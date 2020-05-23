@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "374006631895",
+    "firebase_url": "https://houseofjoy-a2236.firebaseio.com",
+    "project_id": "houseofjoy-a2236",
+    "storage_bucket": "houseofjoy-a2236.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374006631895:android:2fa81b1aa03388f78ecf92",
+        "android_client_info": {
+          "package_name": "com.example.house_of_joy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "374006631895-rg0vacfo66c8f6hi1n1gl1dp0gail9gt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.house_of_joy",
+            "certificate_hash": "faf2a0f239a60ff82acbe8f3cf911341e20c5c00"
+          }
+        },
+        {
+          "client_id": "374006631895-kc6nsp7gs91aobe08hle1ju9ejrbgipo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsU0WF0P7p4H4m5UhCWBWIF_-cXlsZ5xA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "374006631895-kc6nsp7gs91aobe08hle1ju9ejrbgipo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
