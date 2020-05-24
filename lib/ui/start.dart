@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/ui/signUp.dart';
+import 'package:house_of_joy/ui/Auth/signUp.dart';
 
 class Start extends StatelessWidget {
   @override

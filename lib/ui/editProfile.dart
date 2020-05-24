@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:house_of_joy/ui/changePassword.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'Auth/changePassword.dart';
 
 class EditProfile extends StatefulWidget {
   @override

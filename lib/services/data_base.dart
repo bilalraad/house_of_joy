@@ -7,16 +7,22 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/models/user.dart';
 
-import '../services/shered_Preference.dart';
-
 Future<void> showCostumeFireBaseErrorNotif(String title) async {
   //this func. will show in-app notification if there is no internet
   await Future.delayed(const Duration(seconds: 1));
   BotToast.showNotification(
     title: (child) {
-      return Text(
-        title,
-        textDirection: TextDirection.rtl,
+      return Container(
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          // textDirection: TextDirection.rtl,
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       );
     },
     duration: const Duration(seconds: 5),
@@ -48,11 +54,15 @@ class DatabaseService {
     if (await connected()) {
       await usersCollection.document(uid).setData(user.toMap());
     } else {
-      throw ('عذرا، حدث خطا غير معروف');
+      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
     }
   }
 
   Future<String> getEmailByUsername(String username) async {
+    if (!await connected()) {
+      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
+      return null;
+    }
     var querySnapshot = await DatabaseService('')
         .usersCollection
         .where('user_name', isEqualTo: username)
@@ -62,10 +72,13 @@ class DatabaseService {
     var email = querySnapshot.documents.first.data['email'];
 
     return email;
-
   }
 
   Future<bool> checkUserNameExcist(String userName) async {
+    if (!await connected()) {
+      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
+      return null;
+    }
     var snap = await usersCollection
         .where('user_name', isEqualTo: userName)
         .getDocuments();
@@ -76,7 +89,26 @@ class DatabaseService {
     return false;
   }
 
+  Future<bool> checkEmailExcist(String email) async {
+    if (!await connected()) {
+      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
+      return null;
+    }
+    var snap =
+        await usersCollection.where('email', isEqualTo: email).getDocuments();
+    if (snap.documents.isNotEmpty) {
+      return true;
+    }
+
+    return false;
+  }
+
   Future<User> getUserData() async {
+    if (!await connected()) {
+      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
+      return null;
+    }
+
     final userDoc = await usersCollection.document(uid).get();
     final user = User.fromDocument(userDoc, userDoc.documentID);
     return user;

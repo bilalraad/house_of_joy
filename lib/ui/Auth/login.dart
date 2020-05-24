@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/services/auth.dart';
-import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/ui/forgetPassword.dart';
+import 'package:house_of_joy/ui/Auth/forgetPassword.dart';
 import 'package:house_of_joy/ui/homePage.dart';
 
 class Login extends StatefulWidget {
@@ -15,6 +14,7 @@ class _Login extends State<Login> {
   bool test = false;
   bool _obscureText = true;
   bool isUsername = false;
+  bool loading = false;
 
   final userNameOrEmailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -26,6 +26,18 @@ class _Login extends State<Login> {
     userNameOrEmailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Widget showError(String val) {
+    return val.isNotEmpty
+        ? Text(
+            val,
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          )
+        : Container();
   }
 
   int _validate() {
@@ -145,6 +157,7 @@ class _Login extends State<Login> {
                   ),
                 ),
               ),
+              showError(emailOrUNError),
               SizedBox(
                 height: 15,
               ),
@@ -191,6 +204,7 @@ class _Login extends State<Login> {
                   ],
                 ),
               ),
+              showError(passwordNError),
               Container(
                 width: MediaQuery.of(context).size.width / 1.2,
                 height: 45,
@@ -227,22 +241,31 @@ class _Login extends State<Login> {
                       BoxShadow(color: Colors.black12, blurRadius: 5),
                     ]),
                 child: RaisedButton(
-                  onPressed: () async {
-                    var errors = _validate();
-                    if (errors == 0) {
-                      var isVerified = await Auth().signIn(
-                        isUsername ? '' : userNameOrEmailController.text,
-                        passwordController.text,
-                        isUsername ? userNameOrEmailController.text : '',
-                      );
-                      if (isVerified) {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
-                            (Route<dynamic> route) => false);
-                      }
-                    }
-                  },
+                  onPressed: loading
+                      ? null
+                      : () async {
+                          setState(() {
+                            loading = true;
+                          });
+                          var errors = _validate();
+                          if (errors == 0) {
+                            var isVerified = await Auth().signIn(
+                              isUsername ? '' : userNameOrEmailController.text,
+                              passwordController.text,
+                              isUsername ? userNameOrEmailController.text : '',
+                            );
+                            if (isVerified != null && isVerified) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage()),
+                                  (Route<dynamic> route) => false);
+                            }
+                          }
+                          setState(() {
+                            loading = false;
+                          });
+                        },
                   color: Color(0xffFFAADC),
                   child: Text(
                     'Login',

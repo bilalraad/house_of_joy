@@ -3,8 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
 import 'package:house_of_joy/models/user.dart';
 import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/ui/login.dart';
-import 'package:house_of_joy/ui/veritfication.dart';
+import 'package:house_of_joy/ui/Auth/login.dart';
+import 'package:house_of_joy/ui/Auth/veritfication.dart';
+import 'package:house_of_joy/ui/homePage.dart';
+
 
 class SignUp extends StatefulWidget {
   @override
@@ -76,9 +78,11 @@ class _SignUp extends State<SignUp> {
     }
     var userNrexEx =
         RegExp(r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$");
+    bool isUserNameExcist =
+        await DatabaseService('').checkUserNameExcist(userName);
 
     if (userName.isNotEmpty) {
-      if (await DatabaseService('').checkUserNameExcist(userName)) {
+      if (isUserNameExcist != null && isUserNameExcist) {
         userNameErrorText = "اسم المستخدم تم اختياره سابقا";
         errors++;
       } else if (userName.length <= 4) {
@@ -369,27 +373,23 @@ class _SignUp extends State<SignUp> {
                                       phoneNo: number,
                                       userName: userNameController.text,
                                     );
-                                    try {
-                                      Auth().signUp(tempUser.email,
-                                          passwordController.text, tempUser);
-                                    } catch (e) {
-                                      await showCostumeFireBaseErrorNotif(e);
+                                    var isSignedUp = await Auth().signUp(
+                                        tempUser.email,
+                                        passwordController.text,
+                                        tempUser);
+
+                                    if (isSignedUp) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Veritfication(),
+                                        ),
+                                      );
                                     }
-                                    // print(emailController.text);
-                                    // print(fullNameController.text);
-                                    // print(passwordController.text);
-                                    // print(phoneNoController.text);
-                                    // print(userNameController.text);
                                   }
                                   setState(() {
                                     loading = false;
                                   });
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Veritfication(),
-                                    ),
-                                  );
                                 },
                           color: Color(0xffFFAADC),
                           child: Text(
@@ -450,35 +450,51 @@ class _SignUp extends State<SignUp> {
                               width: 5,
                             ),
                             Expanded(
-                              child: Container(
-                                width: 45,
-                                child: FlatButton(
-                                  onPressed: () => {
-                                    //  Navigator.push(context, MaterialPageRoute(builder: (context)=>signUp()),),
-                                  },
-                                  color: Color(0xff6B6BD9),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: 5, right: 7, top: 5),
-                                        child: Icon(
-                                          faf.FontAwesomeIcons.facebookF,
-                                          size: 25,
-                                          color: Colors.white,
-                                        ),
+                              child: FlatButton(
+                                onPressed: loading
+                                    ? null
+                                    : () async {
+                                        setState(() {
+                                          loading = true;
+                                        });
+                                        var isSignedIn =
+                                            await Auth().signInWithFacebook();
+                                        if (isSignedIn) {
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomePage()),
+                                            (Route<dynamic> route) => false,
+                                          );
+                                        }
+                                        setState(() {
+                                          loading = false;
+                                        });
+                                      },
+                                color: Color(0xff6B6BD9),
+                                disabledColor: Colors.grey,
+                                child: Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: 5, right: 7, top: 5),
+                                      child: Icon(
+                                        faf.FontAwesomeIcons.facebookF,
+                                        size: 25,
+                                        color: Colors.white,
                                       ),
-                                      Text(
-                                        'Facebook',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 22),
-                                      )
-                                    ],
-                                  ),
-                                  padding: const EdgeInsets.all(5.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
+                                    ),
+                                    Text(
+                                      'Facebook',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    )
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(5.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
                                 ),
                               ),
                             ),
@@ -495,10 +511,30 @@ class _SignUp extends State<SignUp> {
                                 ),
                                 width: MediaQuery.of(context).size.width / 3,
                                 child: FlatButton(
-                                  onPressed: () => {
-                                    //  Navigator.push(context, MaterialPageRoute(builder: (context)=>signUp()),),
-                                  },
+                                  onPressed: loading
+                                      ? null
+                                      : () async {
+                                          setState(() {
+                                            loading = true;
+                                          });
+                                          var isSignedIn =
+                                              await Auth().signInWithGoogle();
+
+                                          if (isSignedIn) {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HomePage()),
+                                              (Route<dynamic> route) => false,
+                                            );
+                                          }
+                                          setState(() {
+                                            loading = false;
+                                          });
+                                        },
                                   color: Color(0xffffffff),
+                                  disabledColor: Colors.grey,
                                   child: Row(
                                     children: <Widget>[
                                       Padding(

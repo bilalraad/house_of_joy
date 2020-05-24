@@ -1,3 +1,4 @@
+import 'package:house_of_joy/services/data_base.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';
@@ -44,7 +45,9 @@ class SharedPrefs {
   }
 
   Future<void> deleteUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    if (await connected()) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.clear();
+    }
   }
 }

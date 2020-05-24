@@ -18,9 +18,6 @@ class User {
     this.imageUrl = '',
   });
 
-  @override
-  String toString() => 'User(uid: $uid)';
-
   User copyWith({
     String uid,
     String phoneNo,
@@ -50,7 +47,7 @@ class User {
   }
 
   factory User.fromDocument(DocumentSnapshot doc, String uid) {
-    if (doc == null) return null;
+    if (doc.data == null) return null;
     return User(
       uid: uid,
       phoneNo: doc['phoneNo'],
@@ -59,5 +56,10 @@ class User {
       email: doc['email'],
       imageUrl: doc['imageUrl'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl)';
   }
 }

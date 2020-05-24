@@ -1,21 +1,29 @@
 {
   "project_info": {
-    "project_number": "374006631895",
-    "firebase_url": "https://houseofjoy-a2236.firebaseio.com",
-    "project_id": "houseofjoy-a2236",
-    "storage_bucket": "houseofjoy-a2236.appspot.com"
+    "project_number": "802462984285",
+    "firebase_url": "https://house-of-joy-67cf2.firebaseio.com",
+    "project_id": "house-of-joy-67cf2",
+    "storage_bucket": "house-of-joy-67cf2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:374006631895:android:2fa81b1aa03388f78ecf92",
+        "mobilesdk_app_id": "1:802462984285:android:a44cfbdb01b0bdeab605b4",
         "android_client_info": {
           "package_name": "com.example.house_of_joy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "374006631895-rg0vacfo66c8f6hi1n1gl1dp0gail9gt.apps.googleusercontent.com",
+          "client_id": "802462984285-j8hrqcf18dpekctcomh14o1hvotn50qb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.house_of_joy",
+            "certificate_hash": "5c2360cd6ecd8ea72bd0a4bf3b1d36cee277dfad"
+          }
+        },
+        {
+          "client_id": "802462984285-hel0dvn0na53ifnnb4usil54j0jf2r2m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.house_of_joy",
@@ -23,20 +31,20 @@
           }
         },
         {
-          "client_id": "374006631895-kc6nsp7gs91aobe08hle1ju9ejrbgipo.apps.googleusercontent.com",
+          "client_id": "802462984285-o323cklum3bjaiq09t9vbi9bo66tbi1u.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDsU0WF0P7p4H4m5UhCWBWIF_-cXlsZ5xA"
+          "current_key": "AIzaSyDXkG-Em7v5egkN6FLgxVezBaT7yl1JevQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "374006631895-kc6nsp7gs91aobe08hle1ju9ejrbgipo.apps.googleusercontent.com",
+              "client_id": "802462984285-o323cklum3bjaiq09t9vbi9bo66tbi1u.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

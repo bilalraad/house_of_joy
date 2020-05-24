@@ -1,0 +1,12 @@
+<!-- Copyright 2014 The Flutter Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file. -->
+
+<resources>
+    <string name="app_name">Flutter View</string>
+    <string name="title">Flutter Application</string>
+    <string name="button_tap">Flutter button tapped 0 times.</string>
+    <string name="android">Android</string>
+    <string name="facebook_app_id">564672064444328</string>
+    <string name="fb_login_protocol_scheme">fb564672064444328</string>
+</resources>

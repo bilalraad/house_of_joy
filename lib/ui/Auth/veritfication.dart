@@ -9,33 +9,33 @@ class Veritfication extends StatefulWidget {
 }
 
 class _Veritfication extends State<Veritfication> {
-  TextEditingController _controllertxt1 = new TextEditingController();
-  TextEditingController _controllertxt2 = new TextEditingController();
-  TextEditingController _controllertxt3 = new TextEditingController();
-  TextEditingController _controllertxt4 = new TextEditingController();
-  FocusNode _focusNode2;
-  FocusNode _focusNode3;
-  FocusNode _focusNode4;
-  FocusNode _focusNode5;
+  // TextEditingController _controllertxt1 = new TextEditingController();
+  // TextEditingController _controllertxt2 = new TextEditingController();
+  // TextEditingController _controllertxt3 = new TextEditingController();
+  // TextEditingController _controllertxt4 = new TextEditingController();
+  // FocusNode _focusNode2;
+  // FocusNode _focusNode3;
+  // FocusNode _focusNode4;
+  // FocusNode _focusNode5;
   Color _colorpink = Color(0xffFFAADC);
 
-  @override
-  void initState() {
-    super.initState();
-    _focusNode2 = FocusNode();
-    _focusNode3 = FocusNode();
-    _focusNode4 = FocusNode();
-    _focusNode5 = FocusNode();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _focusNode2 = FocusNode();
+  //   _focusNode3 = FocusNode();
+  //   _focusNode4 = FocusNode();
+  //   _focusNode5 = FocusNode();
+  // }
 
-  @override
-  void dispose() {
-    _focusNode2.dispose();
-    _focusNode3.dispose();
-    _focusNode4.dispose();
-    _focusNode5.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _focusNode2.dispose();
+  //   _focusNode3.dispose();
+  //   _focusNode4.dispose();
+  //   _focusNode5.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

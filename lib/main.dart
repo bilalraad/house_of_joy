@@ -7,24 +7,23 @@ import 'package:house_of_joy/ui/start.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  var user =await SharedPrefs().getUser();
+  var user = await SharedPrefs().getUser();
 
-  user.uid != null?runApp(
-    new MaterialApp(
-      builder: BotToastInit(),
-      navigatorObservers: [BotToastNavigatorObserver()],
-      debugShowCheckedModeBanner: false,
-      title: 'House of joy',
-      home: HomePage(),
-    ),
-  ):
-  runApp(
-    new MaterialApp(
-      builder: BotToastInit(),
-      navigatorObservers: [BotToastNavigatorObserver()],
-      debugShowCheckedModeBanner: false,
-      title: 'House of joy',
-      home: Start(),
-    ),
-  );
+  user != null
+      ? runApp(
+          new MaterialApp(
+            builder: BotToastInit(),
+            navigatorObservers: [BotToastNavigatorObserver()],
+            debugShowCheckedModeBanner: false,
+            home: HomePage(),
+          ),
+        )
+      : runApp(
+          new MaterialApp(
+            builder: BotToastInit(),
+            navigatorObservers: [BotToastNavigatorObserver()],
+            debugShowCheckedModeBanner: false,
+            home: Start(),
+          ),
+        );
 }
