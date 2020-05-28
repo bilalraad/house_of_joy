@@ -1,4 +1,6 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:house_of_joy/functions/validations.dart';
 import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/ui/Auth/forgetPassword.dart';
 import 'package:house_of_joy/ui/homePage.dart';
@@ -155,6 +157,12 @@ class _Login extends State<Login> {
                     hintStyle: TextStyle(
                         fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
                   ),
+                  onChanged: (value) {
+                    if (emailOrUNError.isNotEmpty)
+                      setState(() {
+                        emailOrUNError = '';
+                      });
+                  },
                 ),
               ),
               showError(emailOrUNError),
@@ -179,6 +187,12 @@ class _Login extends State<Login> {
                       child: TextField(
                         key: ValueKey('txtPassword'),
                         obscureText: _obscureText,
+                        onChanged: (value) {
+                          if (passwordNError.isNotEmpty)
+                            setState(() {
+                              passwordNError = '';
+                            });
+                        },
                         controller: passwordController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -244,22 +258,27 @@ class _Login extends State<Login> {
                   onPressed: loading
                       ? null
                       : () async {
+                          FocusScope.of(context).unfocus();
                           setState(() {
                             loading = true;
                           });
                           var errors = _validate();
                           if (errors == 0) {
-                            var isVerified = await Auth().signIn(
+                            var error = await Auth().signIn(
                               isUsername ? '' : userNameOrEmailController.text,
                               passwordController.text,
                               isUsername ? userNameOrEmailController.text : '',
                             );
-                            if (isVerified != null && isVerified) {
+                            if (error == null) {
                               Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage()),
-                                  (Route<dynamic> route) => false);
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(),
+                                ),
+                                (Route<dynamic> route) => false,
+                              );
+                            } else {
+                              showFlushSnackBar(context,error);
                             }
                           }
                           setState(() {

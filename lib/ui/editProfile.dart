@@ -3,23 +3,58 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:house_of_joy/services/auth.dart';
+import 'package:house_of_joy/services/data_base.dart';
+import 'package:house_of_joy/show_overlay.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:house_of_joy/models/user.dart';
 import 'Auth/changePassword.dart';
 
 class EditProfile extends StatefulWidget {
+  final User user;
+  const EditProfile({
+    Key key,
+    @required this.user,
+  }) : assert(user != null, 'user data should be provided');
+
   @override
-  _EditProfileState createState() {
-    return _EditProfileState();
-  }
+  _EditProfileState createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
+  final _formKey = GlobalKey<FormState>();
+  var fullNameController = TextEditingController();
+  var userNameController = TextEditingController();
+  var emailController = TextEditingController();
+  var phoneNoController = TextEditingController();
   File imageFile;
+  NetworkImage profilepic;
+  bool dataLoaded = false;
+  bool loading = false;
+
+  @override
+  void didChangeDependencies() {
+    if (!dataLoaded) {
+      if (widget.user.imageUrl.isNotEmpty)
+        profilepic = NetworkImage(widget.user.imageUrl);
+      fullNameController = TextEditingController(text: widget.user.fullName);
+      userNameController = TextEditingController(text: widget.user.userName);
+      emailController = TextEditingController(text: widget.user.email);
+      phoneNoController = TextEditingController(
+          text: widget.user.phoneNo.replaceAll('+964', '0'));
+    }
+    dataLoaded = true;
+    super.didChangeDependencies();
+  }
+
   _openGellery(BuildContext context) async {
     var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
     this.setState(() {
-      imageFile = picture;
+      if (picture.path.isNotEmpty) {
+        imageFile = picture;
+        profilepic = null;
+      }
     });
     Navigator.of(context).pop();
   }
@@ -27,7 +62,10 @@ class _EditProfileState extends State<EditProfile> {
   _openCamera(BuildContext context) async {
     var picture = await ImagePicker.pickImage(source: ImageSource.camera);
     this.setState(() {
-      imageFile = picture;
+      if (picture.path.isNotEmpty) {
+        imageFile = picture;
+        profilepic = null;
+      }
     });
     Navigator.of(context).pop();
   }
@@ -38,8 +76,6 @@ class _EditProfileState extends State<EditProfile> {
     else
       return FileImage(imageFile);
   }
-
-
 
   Future<void> _showDialog(BuildContext context) {
     return showDialog(
@@ -75,7 +111,19 @@ class _EditProfileState extends State<EditProfile> {
         });
   }
 
+  @override
   Widget build(BuildContext context) {
+    var inputDecoration = InputDecoration(
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          color: Color(0xffFFAADC),
+        ),
+      ),
+      hintStyle: TextStyle(
+        fontFamily: 'Cambo',
+        color: Color(0xffA2A2A2),
+      ),
+    );
     return Scaffold(
       backgroundColor: Color(0xffFAFBFD),
       body: ListView(
@@ -91,58 +139,53 @@ class _EditProfileState extends State<EditProfile> {
                               'images/backgroundImage.jpg',
                             ),
                             fit: BoxFit.fitWidth)),
-                    child: Container(
-                      color: Color.fromRGBO(250, 251, 253, 75),
-                      child: Column(
-                        children: <Widget>[
-                          Align(
-                              alignment: Alignment.topLeft,
-                              child: Row(
-                                children: <Widget>[
-                                  FlatButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Cansel',
-                                      style: TextStyle(fontSize: 18),
-                                    ),
+                    child: Column(
+                      children: <Widget>[
+                        Align(
+                            alignment: Alignment.topLeft,
+                            child: Row(
+                              children: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(fontSize: 18),
                                   ),
-                                  Expanded(
-                                    child: SizedBox(
-                                      width: 5,
-                                    ),
+                                ),
+                                Expanded(
+                                  child: SizedBox(
+                                    width: 5,
                                   ),
-                                  FlatButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('Done',
-                                        style: TextStyle(fontSize: 18)),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            height: 75,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 30),
-                            child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                'Edit Profile',
-                                style: TextStyle(
-                                    color: Color(0xFFCA39E3),
-                                    fontSize: 24,
-                                    fontFamily: 'Cambo'),
-                              ),
+                                ),
+                                FlatButton(
+                                  onPressed: _onPressedDone,
+                                  child: Text('Done',
+                                      style: TextStyle(fontSize: 18)),
+                                ),
+                              ],
+                            )),
+                        SizedBox(
+                          height: 75,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 30),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              'Edit Profile',
+                              style: TextStyle(
+                                  color: Color(0xFFCA39E3),
+                                  fontSize: 24,
+                                  fontFamily: 'Cambo'),
                             ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -158,7 +201,8 @@ class _EditProfileState extends State<EditProfile> {
                     decoration: BoxDecoration(
                         color: Color(0xffFFAADC),
                         image: DecorationImage(
-                            image: _decideImageView(), fit: BoxFit.cover),
+                            image: profilepic ?? _decideImageView(),
+                            fit: BoxFit.cover),
                         shape: BoxShape.circle),
                   ),
                   Transform.translate(
@@ -180,60 +224,75 @@ class _EditProfileState extends State<EditProfile> {
                   )
                 ],
               ),
-              Container(
+              Form(
+                key: _formKey,
+                child: Container(
                   width: MediaQuery.of(context).size.width / 1.3,
                   child: Column(
                     children: <Widget>[
-                      TextField(
-                        decoration: InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xffFFAADC))),
-                          hintText: 'Full Name',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
-                        ),
+                      TextFormField(
+                        controller: fullNameController,
+                        decoration:
+                            inputDecoration.copyWith(hintText: 'Full Name'),
+                        readOnly: loading,
+                        validator: (fullName) {
+                          if (fullName == null || fullName.isEmpty) {
+                            return "الرجاء ادخال الاسم";
+                          } else if (fullName.length < 8) {
+                            return "رجاءا ادخل الاسم الكامل";
+                          }
+                          return null;
+                        },
                       ),
-                      TextField(
-                        decoration: InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xffFFAADC))),
-                          hintText: 'Username',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
-                        ),
+                      TextFormField(
+                        controller: userNameController,
+                        decoration:
+                            inputDecoration.copyWith(hintText: 'Username'),
+                        readOnly: loading,
+                        validator: (userName) {
+                          var userNrexEx = RegExp(
+                              r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$");
+                          if (userName.length <= 4) {
+                            return "اسم المستخدم قصير جدا";
+                          } else if (!userNrexEx.hasMatch(userName)) {
+                            return "يجب ان  لا يحتوي على نقط او فراغات مثلا: sara_ali2";
+                          }
+                          return null;
+                        },
                       ),
-                      TextField(
+                      TextFormField(
+                        controller: emailController,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xffFFAADC))),
-                          hintText: 'Email',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
-                        ),
+                        decoration: inputDecoration.copyWith(hintText: 'Email'),
+                        enabled: false,
+                        readOnly: true,
                       ),
-                      TextField(
+                      Text(
+                        'You can\'t change email now',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      TextFormField(
+                        controller: phoneNoController,
                         keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xffFFAADC))),
-                          hintText: 'Phone number',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
-                        ),
+                        decoration:
+                            inputDecoration.copyWith(hintText: 'Phone Number'),
+                        readOnly: loading,
+                        validator: (phoneNo) {
+                          var phoneRegEx = RegExp(r"07[3-9][0-9]{8}");
+                          if (phoneNo.isNotEmpty &&
+                                  !phoneRegEx.hasMatch(phoneNo) ||
+                              phoneNo.length > 11) {
+                            return "الرقم غير صحيح";
+                          }
+                          return null;
+                        },
                       ),
                       GestureDetector(
                         child: Stack(
                           children: <Widget>[
                             TextField(
-                              decoration: InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Color(0xffFFAADC))),
+                              decoration: inputDecoration.copyWith(
                                 hintText: 'Change password',
-                                hintStyle: TextStyle(
-                                    fontFamily: 'Cambo',
-                                    color: Color(0xffA2A2A2)),
                               ),
                               readOnly: true,
                             ),
@@ -246,15 +305,30 @@ class _EditProfileState extends State<EditProfile> {
                             ),
                           ],
                         ),
-                        onTap: () {
+                        onTap: () async {
+                          setState(() {
+                            loading = true;
+                          });
+                          var isCanChange =
+                              await Auth().isSigendInWithEmailAndPassword();
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChangePassword()));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ChangePassword(isCanChange: isCanChange),
+                            ),
+                          );
+                          setState(() {
+                            loading = false;
+                          });
                         },
                       ),
+                      SizedBox(height: 20),
+                      loading ? CircularProgressIndicator() : Container(),
                     ],
-                  )),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 15,
               ),
@@ -265,7 +339,45 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  _onPressedDone() {
-    Navigator.pop(context);
+  void _onPressedDone() async {
+    setState(() {
+      loading = true;
+    });
+    bool isUserNameExcist = false;
+    var newUsername = userNameController.text;
+    FocusScope.of(context).unfocus();
+    if (_formKey.currentState.validate()) {
+      if (widget.user.userName != newUsername)
+        isUserNameExcist =
+            await DatabaseService('').checkUserNameExcist(newUsername);
+
+      if (!isUserNameExcist) {
+        final number = phoneNoController.text.isNotEmpty
+            ? '+964${phoneNoController.text.substring(1)}'
+            : '';
+        String newImageUrl = profilepic == null
+            ? await DatabaseService(widget.user.uid).uploadPic(imageFile)
+            : widget.user.imageUrl;
+        await DatabaseService(widget.user.uid).updateUserData(
+          widget.user.copyWith(
+            fullName: fullNameController.text,
+            imageUrl: newImageUrl ?? "",
+            phoneNo: number,
+            userName: userNameController.text,
+          ),
+        );
+        showOverlay(context: context, text: 'تم تعديل المعلومات');
+        Navigator.pop(context);
+      } else {
+        showOverlay(
+          context: context,
+          text: 'اسم المستخدم تم اختيارة سابقا',
+        );
+        // showFlushSnackBar(context, 'اسم المستخدم تم اختيارة سابقا');
+      }
+    }
+    setState(() {
+      loading = false;
+    });
   }
 }

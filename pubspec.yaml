@@ -31,6 +31,7 @@ dependencies:
   flutter_spinkit: ^4.1.2+1
   provider: ^4.0.5+1
   bot_toast: ^3.0.0
+  flushbar: ^1.10.4
   connectivity: ^0.4.8+6
   uuid: ^2.0.4
   image_picker: ^0.6.6+4
@@ -38,6 +39,7 @@ dependencies:
   firebase_storage: ^3.1.5
   firebase_analytics: ^5.0.11
   flutter_facebook_login: ^3.0.0
+  flutter_form_bloc: ^0.14.0
 
 dev_dependencies:
 

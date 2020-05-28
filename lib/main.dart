@@ -8,13 +8,16 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   var user = await SharedPrefs().getUser();
-
   user != null
       ? runApp(
           new MaterialApp(
             builder: BotToastInit(),
             navigatorObservers: [BotToastNavigatorObserver()],
             debugShowCheckedModeBanner: false,
+            color: Colors.black.withOpacity(1),
+            theme: ThemeData(
+              primaryColor: Colors.black12
+            ),
             home: HomePage(),
           ),
         )

@@ -132,9 +132,9 @@ class _LogoutState extends State<Logout> {
                             ),
                             child: FlatButton(
                               onPressed: () async {
-                                await Auth().signOut();
-                                await Auth().googleSignout();
                                 await SharedPrefs().deleteUser();
+                                await Auth().signOut();
+
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/services/data_base.dart';
+import 'package:house_of_joy/show_overlay.dart';
+import 'package:house_of_joy/ui/Costume_widgets/costume_text_field.dart';
 
 class ForgetPassword extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class _ForgetPassword extends State<ForgetPassword> {
   final emailController = TextEditingController();
   String emailErrorText = '';
   bool loading = false;
+  int error = 0;
 
   @override
   void dispose() {
@@ -98,16 +101,10 @@ class _ForgetPassword extends State<ForgetPassword> {
                 SizedBox(
                   height: 15,
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  child: TextField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      hintText: 'Your Email',
-                      hintStyle: TextStyle(
-                          fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
-                    ),
-                  ),
+                CustomTextField(
+                  controller: emailController,
+                  hint: 'Your Email',
+                  onChanged: (newValue) => setState(() => emailErrorText = ''),
                 ),
                 emailErrorText.isNotEmpty
                     ? Text(
@@ -140,7 +137,6 @@ class _ForgetPassword extends State<ForgetPassword> {
                             });
                             var emailRegEx = RegExp(
                                 r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-                            int error = 0;
                             var email = emailController.text;
 
                             if (email == null || email.isEmpty) {
@@ -159,7 +155,10 @@ class _ForgetPassword extends State<ForgetPassword> {
                               print('cc');
                             } else {
                               Auth().resetPassword(email);
-                                emailController.clear();
+                              emailController.clear();
+                              showOverlay(
+                                  context: context,
+                                  text: 'تم ارسال رسالة الى الايميل الخاص بك');
                             }
                             setState(() {
                               loading = false;

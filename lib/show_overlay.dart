@@ -12,8 +12,8 @@ Future<void> showOverlay({
   final overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
       bottom: 50.0,
-      // right: SizeConfig.screenWidth * 0.25,
-      // width: SizeConfig.screenWidth * 0.5,
+      right: MediaQuery.of(context).size.width * 0.25,
+      width: MediaQuery.of(context).size.width * 0.5,
       child: Material(
         color: Colors.white.withOpacity(0),
         child: Container(

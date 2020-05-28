@@ -8,6 +8,7 @@ class User {
   final String email;
   final String userName;
   final String imageUrl;
+  final List<String> postIds;
 
   User({
     @required this.uid,
@@ -16,6 +17,7 @@ class User {
     @required this.email,
     this.userName,
     this.imageUrl = '',
+    this.postIds = const [],
   });
 
   User copyWith({
@@ -25,6 +27,7 @@ class User {
     String email,
     String userName,
     String imageUrl,
+    List<String> postIds,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -33,33 +36,36 @@ class User {
       email: email ?? this.email,
       userName: userName ?? this.userName,
       imageUrl: imageUrl ?? this.imageUrl,
+      postIds: postIds ?? this.postIds,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'phoneNo': this.phoneNo,
-      'full_name': this.fullName,
-      'user_name': this.userName,
-      'email': this.email,
-      'imageUrl': this.imageUrl,
+      'uid': uid,
+      'phoneNo': phoneNo,
+      'fullName': fullName,
+      'email': email,
+      'userName': userName,
+      'imageUrl': imageUrl,
+      'postIds': postIds,
     };
   }
 
   factory User.fromDocument(DocumentSnapshot doc, String uid) {
     if (doc.data == null) return null;
     return User(
-      uid: uid,
-      phoneNo: doc['phoneNo'],
-      fullName: doc['full_name'],
-      userName: doc['user_name'],
-      email: doc['email'],
-      imageUrl: doc['imageUrl'],
-    );
+        uid: uid,
+        phoneNo: doc['phoneNo'],
+        fullName: doc['fullName'],
+        userName: doc['userName'],
+        email: doc['email'],
+        imageUrl: doc['imageUrl'],
+        postIds: List<String>.from(doc['postIds']));
   }
 
   @override
   String toString() {
-    return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl)';
+    return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl, postIds: $postIds)';
   }
 }

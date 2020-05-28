@@ -1,13 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/ui/Auth/logout.dart';
-import 'package:house_of_joy/ui/aboutCodeForIraq.dart';
-import 'package:house_of_joy/ui/aboutTheApplication.dart';
-import 'package:house_of_joy/ui/editProfile.dart';
+import 'package:house_of_joy/functions/show_dialog.dart';
+
 import 'package:house_of_joy/ui/profileUser.dart';
 import 'package:house_of_joy/ui/publishAPost.dart';
-import 'package:house_of_joy/ui/staff.dart';
 
 class Alerts extends StatefulWidget {
   @override
@@ -15,82 +12,7 @@ class Alerts extends StatefulWidget {
 }
 
 class _AlertsState extends State<Alerts> {
-  Future<void> _showDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Directionality(
-            textDirection: TextDirection.ltr,
-            child: AlertDialog(
 
-              content: SingleChildScrollView(
-                child:  Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: ListBody(
-                    children: <Widget>[
-                      GestureDetector(
-                        child: Text('تعديل الملف الشخصي'),
-                        onTap: () {
-
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfile()));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        child: Text('تسجيل الخروج'),
-                        onTap: () {
-
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Logout()));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        child: Text('حول التطبيق'),
-                        onTap: () {
-
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AboutTheApp()));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        child: Text('حول المبادرة'),
-                        onTap: () {
-
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AboutCodeForIraq()));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        child: Text('فريق العمل'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Staff()));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                ),
-
-              ),
-            ),
-          );
-        });
-  }
   File imageFile;
   // dynamic _decideImageView() {
   //   if (imageFile == null)
@@ -151,7 +73,7 @@ class _AlertsState extends State<Alerts> {
                                     IconButton(icon: Icon(Icons.home),
                                         iconSize: 30,
                                         onPressed: (){
-                                          _showDialog(context);
+                                          showCostumeDialog(context);
 
                                         })
                                   ],

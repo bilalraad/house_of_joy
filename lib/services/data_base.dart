@@ -6,6 +6,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/models/user.dart';
+import 'package:house_of_joy/services/shered_Preference.dart';
 
 Future<void> showCostumeFireBaseErrorNotif(String title) async {
   //this func. will show in-app notification if there is no internet
@@ -53,6 +54,15 @@ class DatabaseService {
     //this can be used to add new family or update an exsisting one
     if (await connected()) {
       await usersCollection.document(uid).setData(user.toMap());
+      SharedPrefs().setUser(
+        uid: uid,
+        fullName: user.fullName,
+        userName: user.userName,
+        phoneNo: user.phoneNo,
+        email: user.email,
+        imageUrl: user.imageUrl,
+        postIds: user.postIds,
+      );
     } else {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
     }
@@ -65,22 +75,23 @@ class DatabaseService {
     }
     var querySnapshot = await DatabaseService('')
         .usersCollection
-        .where('user_name', isEqualTo: username)
+        .where('userName', isEqualTo: username)
         .snapshots()
         .first;
 
-    var email = querySnapshot.documents.first.data['email'];
+    var documents = querySnapshot.documents;
+
+    var email = documents.isNotEmpty ? documents.first.data['email'] : null;
 
     return email;
   }
 
   Future<bool> checkUserNameExcist(String userName) async {
     if (!await connected()) {
-      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
-      return null;
+      return false;
     }
     var snap = await usersCollection
-        .where('user_name', isEqualTo: userName)
+        .where('userName', isEqualTo: userName)
         .getDocuments();
     if (snap.documents.isNotEmpty) {
       return true;
@@ -91,8 +102,7 @@ class DatabaseService {
 
   Future<bool> checkEmailExcist(String email) async {
     if (!await connected()) {
-      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
-      return null;
+      return false;
     }
     var snap =
         await usersCollection.where('email', isEqualTo: email).getDocuments();
@@ -140,21 +150,21 @@ class DatabaseService {
   //       .map(_familyDataFromSnapshot);
   // }
 
-  Future uploadPic(BuildContext context, File image) async {
-    String fileName = 'userphoto'; //TODO: get username
+  Future<String> uploadPic(File image, {String fileName}) async {
+    if (uid.isNotEmpty) fileName = uid;
     StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     if (taskSnapshot.error == null) {
-      final String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+      final String imageUrl = await taskSnapshot.ref.getDownloadURL();
       await Firestore.instance
           .collection("images")
-          .add({"url": downloadUrl, "name": 'userName'}); //TODO: get username
-      final snackBar = SnackBar(content: Text('Yay! Success'));
-      Scaffold.of(context).showSnackBar(snackBar);
+          .add({"url": imageUrl, "name": fileName});
+
+      return imageUrl;
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text('error')));
+      return null;
     }
   }
 }
