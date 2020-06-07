@@ -1,9 +1,9 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/functions/validations.dart';
 import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/ui/Auth/forgetPassword.dart';
-import 'package:house_of_joy/ui/homePage.dart';
+import 'package:house_of_joy/ui/Auth/signUp.dart';
+import '../../main.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -114,15 +114,16 @@ class _Login extends State<Login> {
                             height: 75,
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 30),
+                            padding: EdgeInsets.only(right: 30),
                             child: Align(
-                              alignment: Alignment.bottomLeft,
+                              alignment: Alignment.bottomRight,
                               child: Text(
-                                'Login',
+                                'تسجيل الدخول',
+                                textDirection: TextDirection.rtl,
                                 style: TextStyle(
                                     color: Color(0xFFCA39E3),
                                     fontSize: 24,
-                                    fontFamily: 'Cambo'),
+                                    fontFamily: 'ae_Sindibad'),
                               ),
                             ),
                           ),
@@ -138,84 +139,88 @@ class _Login extends State<Login> {
               SizedBox(
                 height: 15,
               ),
-              Container(
-                width: MediaQuery.of(context).size.width / 1.2,
-                height: 45,
-                padding:
-                    EdgeInsets.only(top: 4, left: 25, right: 16, bottom: 4),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(color: Colors.black12, blurRadius: 5),
-                    ]),
-                child: TextField(
-                  controller: userNameOrEmailController,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Username or email',
-                    hintStyle: TextStyle(
-                        fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: 45,
+                  padding:
+                      EdgeInsets.only(right: 25),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5),
+                      ]),
+                  child: TextField(
+                    controller: userNameOrEmailController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'البريد الالكتروني او اسم المستخدم',
+                      hintStyle: TextStyle(
+                          fontFamily: 'ae_Sindibad', color: Color(0xffA2A2A2)),
+                    ),
+                    onChanged: (value) {
+                      if (emailOrUNError.isNotEmpty)
+                        setState(() {
+                          emailOrUNError = '';
+                        });
+                    },
                   ),
-                  onChanged: (value) {
-                    if (emailOrUNError.isNotEmpty)
-                      setState(() {
-                        emailOrUNError = '';
-                      });
-                  },
                 ),
               ),
               showError(emailOrUNError),
               SizedBox(
                 height: 15,
               ),
-              Container(
-                width: MediaQuery.of(context).size.width / 1.2,
-                height: 45,
-                padding:
-                    EdgeInsets.only(top: 4, left: 25, right: 16, bottom: 4),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(color: Colors.black12, blurRadius: 5),
-                    ]),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      width: 200,
-                      child: TextField(
-                        key: ValueKey('txtPassword'),
-                        obscureText: _obscureText,
-                        onChanged: (value) {
-                          if (passwordNError.isNotEmpty)
-                            setState(() {
-                              passwordNError = '';
-                            });
-                        },
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Password',
-                          hintStyle: TextStyle(
-                              fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: 45,
+                  padding: EdgeInsets.only(left: 16, right: 25),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5),
+                      ]),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        width: 200,
+                        child: TextField(
+                          key: ValueKey('txtPassword'),
+                          obscureText: _obscureText,
+                          onChanged: (value) {
+                            if (passwordNError.isNotEmpty)
+                              setState(() {
+                                passwordNError = '';
+                              });
+                          },
+                          controller: passwordController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'كلمة السر',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Cambo', color: Color(0xffA2A2A2)),
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: SizedBox(),
-                    ),
-                    Container(
-                      child: IconButton(
-                          icon: test
-                              ? Icon(Icons.visibility, color: Color(0xffFFAADC))
-                              : Icon(Icons.visibility_off,
-                                  color: Color(0xffFFAADC)),
-                          onPressed: () {
-                            showOrHidenPassword();
-                          }),
-                    )
-                  ],
+                      Spacer(),
+                      Container(
+                        child: IconButton(
+                            icon: test
+                                ? Icon(Icons.visibility,
+                                    color: Color(0xffFFAADC))
+                                : Icon(Icons.visibility_off,
+                                    color: Color(0xffFFAADC)),
+                            onPressed: () {
+                              showOrHidenPassword();
+                            }),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               showError(passwordNError),
@@ -223,7 +228,7 @@ class _Login extends State<Login> {
                 width: MediaQuery.of(context).size.width / 1.2,
                 height: 45,
                 child: Align(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.centerLeft,
                   child: FlatButton(
                     onPressed: () {
                       Navigator.push(
@@ -233,11 +238,11 @@ class _Login extends State<Login> {
                           ));
                     },
                     child: Text(
-                      'Forgot password?',
+                      'هل سيت كلمة السر؟',
                       style: TextStyle(
                           color: Color(0xFFCA39E3),
                           fontSize: 16,
-                          fontFamily: 'Cambo'),
+                          fontFamily: 'ae_Sindibad'),
                     ),
                   ),
                 ),
@@ -273,12 +278,12 @@ class _Login extends State<Login> {
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => HomePage(),
-                                ),
+                                    builder: (context) =>
+                                        Wrapper(isLogesdIn: true)),
                                 (Route<dynamic> route) => false,
                               );
                             } else {
-                              showFlushSnackBar(context,error);
+                              showFlushSnackBar(context, error);
                             }
                           }
                           setState(() {
@@ -287,11 +292,11 @@ class _Login extends State<Login> {
                         },
                   color: Color(0xffFFAADC),
                   child: Text(
-                    'Login',
+                    'تسجيل',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontFamily: 'ae_Sindibad'),
                   ),
                   padding: const EdgeInsets.all(5.0),
                   shape: RoundedRectangleBorder(
@@ -305,21 +310,29 @@ class _Login extends State<Login> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      'Don‘t have an account?',
-                      style: TextStyle(fontSize: 16, fontFamily: 'Cambo'),
-                    ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignUp(),
+                          ),
+                        );
                       },
-                      child: Text(
-                        ' Sign in',
-                        style: TextStyle(
-                          color: Color(0xffFFAADC),
-                          fontSize: 14,
-                          fontFamily: 'Cambo',
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          'انشاء حساب',
+                          style:
+                              TextStyle(color: Color(0xffFFAADC), fontSize: 18),
                         ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(
+                        'ليس لديك حساب؟',
+                        style: TextStyle(fontSize: 20),
                       ),
                     ),
                   ],

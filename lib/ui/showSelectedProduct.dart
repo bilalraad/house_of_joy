@@ -1,131 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:house_of_joy/functions/validations.dart';
+import 'package:house_of_joy/models/post.dart';
+import 'package:house_of_joy/models/user.dart';
+import 'package:house_of_joy/services/post_services.dart';
+import 'package:house_of_joy/ui/Costume_widgets/post_widget.dart';
 import 'package:house_of_joy/ui/comments.dart';
 import 'package:house_of_joy/ui/order.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
 import 'package:house_of_joy/ui/publishAPost.dart';
 
+import 'Costume_widgets/loading_dialog.dart';
+import 'Costume_widgets/post_widget.dart';
+import 'Costume_widgets/view_images.dart';
+
+enum PopMenuItem {
+  editPost,
+  removePost,
+}
+
 class ShowSelectedProduct extends StatefulWidget {
-  final bool _showOptions;
-  ShowSelectedProduct(this._showOptions);
+  final Post post;
+  final User user;
+  final bool showOptions;
+
+  const ShowSelectedProduct({
+    @required this.post,
+    @required this.user,
+    @required this.showOptions,
+  });
   @override
-  _ShowSelectedProductState createState() =>
-      _ShowSelectedProductState(_showOptions);
+  _ShowSelectedProductState createState() => _ShowSelectedProductState();
 }
 
 class _ShowSelectedProductState extends State<ShowSelectedProduct> {
-  _ShowSelectedProductState(this.showOptions);
-  bool showOptions;
-  List getinfo;
   Color colorLike = Colors.red;
   Color colorNotlike = Color(0xffBDADE0);
   bool like = false;
-  String _title;
-  void initState() {
-    super.initState();
-    _title = 'مواد تجميل';
-    getinfo = [
-      {
-        "name": "منى محمد",
-        'describation': "وصف المشروع",
-        'numberOfComment': "10",
-        'numberOfLike': "20"
-      },
-    ];
-  }
-
-  Widget containerShowOptions(context) {
-    if (showOptions == true) {
-      return GestureDetector(
-        child: Container(
-          color: Colors.white24,
-          width: 40,
-          height: 40,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 5,
-                height: 5,
-                decoration:
-                    BoxDecoration(color: Colors.black, shape: BoxShape.circle),
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              Container(
-                width: 5,
-                height: 5,
-                decoration:
-                    BoxDecoration(color: Colors.black, shape: BoxShape.circle),
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              Container(
-                width: 5,
-                height: 5,
-                decoration:
-                    BoxDecoration(color: Colors.black, shape: BoxShape.circle),
-              )
-            ],
-          ),
-        ),
-        onTap: () {
-          _showDialog(context);
-        },
-      );
-    } else
-      return Text('');
-  }
-
-  Future<void> _showDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Directionality(
-            textDirection: TextDirection.ltr,
-            child: AlertDialog(
-              content: SingleChildScrollView(
-                child: Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: ListBody(
-                    children: <Widget>[
-                      GestureDetector(
-                        child: Text('تعديل'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PublishAPsost(null)));
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        child: Text('حذف'),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        });
-  }
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xffFAFBFD),
-        body: ListView(
+      backgroundColor: Color(0xffFAFBFD),
+      body: ModalProgress(
+        inAsyncCall: loading,
+        costumeIndicator: LoadingDialog(),
+        child: Column(
           children: <Widget>[
             Container(
               child: Stack(
@@ -134,61 +54,53 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.25,
                     decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(
-                              'images/backgroundImage.jpg',
-                            ),
-                            fit: BoxFit.cover)),
+                      image: DecorationImage(
+                          image: AssetImage(
+                            'images/backgroundImage.jpg',
+                          ),
+                          fit: BoxFit.cover),
+                    ),
                     child: Container(
                       color: Color.fromRGBO(250, 251, 253, 75),
                       alignment: Alignment.topLeft,
                     ),
                   ),
-                  Row(
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(Icons.arrow_back_ios),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }),
-                      Expanded(
-                        child: SizedBox(
-                          width: 3,
+                  SafeArea(
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                            icon: Icon(Icons.arrow_back_ios),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        Expanded(
+                          child: SizedBox(
+                            width: 3,
+                          ),
                         ),
-                      ),
-                      Text(
-                        '$_title',
-                        style: TextStyle(
-                            color: Color(0xffE10586),
-                            fontSize: 26,
-                            fontFamily: 'ae_Sindibad'),
-                      ),
-                      Expanded(
-                        child: SizedBox(
-                          width: 3,
+                        Text(
+                          '${widget.post.category}',
+                          style: TextStyle(
+                              color: Color(0xffE10586),
+                              fontSize: 26,
+                              fontFamily: 'ae_Sindibad'),
                         ),
-                      ),
-                    ],
-                  ),
-                  Transform.translate(
-                    offset: Offset(0, -23),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 30,
-                      ),
+                        Expanded(child: SizedBox(width: 5)),
+                        Container(child: SizedBox(width: 50)),
+                      ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-            containerShowTheGoods(getinfo),
+            containerShowTheGoods(widget.user),
           ],
-        ));
+        ),
+      ),
+    );
   }
 
-  Widget containerShowTheGoods(List<dynamic> info) {
+  Widget containerShowTheGoods(User currentUser) {
     return Container(
       padding: EdgeInsets.only(right: 8),
       width: MediaQuery.of(context).size.width / 1.1,
@@ -201,19 +113,17 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            'images/personalPhoto.jpg',
-                          ),
-                          fit: BoxFit.cover),
-                      shape: BoxShape.circle),
+                  child: LoadImage(
+                    url: currentUser.imageUrl,
+                    fit: BoxFit.cover,
+                    boxShape: BoxShape.circle,
+                  ),
                 ),
                 SizedBox(
                   width: 10,
                 ),
                 Text(
-                  '${info[0]["name"]}',
+                  '${currentUser.fullName}',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -224,7 +134,7 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                     width: 10,
                   ),
                 ),
-                containerShowOptions(context),
+                widget.showOptions ? buildPopupMenuButton() : Container(),
                 SizedBox(
                   width: 10,
                 )
@@ -237,7 +147,7 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
           Container(
             width: MediaQuery.of(context).size.width / 1.2,
             child: Text(
-              '${info[0]["describation"]}',
+              '${widget.post.description}',
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
               style: TextStyle(
@@ -252,33 +162,18 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
             color: Color(0xffF9F5F7),
             child: Column(
               children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.1,
-                  height: 200,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: AssetImage(
-                      'images/photo.jpg',
-                    ),
-                    fit: BoxFit.cover,
-                  )),
-                ),
+                ViewImages(imagesUrl: widget.post.imagesUrl),
                 Divider(
                   height: 5,
                 ),
                 Container(
                   child: Row(
                     children: <Widget>[
-                      IconButton(
-                          icon: Icon(Icons.favorite),
-                          color: like ? colorLike : colorNotlike,
-                          iconSize: 30,
-                          onPressed: () {
-                            setState(() {});
-                          }),
-                      Text(
-                        '${getinfo[0]['numberOfLike']}',
-                        style: TextStyle(color: Colors.grey),
+                      LikeButton(
+                        widget.post.likes,
+                        widget.post.postId,
+                        widget.post.userId,
+                        user: currentUser,
                       ),
                       Expanded(
                         child: SizedBox(
@@ -291,12 +186,17 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                           iconSize: 30,
                           onPressed: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Comments()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Comments(
+                                  postId: widget.post.postId,
+                                  postOwnerId: widget.post.userId,
+                                ),
+                              ),
+                            );
                           }),
                       Text(
-                        '${getinfo[0]['numberOfComment']}',
+                        '${widget.post.comments.length}',
                         style: TextStyle(color: Colors.grey),
                       ),
                       Expanded(
@@ -309,9 +209,11 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                           color: Color(0xffBDADE0),
                           onPressed: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Order()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Order(),
+                              ),
+                            );
                           }),
                     ],
                   ),
@@ -320,6 +222,56 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
             ),
           ),
           SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget buildPopupMenuButton() {
+    return Container(
+      color: Colors.white24,
+      width: 40,
+      height: 40,
+      child: PopupMenuButton(
+        onSelected: (PopMenuItem selectedItem) async {
+          switch (selectedItem) {
+            case PopMenuItem.editPost:
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PublishAPsost(oldPost: widget.post),
+                ),
+              );
+              break;
+            case PopMenuItem.removePost:
+              // Navigator.pop(context);
+              setState(() => loading = true);
+              final err = await PostServices(widget.post.postId).deletePost();
+              setState(() => loading = false);
+              if (err == null) {
+                Navigator.of(context).pushReplacementNamed('/');
+              } else {
+                showFlushSnackBar(context, err);
+              }
+              break;
+            default:
+          }
+        },
+        icon: Icon(Icons.more_vert),
+        itemBuilder: (_) => [
+          PopupMenuItem(
+            value: PopMenuItem.editPost,
+            child: Text(
+              'تعديل',
+            ),
+          ),
+          PopupMenuItem(
+            value: PopMenuItem.removePost,
+            child: Text(
+              'حذف',
+            ),
+          ),
         ],
       ),
     );

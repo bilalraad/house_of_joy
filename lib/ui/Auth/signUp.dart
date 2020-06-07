@@ -7,8 +7,7 @@ import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/ui/Auth/login.dart';
 import 'package:house_of_joy/ui/Auth/veritfication.dart';
 import 'package:house_of_joy/ui/Costume_widgets/bloc_text_form_field.dart';
-import 'package:house_of_joy/ui/homePage.dart';
-
+import '../../main.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -23,6 +22,7 @@ class _SignUp extends State<SignUp> {
   bool char = false;
   bool insertPassord = false;
   bool loading = false;
+  FieldValidationFormBloc _formBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +33,7 @@ class _SignUp extends State<SignUp> {
           BlocProvider(
             create: (context) => FieldValidationFormBloc(),
             child: Builder(builder: (context) {
-              final _formBloc =
-                  BlocProvider.of<FieldValidationFormBloc>(context);
+              _formBloc = BlocProvider.of<FieldValidationFormBloc>(context);
               return Column(
                 children: <Widget>[
                   Stack(
@@ -53,7 +52,7 @@ class _SignUp extends State<SignUp> {
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: IconButton(
-                                    icon: Icon(Icons.arrow_back),
+                                    icon: Icon(Icons.arrow_back_ios),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     }),
@@ -138,7 +137,6 @@ class _SignUp extends State<SignUp> {
                                       hasPassword: true,
                                       hasUsername: true,
                                     );
-                                    print(data);
                                     if (data != null) {
                                       final number = data['number'].isNotEmpty
                                           ? '+964${data['number'].substring(1)}'
@@ -246,8 +244,8 @@ class _SignUp extends State<SignUp> {
                                             Navigator.pushAndRemoveUntil(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage()),
+                                                  builder: (context) => Wrapper(
+                                                      isLogesdIn: true)),
                                               (Route<dynamic> route) => false,
                                             );
                                           } else {
@@ -311,7 +309,8 @@ class _SignUp extends State<SignUp> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        HomePage()),
+                                                        Wrapper(
+                                                            isLogesdIn: true)),
                                                 (Route<dynamic> route) => false,
                                               );
                                             } else {
@@ -371,11 +370,7 @@ class _SignUp extends State<SignUp> {
                                 style: TextStyle(color: Colors.black),
                               ),
                               GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Login()),
-                                ),
+                                onTap: () => Navigator.pop(context),
                                 child: Text(
                                   ' Login',
                                   style: TextStyle(

@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/functions/show_dialog.dart';
-
-import 'package:house_of_joy/ui/profileUser.dart';
-import 'package:house_of_joy/ui/publishAPost.dart';
+import 'package:house_of_joy/models/user.dart';
+import 'package:house_of_joy/services/data_base.dart';
+import 'package:provider/provider.dart';
 
 class Alerts extends StatefulWidget {
   @override
@@ -12,36 +12,23 @@ class Alerts extends StatefulWidget {
 }
 
 class _AlertsState extends State<Alerts> {
-
   File imageFile;
-  // dynamic _decideImageView() {
-  //   if (imageFile == null)
-  //     return AssetImage('images/personal.png');
-  //   else
-  //     return FileImage(imageFile);
-  // }
-  List getinfo;
-  void initState() {
-    super.initState();
-    getinfo = [
-      {"name": "منى محمد", 'describation': "وصف المشروع"},
-      {"name": "ندى علي", 'describation': "وصف المشروع"},
-      {"name": "شهد قاسم", 'describation': "وصف المشروع"},
-      {"name": "رنا وليد", 'describation': "وصف المشروع"}
-    ];
-  }
+
   @override
   Widget build(BuildContext context) {
+    var currentUser = Provider.of<User>(context);
+    var activities = currentUser.activities.reversed.toList();
+
     return Scaffold(
       body: Container(
         child: Stack(
           children: <Widget>[
             Container(
-              child:
-              Column(
+              child: Column(
                 children: <Widget>[
-                  SizedBox(height: 23,),
-
+                  SizedBox(
+                    height: 23,
+                  ),
                   Stack(
                     children: <Widget>[
                       Container(
@@ -59,42 +46,36 @@ class _AlertsState extends State<Alerts> {
                                 alignment: Alignment.topLeft,
                                 child: Row(
                                   children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(Icons.arrow_back_ios),
-                                      onPressed:(){
-                                        Navigator.pop(context);
-                                      } ,
-                                    ),
                                     Expanded(
                                       child: SizedBox(
                                         width: 5,
                                       ),
                                     ),
-                                    IconButton(icon: Icon(Icons.home),
+                                    IconButton(
+                                        icon: Icon(Icons.home),
                                         iconSize: 30,
-                                        onPressed: (){
+                                        onPressed: () {
                                           showCostumeDialog(context);
-
                                         })
                                   ],
                                 ),
                               ),
-                              SizedBox(height:60,),
-
-                          Padding(
-                            padding: EdgeInsets.only(right: 30),
-                            child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: Text(
-                                'النشاطات',
-                                style: TextStyle(
-                                    color: Color(0xFFCA39E3),
-                                    fontSize: 24,
-                                    fontFamily: 'ae_Sindibad'),
+                              SizedBox(
+                                height: 60,
                               ),
-                            ),),
-
-
+                              Padding(
+                                padding: EdgeInsets.only(right: 30),
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(
+                                    'النشاطات',
+                                    style: TextStyle(
+                                        color: Color(0xFFCA39E3),
+                                        fontSize: 24,
+                                        fontFamily: 'ae_Sindibad'),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -104,127 +85,72 @@ class _AlertsState extends State<Alerts> {
                   Expanded(
                     child: Container(
                       child: ListView.builder(
-                        itemCount: getinfo.length,
-                          itemBuilder: (context,position){
-                        return containerAlert(getinfo, position);
-                      }),
+                          itemCount: activities.length,
+                          itemBuilder: (context, i) {
+                            DatabaseService(currentUser.uid)
+                                .markAllActivitiesAsReaded();
+                            return containerAlert(activities[i], currentUser);
+                          }),
                     ),
                   )
                 ],
               ),
-
             ),
+          ],
+        ),
+      ),
+    );
+  }
 
-
-
-
-            Transform.translate(offset: Offset(0,-20),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Color(0xffFCFCFC),
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black12, blurRadius: 5),
-                    ],
-                  ),
+  Widget containerAlert(Activity activity, User currentUser) {
+    return FutureBuilder<User>(
+      future: DatabaseService(activity.userId).getUserData(),
+      builder: (context, snapshot) {
+        var activityByTheUser = snapshot.data;
+        return activityByTheUser == null
+            ? Container()
+            : Container(
+                padding: EdgeInsets.only(top: 5, bottom: 5),
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.home),
-                        color: Color(0xffC5C3E3),
-                        iconSize: 30,
-                        onPressed: (){
-                          Navigator.pop(context);
-                        },
-
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(
+                                  'images/personalPhoto.jpg',
+                                ),
+                                fit: BoxFit.cover),
+                            shape: BoxShape.circle),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.person_pin),
-                        color: Color(0xffC5C3E3),
-                        iconSize: 30,
-                        onPressed: (){
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileUser(null,true)));
-                        },
-
+                      SizedBox(
+                        width: 10,
                       ),
-                      IconButton(
-                        icon: Icon(Icons.add_circle_outline),
-                        color: Color(0xffC5C3E3),
-                        iconSize: 30,
-                        onPressed: (){
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PublishAPsost(null)));
-                        },
+                      Text(
+                        '${activityByTheUser.fullName}',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontFamily: 'ae_Sindibad'),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.notifications),
-                        color: Color(0xffFD85CB),
-                        iconSize: 30,
-                        onPressed: (){
-
-                        },
+                      SizedBox(width: 20),
+                      Text(
+                        activity.isLike
+                            ? 'قام بالاعجاب بمنشورك'
+                            : 'قام بالتعليق على منشورك',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontFamily: 'ae_Sindibad'),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ),
-
-          ],
-        ),
-      ),
-
-
-
+              );
+      },
     );
   }
-
-  Widget containerAlert(List info,int index){
-    return Container(
-      padding: EdgeInsets.only(top: 5,bottom: 5),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Row(
-          children: <Widget>[
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage(
-                        'images/personalPhoto.jpg',
-                      ),
-                      fit: BoxFit.cover),
-                  shape: BoxShape.circle),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              '${info[index]["name"]}',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontFamily: 'ae_Sindibad'),
-            ),
-            Expanded(
-              child: SizedBox(
-                width: 10,
-              ),
-            ),
-
-
-
-          ],
-        ),),
-    );
-  }
-
 }

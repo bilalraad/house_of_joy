@@ -59,14 +59,12 @@ class Auth implements BaseAuth {
           imageUrl: user.imageUrl,
           phoneNo: user.phoneNo,
           userName: user.userName,
-          postIds: user.postIds,
         );
         return null;
       } else {
         return 'رجاء،اقم بتاكيد الحساب الخاص بك اولا';
       }
     } catch (e) {
-      print(e);
       if (e is PlatformException) {
         String errorMessege = '';
         if (e.code == 'ERROR_USER_NOT_FOUND')
@@ -88,18 +86,15 @@ class Auth implements BaseAuth {
 
   Future<String> signUp(String email, String password, User user) async {
     try {
-      print(await _firebaseAuth.fetchSignInMethodsForEmail(email: email));
       AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser firebaseUser = result.user;
-      await DatabaseService(firebaseUser.uid).updateUserData(user);
-      print(firebaseUser.email);
+      await DatabaseService(firebaseUser.uid)
+          .updateUserData(user.copyWith(uid: firebaseUser.uid));
       await firebaseUser.sendEmailVerification();
 
       return null;
     } catch (e) {
-      print(e);
-
       if (e is PlatformException) {
         String errorMessege = '';
         if (e.code == 'ERROR_INVALID_EMAIL')
@@ -120,8 +115,8 @@ class Auth implements BaseAuth {
         return errorMessege;
       } else {
         print(e);
+        return '';
       }
-      return null;
     }
   }
 
@@ -160,8 +155,6 @@ class Auth implements BaseAuth {
       assert(firebaseUser.displayName != null, 'the display name is null');
       assert(!firebaseUser.isAnonymous, 'the user is anonymous');
       assert(await firebaseUser.getIdToken() != null, 'test1');
-      print(googleUser.id);
-      print(firebaseUser.uid);
 
       //If the user already excists in the data base then get his data
       user = await DatabaseService(firebaseUser.uid).getUserData() ??
@@ -172,7 +165,7 @@ class Auth implements BaseAuth {
             phoneNo: '',
             email: firebaseUser.email ?? "",
             imageUrl: googleUser.photoUrl ?? '',
-            postIds: [],
+            activities: [],
           );
 
       if (user.userName.isEmpty)
@@ -185,10 +178,8 @@ class Auth implements BaseAuth {
         phoneNo: user.phoneNo,
         email: user.email,
         imageUrl: user.imageUrl,
-        postIds: user.postIds,
       );
 
-      print(user.toString());
       return null;
     } catch (e) {
       if (e is PlatformException) {
@@ -206,7 +197,7 @@ class Auth implements BaseAuth {
       }
       print(e);
     }
-    return null;
+    return '';
   }
 
   Future<bool> googleSignout() async {
@@ -236,7 +227,6 @@ class Auth implements BaseAuth {
       await result.user.updatePassword(newPassword);
       return null;
     } catch (error) {
-      print(error);
       if (error is PlatformException) {
         if (error.code == 'ERROR_WRONG_PASSWORD')
           return 'كلمة السر غير صحيحة';
@@ -303,13 +293,12 @@ class Auth implements BaseAuth {
                 phoneNo: '',
                 email: profile['email'] ?? "",
                 imageUrl: profile['picture']["data"]["url"],
-                postIds: [],
+                activities: [],
               );
           // } else {
           if (user.userName.isEmpty)
             await DatabaseService(firebaseUser.uid).updateUserData(user);
           // }
-          print(user.toString());
           SharedPrefs().setUser(
             uid: user.uid,
             fullName: user.fullName,
@@ -317,7 +306,6 @@ class Auth implements BaseAuth {
             phoneNo: user.phoneNo,
             email: user.email,
             imageUrl: user.imageUrl,
-            postIds: user.postIds,
           );
           return null;
           break;

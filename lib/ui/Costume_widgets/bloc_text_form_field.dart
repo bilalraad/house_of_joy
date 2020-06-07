@@ -5,9 +5,7 @@ import 'package:house_of_joy/functions/validations.dart';
 
 class FieldValidationFormBloc extends FormBloc<String, String> {
   final username = TextFieldBloc(
-    validators: [
-      FieldBlocValidators.required,
-    ],
+    validators: [],
     asyncValidatorDebounceTime: Duration(milliseconds: 300),
   );
 
@@ -138,8 +136,7 @@ class BlocTextFormField extends StatelessWidget {
                 fillColor: Colors.white,
               ),
             ),
-            child:
-                FormBlocListener<FieldValidationFormBloc, String, String>(
+            child: FormBlocListener<FieldValidationFormBloc, String, String>(
               child: Container(
                 width: MediaQuery.of(context).size.width / 1.15,
                 child: TextFieldBlocBuilder(
@@ -171,32 +168,4 @@ class BlocTextFormField extends StatelessWidget {
   }
 }
 
-class LoadingDialog extends StatelessWidget {
-  static void show(BuildContext context, {Key key}) => showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => LoadingDialog(key: key),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
 
-  static void hide(BuildContext context) => Navigator.pop(context);
-
-  LoadingDialog({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Center(
-        child: Card(
-          child: Container(
-            width: 60,
-            height: 60,
-            padding: EdgeInsets.all(12.0),
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      ),
-    );
-  }
-}

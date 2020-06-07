@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:house_of_joy/services/data_base.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';
@@ -12,7 +11,6 @@ class SharedPrefs {
     @required String userName,
     @required String imageUrl,
     @required String email,
-    @required List<String> postIds,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('phoneNo', phoneNo);
@@ -21,7 +19,6 @@ class SharedPrefs {
     await prefs.setString('full_name', fullName);
     await prefs.setString('image_url', imageUrl);
     await prefs.setString('email', email);
-    await prefs.setStringList('postIds', postIds);
   }
 
   Future<User> getUser() async {
@@ -32,8 +29,6 @@ class SharedPrefs {
     final fullName = prefs.getString('full_name');
     final imageUrl = prefs.getString('image_url');
     final email = prefs.getString('email');
-    final postIds = prefs.getStringList('postIds');
-
     return uid != null
         ? User(
             uid: uid,
@@ -42,7 +37,6 @@ class SharedPrefs {
             userName: userName,
             fullName: fullName,
             imageUrl: imageUrl,
-            postIds: postIds,
           )
         : null;
   }

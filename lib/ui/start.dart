@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:house_of_joy/ui/Auth/login.dart';
 import 'package:house_of_joy/ui/Auth/signUp.dart';
 
 class Start extends StatelessWidget {
@@ -111,14 +112,17 @@ class Start extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SignUp(),
+                          builder: (context) => Login(),
                         ),
                       );
                     },
                     color: Color(0xffFFAADC),
                     child: Text(
-                      'Start',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
+                      'ابدا',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontFamily: 'ae_Sindibad'),
                     ),
                     padding: const EdgeInsets.all(5.0),
                     shape: RoundedRectangleBorder(

@@ -14,20 +14,24 @@ description: code for iraq
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
-  shared_preferences: ^0.5.7
   flutter:
     sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
+  shared_preferences: ^0.5.7
   cupertino_icons: ^0.1.2
   font_awesome_flutter: ^8.8.1
   firebase_auth: ^0.16.0
   firebase_core: ^0.4.4+3
+  firebase_storage: ^3.1.5
+  firebase_analytics: ^5.0.11
+  flutter_facebook_login: ^3.0.0
   cloud_firestore: ^0.13.5
+  google_sign_in: ^4.5.1
   flutter_spinkit: ^4.1.2+1
   provider: ^4.0.5+1
   bot_toast: ^3.0.0
@@ -35,11 +39,9 @@ dependencies:
   connectivity: ^0.4.8+6
   uuid: ^2.0.4
   image_picker: ^0.6.6+4
-  google_sign_in: ^4.5.1
-  firebase_storage: ^3.1.5
-  firebase_analytics: ^5.0.11
-  flutter_facebook_login: ^3.0.0
+  multi_image_picker: ^4.6.7
   flutter_form_bloc: ^0.14.0
+  extended_image: ^0.9.0
 
 dev_dependencies:
 

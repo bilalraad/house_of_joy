@@ -8,7 +8,7 @@ class User {
   final String email;
   final String userName;
   final String imageUrl;
-  final List<String> postIds;
+  final List<Activity> activities;
 
   User({
     @required this.uid,
@@ -17,7 +17,7 @@ class User {
     @required this.email,
     this.userName,
     this.imageUrl = '',
-    this.postIds = const [],
+    this.activities = const [],
   });
 
   User copyWith({
@@ -27,7 +27,7 @@ class User {
     String email,
     String userName,
     String imageUrl,
-    List<String> postIds,
+    List<Activity> activities,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -36,7 +36,7 @@ class User {
       email: email ?? this.email,
       userName: userName ?? this.userName,
       imageUrl: imageUrl ?? this.imageUrl,
-      postIds: postIds ?? this.postIds,
+      activities: activities ?? this.activities,
     );
   }
 
@@ -48,24 +48,106 @@ class User {
       'email': email,
       'userName': userName,
       'imageUrl': imageUrl,
-      'postIds': postIds,
+      'activities': activities?.map((x) => x?.toMap())?.toList(),
     };
   }
 
-  factory User.fromDocument(DocumentSnapshot doc, String uid) {
-    if (doc.data == null) return null;
-    return User(
-        uid: uid,
-        phoneNo: doc['phoneNo'],
-        fullName: doc['fullName'],
-        userName: doc['userName'],
-        email: doc['email'],
-        imageUrl: doc['imageUrl'],
-        postIds: List<String>.from(doc['postIds']));
+  // factory User.fromDocument(DocumentSnapshot doc, String uid) {
+  //   if (doc.data == null) return null;
+  //   return User(
+  //     uid: uid,
+  //     phoneNo: doc.data['phoneNo'],
+  //     fullName: doc.data['fullName'],
+  //     userName: doc.data['userName'],
+  //     email: doc.data['email'],
+  //     imageUrl: doc.data['imageUrl'],
+  //     activities: List<Activity>.from(
+  //         doc.data['activities']?.map((e) => Activity.fromMap(e))),
+  //   );
+  // }
+  factory User.fromMap(Map<String, dynamic> map) {
+    if (map == null) return null;
+    var user = User(
+      uid: map['uid'],
+      phoneNo: map['phoneNo'],
+      fullName: map['fullName'],
+      userName: map['userName'],
+      email: map['email'],
+      imageUrl: map['imageUrl'],
+      activities: List<Activity>.from(
+          map['Activities']?.map((x) => Activity.fromMap(x))),
+    );
+    return user;
   }
 
   @override
   String toString() {
-    return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl, postIds: $postIds)';
+    return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl, activities: $activities)';
+  }
+
+  factory User.fromDocument(DocumentSnapshot doc, String uid) {
+    if (doc == null) return null;
+    return User(
+      uid: doc.data['uid'],
+      phoneNo: doc.data['phoneNo'],
+      fullName: doc.data['fullName'],
+      email: doc.data['email'],
+      userName: doc.data['userName'],
+      imageUrl: doc.data['imageUrl'],
+      activities: List<Activity>.from(
+          doc.data['activities']?.map((x) => Activity.fromMap(x))),
+    );
+  }
+}
+
+class Activity {
+  final bool isReaded;
+  final bool isLike; //if false then its comment
+  final String postId;
+  final String userId;
+
+  Activity({
+    this.isReaded = false,
+    @required this.isLike,
+    @required this.postId,
+    @required this.userId,
+  });
+
+  Activity copyWith({
+    bool isReaded,
+    bool isLike,
+    String postId,
+    String userId,
+  }) {
+    return Activity(
+      isReaded: isReaded ?? this.isReaded,
+      isLike: isLike ?? this.isLike,
+      postId: postId ?? this.postId,
+      userId: userId ?? this.userId,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Activity(isReaded: $isReaded, isLike: $isLike, postId: $postId, userId: $userId)';
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'isReaded': isReaded,
+      'isLike': isLike,
+      'postId': postId,
+      'userId': userId,
+    };
+  }
+
+  factory Activity.fromMap(Map<String, dynamic> map) {
+    if (map == null) return null;
+    return Activity(
+      isReaded: map['isReaded'],
+      isLike: map['isLike'],
+      postId: map['postId'],
+      userId: map['userId'],
+    );
   }
 }

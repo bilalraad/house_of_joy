@@ -1,13 +1,14 @@
   import 'package:flutter/material.dart';
 import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/shered_Preference.dart';
 import 'package:house_of_joy/ui/Auth/logout.dart';
 import 'package:house_of_joy/ui/aboutCodeForIraq.dart';
 import 'package:house_of_joy/ui/aboutTheApplication.dart';
 import 'package:house_of_joy/ui/editProfile.dart';
 import 'package:house_of_joy/ui/staff.dart';
+import 'package:provider/provider.dart';
 
 Future<void> showCostumeDialog(BuildContext context) {
+  final user = Provider.of<User>(context,listen: false);
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -22,8 +23,6 @@ Future<void> showCostumeDialog(BuildContext context) {
                       GestureDetector(
                         child: Text('تعديل الملف الشخصي'),
                         onTap: () async {
-                          User user = await SharedPrefs().getUser();
-
                           Navigator.pop(context);
                           Navigator.push(
                             context,

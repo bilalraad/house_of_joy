@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/services/data_base.dart';
 import 'package:house_of_joy/show_overlay.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +28,7 @@ class _EditProfileState extends State<EditProfile> {
   var emailController = TextEditingController();
   var phoneNoController = TextEditingController();
   File imageFile;
+  final picker = ImagePicker();
   NetworkImage profilepic;
   bool dataLoaded = false;
   bool loading = false;
@@ -49,10 +49,10 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   _openGellery(BuildContext context) async {
-    var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var pickedFile = await picker.getImage(source: ImageSource.gallery);
     this.setState(() {
-      if (picture.path.isNotEmpty) {
-        imageFile = picture;
+      if (pickedFile.path.isNotEmpty) {
+        imageFile = File(pickedFile.path);
         profilepic = null;
       }
     });
@@ -60,10 +60,10 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   _openCamera(BuildContext context) async {
-    var picture = await ImagePicker.pickImage(source: ImageSource.camera);
+    var pickedFile = await picker.getImage(source: ImageSource.camera);
     this.setState(() {
-      if (picture.path.isNotEmpty) {
-        imageFile = picture;
+      if (pickedFile.path.isNotEmpty) {
+        imageFile = File(pickedFile.path);
         profilepic = null;
       }
     });
@@ -79,36 +79,37 @@ class _EditProfileState extends State<EditProfile> {
 
   Future<void> _showDialog(BuildContext context) {
     return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: AlertDialog(
-              title: Text('اختر صورة'),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: <Widget>[
-                    GestureDetector(
-                      child: Text('المعرض'),
-                      onTap: () {
-                        _openGellery(context);
-                      },
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    GestureDetector(
-                      child: Text('الكاميرا'),
-                      onTap: () {
-                        _openCamera(context);
-                      },
-                    ),
-                  ],
-                ),
+      context: context,
+      builder: (BuildContext context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            title: Text('اختر صورة'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  GestureDetector(
+                    child: Text('المعرض'),
+                    onTap: () {
+                      _openGellery(context);
+                    },
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  GestureDetector(
+                    child: Text('الكاميرا'),
+                    onTap: () {
+                      _openCamera(context);
+                    },
+                  ),
+                ],
               ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -252,7 +253,7 @@ class _EditProfileState extends State<EditProfile> {
                         validator: (userName) {
                           var userNrexEx = RegExp(
                               r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$");
-                          if (userName.length <= 4) {
+                          if (userName.isNotEmpty) if (userName.length <= 4) {
                             return "اسم المستخدم قصير جدا";
                           } else if (!userNrexEx.hasMatch(userName)) {
                             return "يجب ان  لا يحتوي على نقط او فراغات مثلا: sara_ali2";
@@ -309,13 +310,12 @@ class _EditProfileState extends State<EditProfile> {
                           setState(() {
                             loading = true;
                           });
-                          var isCanChange =
-                              await Auth().isSigendInWithEmailAndPassword();
+                          
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ChangePassword(isCanChange: isCanChange),
+                                  ChangePassword(),
                             ),
                           );
                           setState(() {
