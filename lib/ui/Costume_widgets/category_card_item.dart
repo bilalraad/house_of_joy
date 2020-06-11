@@ -1,17 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/shered_Preference.dart';
-import 'package:provider/provider.dart';
-
-import '../showTheGoods.dart';
-
-// Widget categoryCardItem({
-//   String category,
-//   String pathImage,
-//   BuildContext context,
-// }) {
-//   return
-// }
+import 'package:house_of_joy/ui/screens/showTheGoods.dart';
 
 class CategoryCardItem extends StatelessWidget {
   final String category;
@@ -23,7 +11,6 @@ class CategoryCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       children: <Widget>[
         Container(
@@ -35,7 +22,6 @@ class CategoryCardItem extends StatelessWidget {
               boxShadow: [
                 BoxShadow(color: Color(0xffE8E8E8), blurRadius: 10),
               ]),
-          
         ),
         Transform.translate(
           offset: Offset(0, -5),
@@ -58,9 +44,7 @@ class CategoryCardItem extends StatelessWidget {
                             image: AssetImage(pathImage), fit: BoxFit.cover),
                       )),
                   Expanded(
-                    child: SizedBox(
-                      width: 10,
-                    ),
+                    child: SizedBox(width: 10),
                   ),
                   Text(
                     '$category',
@@ -70,19 +54,14 @@ class CategoryCardItem extends StatelessWidget {
                         color: Color(0xff460053)),
                   ),
                   Expanded(
-                    child: SizedBox(
-                      width: 10,
-                    ),
+                    child: SizedBox(width: 10),
                   ),
                 ],
               ),
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FutureProvider<User>.value(
-                    value: SharedPrefs().getUser(),
-                    child: ShowThwGoods(category),
-                  ),
+                  builder: (context) => ShowThwGoods(category),
                 ),
               ),
             ),

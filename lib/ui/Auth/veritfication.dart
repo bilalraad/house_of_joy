@@ -51,7 +51,7 @@ class _Veritfication extends State<Veritfication> {
                       decoration: BoxDecoration(
                           image: DecorationImage(
                               image: AssetImage(
-                                'images/backgroundImage.jpg',
+                                'images/backgroundImage.png',
                               ),
                               fit: BoxFit.cover)),
                       child: Container(
@@ -66,9 +66,7 @@ class _Veritfication extends State<Veritfication> {
                                     Navigator.pop(context);
                                   }),
                             ),
-                            SizedBox(
-                              height: 75,
-                            ),
+                            SizedBox(height: 75),
                             Padding(
                               padding: EdgeInsets.only(left: 30),
                               child: Align(
@@ -82,18 +80,14 @@ class _Veritfication extends State<Veritfication> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 20,
-                            ),
+                            SizedBox(height: 20),
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 15,
-                ),
+                SizedBox(height: 15),
                 Padding(
                   padding: EdgeInsets.only(left: 25, right: 20),
                   child: Text(
@@ -102,7 +96,7 @@ class _Veritfication extends State<Veritfication> {
                   ),
                 ),
                 // SizedBox(
-                //   height: 5,
+                //   height: 5
                 // ),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.center,
@@ -122,7 +116,7 @@ class _Veritfication extends State<Veritfication> {
                 //       ),
                 //     ),
                 //     SizedBox(
-                //       width: 5,
+                //       width: 5
                 //     ),
                 //     Container(
                 //       width: 30,
@@ -139,7 +133,7 @@ class _Veritfication extends State<Veritfication> {
                 //       ),
                 //     ),
                 //     SizedBox(
-                //       width: 5,
+                //       width: 5
                 //     ),
                 //     Container(
                 //       width: 30,
@@ -156,7 +150,7 @@ class _Veritfication extends State<Veritfication> {
                 //       ),
                 //     ),
                 //     SizedBox(
-                //       width: 5,
+                //       width: 5
                 //     ),
                 //     Container(
                 //       width: 30,
@@ -172,7 +166,7 @@ class _Veritfication extends State<Veritfication> {
                 //   ],
                 // ),
                 // SizedBox(
-                //   height: 30,
+                //   height: 30
                 // ),
                 // Container(
                 //   width: MediaQuery.of(context).size.width / 1.8,
@@ -202,6 +196,7 @@ class _Veritfication extends State<Veritfication> {
                 //     ),
                 //   ),
                 // ),
+                //TODO:try to GET CODE INSTED OF LINK
               ],
             ),
           ),

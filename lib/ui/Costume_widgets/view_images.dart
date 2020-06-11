@@ -67,8 +67,8 @@ class _ViewImagesState extends State<ViewImages>
                           ),
                           onPressed: () {
                             _controller.previousPage(
-                              duration: Duration(milliseconds: 500),
-                              curve: Curves.ease,
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.easeIn,
                             );
                           }),
                       IconButton(
@@ -84,8 +84,8 @@ class _ViewImagesState extends State<ViewImages>
                         ),
                         onPressed: () {
                           _controller.nextPage(
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.ease,
+                            duration: Duration(milliseconds: 200),
+                            curve: Curves.easeIn,
                           );
                         },
                       ),
@@ -132,6 +132,7 @@ class _ViewImagesState extends State<ViewImages>
         asset: assetImage,
         width: 400,
         height: 200,
+        spinner: CircularProgressIndicator(),
       ),
     );
   }

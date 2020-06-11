@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:house_of_joy/functions/show_overlay.dart';
 import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/show_overlay.dart';
 import 'package:house_of_joy/ui/Costume_widgets/costume_text_field.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -40,7 +40,7 @@ class _ForgetPassword extends State<ForgetPassword> {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: AssetImage(
-                                  'images/backgroundImage.jpg',
+                                  'images/backgroundImage.png',
                                 ),
                                 fit: BoxFit.cover)),
                         child: Container(
@@ -55,9 +55,7 @@ class _ForgetPassword extends State<ForgetPassword> {
                                       Navigator.pop(context);
                                     }),
                               ),
-                              SizedBox(
-                                height: 75,
-                              ),
+                              SizedBox(height: 75),
                               Padding(
                                 padding: EdgeInsets.only(right: 30),
                                 child: Align(
@@ -73,18 +71,14 @@ class _ForgetPassword extends State<ForgetPassword> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
+                              SizedBox(height: 20),
                             ],
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
+                  SizedBox(height: 15),
                   Align(
                     alignment: Alignment.topRight,
                     child: Padding(
@@ -99,9 +93,7 @@ class _ForgetPassword extends State<ForgetPassword> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
+                  SizedBox(height: 5),
                   Padding(
                     padding: EdgeInsets.only(left: 25, right: 20),
                     child: Text(
@@ -112,9 +104,7 @@ class _ForgetPassword extends State<ForgetPassword> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
+                  SizedBox(height: 15),
                   CustomTextField(
                     controller: emailController,
                     hint: 'بريدك الالكتروني',
@@ -130,9 +120,7 @@ class _ForgetPassword extends State<ForgetPassword> {
                           ),
                         )
                       : Container(),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  SizedBox(height: 30),
                   Container(
                     width: MediaQuery.of(context).size.width / 1.8,
                     height: 45,
@@ -144,41 +132,7 @@ class _ForgetPassword extends State<ForgetPassword> {
                       ],
                     ),
                     child: RaisedButton(
-                      onPressed: loading
-                          ? null
-                          : () async {
-                              setState(() {
-                                loading = true;
-                              });
-                              var emailRegEx = RegExp(
-                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-                              var email = emailController.text;
-
-                              if (email == null || email.isEmpty) {
-                                emailErrorText = "الرجاء ادخال الايميل";
-                                error++;
-                              } else if (!emailRegEx.hasMatch(email)) {
-                                emailErrorText = "الايميل غير صحيح";
-                                error++;
-                              } else if (!await DatabaseService('')
-                                  .checkEmailExcist(email)) {
-                                emailErrorText = "الايميل غير موجود";
-                                error++;
-                              }
-                              if (error != 0) {
-                                setState(() {});
-                              } else {
-                                Auth().resetPassword(email);
-                                emailController.clear();
-                                showOverlay(
-                                    context: context,
-                                    text:
-                                        'تم ارسال رسالة الى الايميل الخاص بك');
-                              }
-                              setState(() {
-                                loading = false;
-                              });
-                            },
+                      onPressed: loading ? null : _onSendPressed,
                       color: _colorpink,
                       child: Text(
                         'ارسال',
@@ -200,5 +154,36 @@ class _ForgetPassword extends State<ForgetPassword> {
         ),
       ),
     );
+  }
+
+  void _onSendPressed() async {
+    setState(() {
+      loading = true;
+    });
+    var emailRegEx = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    var email = emailController.text;
+
+    if (email == null || email.isEmpty) {
+      emailErrorText = "الرجاء ادخال الايميل";
+      error++;
+    } else if (!emailRegEx.hasMatch(email)) {
+      emailErrorText = "الايميل غير صحيح";
+      error++;
+    } else if (!await DatabaseService('').checkEmailExcist(email)) {
+      emailErrorText = "الايميل غير موجود";
+      error++;
+    }
+    if (error != 0) {
+      setState(() {});
+    } else {
+      Auth().resetPassword(email);
+      emailController.clear();
+      showOverlay(
+          context: context, text: 'تم ارسال رسالة الى الايميل الخاص بك');
+    }
+    setState(() {
+      loading = false;
+    });
   }
 }

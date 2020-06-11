@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/ui/Auth/login.dart';
-import 'package:house_of_joy/ui/Auth/signUp.dart';
 
 class Start extends StatelessWidget {
   @override
@@ -23,9 +22,7 @@ class Start extends StatelessWidget {
                       fontSize: 26,
                       fontFamily: 'Sonsie One'),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 Stack(
                   children: <Widget>[
                     Container(
@@ -33,9 +30,7 @@ class Start extends StatelessWidget {
                       child: Row(
                         children: <Widget>[
                           Expanded(
-                            child: SizedBox(
-                              height: 0.0,
-                            ),
+                            child: SizedBox(height: 0.0),
                           ),
                           Text(
                             'H',
@@ -52,9 +47,7 @@ class Start extends StatelessWidget {
                                 fontFamily: 'Teko'),
                           ),
                           Expanded(
-                            child: SizedBox(
-                              height: 0.0,
-                            ),
+                            child: SizedBox(height: 0.0),
                           ),
                         ],
                       ),
@@ -64,9 +57,7 @@ class Start extends StatelessWidget {
                       child: Container(
                           child: Row(children: <Widget>[
                         Expanded(
-                          child: SizedBox(
-                            height: 0.0,
-                          ),
+                          child: SizedBox(height: 0.0),
                         ),
                         Text(
                           'الفرح',
@@ -83,17 +74,13 @@ class Start extends StatelessWidget {
                               fontFamily: 'ae_Sindibad'),
                         ),
                         Expanded(
-                          child: SizedBox(
-                            height: 0.0,
-                          ),
+                          child: SizedBox(height: 0.0),
                         ),
                       ])),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 25,
-                ),
+                SizedBox(height: 25),
                 Text(
                   'An application to support small projects for women',
                   style: TextStyle(
@@ -101,9 +88,7 @@ class Start extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(
-                  height: 70,
-                ),
+                SizedBox(height: 70),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 1.2,
                   height: 45,

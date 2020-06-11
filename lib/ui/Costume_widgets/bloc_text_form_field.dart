@@ -5,31 +5,18 @@ import 'package:house_of_joy/functions/validations.dart';
 
 class FieldValidationFormBloc extends FormBloc<String, String> {
   final username = TextFieldBloc(
-    validators: [],
     asyncValidatorDebounceTime: Duration(milliseconds: 300),
   );
 
   final email = TextFieldBloc(
-    validators: [
-      FieldBlocValidators.required,
-      FieldBlocValidators.email,
-    ],
+    asyncValidatorDebounceTime: Duration(milliseconds: 300),
   );
 
-  final password = TextFieldBloc(
-    validators: [
-      FieldBlocValidators.required,
-      FieldBlocValidators.passwordMin6Chars,
-    ],
-  );
+  final password = TextFieldBloc();
 
-  final passwordConfirm = TextFieldBloc(
-    validators: [FieldBlocValidators.required],
-  );
+  final passwordConfirm = TextFieldBloc();
 
-  final fullName = TextFieldBloc(
-    validators: [FieldBlocValidators.required],
-  );
+  final fullName = TextFieldBloc();
   final number = TextFieldBloc();
 
   FieldValidationFormBloc() {
@@ -136,26 +123,29 @@ class BlocTextFormField extends StatelessWidget {
                 fillColor: Colors.white,
               ),
             ),
-            child: FormBlocListener<FieldValidationFormBloc, String, String>(
-              child: Container(
-                width: MediaQuery.of(context).size.width / 1.15,
-                child: TextFieldBlocBuilder(
-                  onChanged: onChanged,
-                  // obscureText: obscure,
-                  textFieldBloc: textFieldBloc,
-                  suffixButton: obscure
-                      ? SuffixButton.obscureText
-                      : SuffixButton.asyncValidating,
-                  obscureTextFalseIcon:
-                      Icon(Icons.visibility, color: Color(0xffFFAADC)),
-                  obscureTextTrueIcon:
-                      Icon(Icons.visibility_off, color: Color(0xffFFAADC)),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
-                    hintText: hint,
-                    hintStyle: TextStyle(
-                      fontFamily: 'Cambo',
-                      color: Color(0xffA2A2A2),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: FormBlocListener<FieldValidationFormBloc, String, String>(
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 1.15,
+                  child: TextFieldBlocBuilder(
+                    onChanged: onChanged,
+                    // obscureText: obscure,
+                    textFieldBloc: textFieldBloc,
+                    suffixButton: obscure
+                        ? SuffixButton.obscureText
+                        : SuffixButton.asyncValidating,
+                    obscureTextFalseIcon:
+                        Icon(Icons.visibility, color: Color(0xffFFAADC)),
+                    obscureTextTrueIcon:
+                        Icon(Icons.visibility_off, color: Color(0xffFFAADC)),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(10),
+                      hintText: hint,
+                      hintStyle: TextStyle(
+                        fontFamily: 'ae_Sindibad',
+                        color: Color(0xffA2A2A2),
+                      ),
                     ),
                   ),
                 ),
@@ -167,5 +157,3 @@ class BlocTextFormField extends StatelessWidget {
     );
   }
 }
-
-

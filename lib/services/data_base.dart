@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/shered_Preference.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 Future<void> showCostumeFireBaseErrorNotif(String title) async {
@@ -33,12 +33,23 @@ Future<void> showCostumeFireBaseErrorNotif(String title) async {
 }
 
 Future<bool> connected() async {
-  //This will check if there is an internet connection
-  var connectivityResult = await (Connectivity().checkConnectivity());
-  if (connectivityResult == ConnectivityResult.none) {
+  try {
+    final result = await InternetAddress.lookup('google.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      if (await DataConnectionChecker().hasConnection) {
+        print('connected');
+        // Mobile data detected & internet connection confirmed.
+        return true;
+      } else {
+        // Mobile data detected but no internet connection found.
+        return false;
+      }
+    }
+  } catch (_) {
+    print('not connected');
     return false;
   }
-  return true;
+  return false;
 }
 
 class DatabaseService {
@@ -53,14 +64,6 @@ class DatabaseService {
     //this can be used to add new family or update an exsisting one
     if (await connected()) {
       await usersCollection.document(uid).setData(user.toMap());
-      SharedPrefs().setUser(
-        uid: uid,
-        fullName: user.fullName,
-        userName: user.userName,
-        phoneNo: user.phoneNo,
-        email: user.email,
-        imageUrl: user.imageUrl,
-      );
     } else {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
     }
@@ -79,6 +82,10 @@ class DatabaseService {
   }
 
   Future<void> updateUserActivities(Activity activity) async {
+    if (!await connected()) {
+      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
+      return null;
+    }
     var postowner = await getUserData();
     print(postowner.uid);
     await usersCollection.document(uid).updateData({
@@ -88,25 +95,26 @@ class DatabaseService {
   }
 
   Future<void> markAllActivitiesAsReaded() async {
-    var postowner = await getUserData();
-    List<Activity> updatedActivities = [];
-    if (postowner.activities.length >= 6) {
-      for (var i = 6; i < postowner.activities.length; i++) {
-        if (postowner.activities[i].isReaded)
-          postowner.activities.remove(postowner.activities[i - 6]);
+    if (await connected()) {
+      var postowner = await getUserData();
+      List<Activity> updatedActivities = [];
+      if (postowner.activities.length >= 6) {
+        for (var i = 6; i < postowner.activities.length; i++) {
+          if (postowner.activities[i].isReaded)
+            postowner.activities.remove(postowner.activities[i - 6]);
+        }
       }
-    }
-    for (var i in postowner.activities) {
-      updatedActivities.add(i.copyWith(isReaded: true));
-    }
+      for (var i in postowner.activities) {
+        updatedActivities.add(i.copyWith(isReaded: true));
+      }
 
-    await usersCollection.document(uid).updateData(
-        {'activities': (updatedActivities.map((e) => e.toMap()).toList())});
+      await usersCollection.document(uid).updateData(
+          {'activities': (updatedActivities.map((e) => e.toMap()).toList())});
+    }
   }
 
   Future<String> getEmailByUsername(String username) async {
     if (!await connected()) {
-      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
       return null;
     }
     var querySnapshot = await DatabaseService('')
@@ -149,45 +157,41 @@ class DatabaseService {
     return false;
   }
 
+  Future<User> getCurrentUserData() async {
+    if (!await connected()) {
+      return null;
+    }
+    final firebaseuser = await FirebaseAuth.instance.onAuthStateChanged.first;
+    // print(firebaseuser.uid);
+
+    if (firebaseuser == null) return null;
+    final userDoc = await usersCollection.document(firebaseuser.uid).get();
+    final user = User.fromDocument(userDoc, userDoc.documentID);
+    return user;
+  }
+
+  Future deleteUser() async {
+    //this can be used to delete user and only can be used by the admin
+    await usersCollection.document(uid).delete();
+  }
+
   Future<User> getUserData() async {
     if (uid == null) return null;
     if (!await connected()) {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
       return null;
     }
-
     final userDoc = await usersCollection.document(uid).get();
     final user = User.fromDocument(userDoc, userDoc.documentID);
     return user;
   }
 
-  Future deleteUser() async {
-    //this can be used to delete family and only can be used by the admin
-    await usersCollection.document(uid).delete();
-  }
-
-  // List<Family> _familiesListFromSnapshot(QuerySnapshot snap) {
-  //   return snap.documents.map((doc) {
-  //     return Family.fromDocument(doc, doc.documentID);
-  //   }).toList();
-  // }
-
-  // Family _familyDataFromSnapshot(DocumentSnapshot snapshot) {
-  //   return Family.fromDocument(snapshot, uid);
-  // }
-
-  // Stream<List<Family>> get families {
-  //   return usersCollection.snapshots().map(_familiesListFromSnapshot);
-  // }
-
-  // Stream<Family> get familyData {
-  //   return usersCollection
-  //       .document(uid)
-  //       .snapshots()
-  //       .map(_familyDataFromSnapshot);
-  // }
-
   Future<String> uploadPic(File image, {String fileName}) async {
+    if (!await connected()) {
+      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
+      return null;
+    }
+
     if (uid.isNotEmpty) fileName = uid;
     StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child(fileName);
@@ -206,6 +210,10 @@ class DatabaseService {
   }
 
   Future<dynamic> postImageToFireBase(Asset imageFile) async {
+    if (!await connected()) {
+      print('عذرا لا يوجد اتصال بالانترنت');
+      return null;
+    }
     var imageData = await imageFile.getByteData();
     String fileName = '$uid${imageFile.name}';
     StorageReference reference = FirebaseStorage.instance.ref().child(fileName);

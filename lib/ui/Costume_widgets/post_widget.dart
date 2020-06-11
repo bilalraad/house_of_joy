@@ -1,148 +1,156 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:house_of_joy/functions/creat_route.dart';
+import 'package:house_of_joy/functions/show_overlay.dart';
 import 'package:house_of_joy/models/post.dart';
 import 'package:house_of_joy/models/user.dart';
 import 'package:house_of_joy/services/data_base.dart';
 import 'package:house_of_joy/services/post_services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
+import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
 import 'package:house_of_joy/ui/Costume_widgets/view_images.dart';
+import 'package:house_of_joy/ui/screens/comments.dart';
+import 'package:house_of_joy/ui/screens/order.dart';
+import 'package:house_of_joy/ui/screens/profileUser.dart';
 import 'package:provider/provider.dart';
 
-import '../../show_overlay.dart';
-import '../comments.dart';
-import '../order.dart';
-import '../profileUser.dart';
-
-Widget buildPostWidget(Post post, BuildContext context) {
+Widget buildPostWidget(Post post, BuildContext context, int index) {
   return FutureBuilder<User>(
     future: DatabaseService(post.userId).getUserData(),
     builder: (context, snapshot) {
       var postUser = snapshot.data;
       return !snapshot.hasData
-          ? Container()
-          : Container(
-              padding: EdgeInsets.only(right: 8),
-              child: Column(
-                children: <Widget>[
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: GestureDetector(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(shape: BoxShape.circle),
-                            child: !postUser.imageUrl.isNotEmpty
-                                ? Image.asset('images/personal.png')
-                                : LoadImage(
-                                    url: postUser.imageUrl,
-                                    fit: BoxFit.cover,
-                                    boxShape: BoxShape.circle,
-                                  ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            '${postUser.fullName}',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontFamily: 'ae_Sindibad',
-                            ),
-                          ),
-                          Expanded(
-                            child: SizedBox(width: 10),
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return UserProfile(outSideUser: postUser);
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.1,
-                    child: Text(
-                      '${post.description}',
-                      textAlign: TextAlign.right,
+          ? post != null && index == 0 ? LoadingDialog() : Container()
+          : FutureProvider.value(
+              value: DatabaseService('').getCurrentUserData(),
+              child: Container(
+                padding: EdgeInsets.only(right: 8),
+                child: Column(
+                  children: <Widget>[
+                    Directionality(
                       textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontFamily: 'ae_Sindibad'),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.1,
-                    color: Color(0xffF9F5F7),
-                    child: Column(
-                      children: <Widget>[
-                        ViewImages(imagesUrl: post.imagesUrl),
-                        SizedBox(height: 10),
-                        Divider(height: 5, color: Colors.black),
-                        Container(
-                          child: Row(
-                            children: <Widget>[
-                              LikeButton(post.likes, post.postId, post.userId),
-                              Expanded(
-                                child: SizedBox(
-                                  width: 3,
-                                ),
+                      child: GestureDetector(
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              child: !postUser.imageUrl.isNotEmpty
+                                  ? Image.asset('images/personal.png')
+                                  : LoadImage(
+                                      url: postUser.imageUrl,
+                                      fit: BoxFit.cover,
+                                      boxShape: BoxShape.circle,
+                                    ),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              '${postUser.fullName}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontFamily: 'ae_Sindibad',
                               ),
-                              IconButton(
-                                  icon: Icon(Icons.mode_comment),
+                            ),
+                            Expanded(
+                              child: SizedBox(width: 10),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return MultiProvider(providers: [
+                                  FutureProvider<User>(
+                                    create: (context) => DatabaseService('')
+                                        .getCurrentUserData(),
+                                  )
+                                ], child: UserProfile(outSideUser: postUser));
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.1,
+                      child: Text(
+                        '${post.description}',
+                        textAlign: TextAlign.right,
+                        textDirection: TextDirection.rtl,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: 'ae_Sindibad'),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.1,
+                      color: Color(0xffF9F5F7),
+                      child: Column(
+                        children: <Widget>[
+                          ViewImages(imagesUrl: post.imagesUrl),
+                          SizedBox(height: 10),
+                          Divider(height: 5, color: Colors.black),
+                          Container(
+                            child: Row(
+                              children: <Widget>[
+                                LikeButton(
+                                    post.likes, post.postId, post.userId),
+                                Expanded(child: SizedBox(width: 3)),
+                                IconButton(
+                                    icon: Icon(Icons.mode_comment),
+                                    color: Color(0xffBDADE0),
+                                    iconSize: 30,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        createRoute(
+                                          FutureProvider<User>(
+                                            create: (context) =>
+                                                DatabaseService('')
+                                                    .getCurrentUserData(),
+                                            child: Comments(
+                                              postId: post.postId,
+                                              postOwnerId: post.userId,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                Text(
+                                  '${post.comments.length}',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Expanded(child: SizedBox(width: 3)),
+                                IconButton(
+                                  icon: Icon(faf.FontAwesomeIcons.shoppingCart),
                                   color: Color(0xffBDADE0),
-                                  iconSize: 30,
                                   onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Comments(
-                                          postId: post.postId,
-                                          postOwnerId: post.userId,
-                                        ),
+                                        builder: (context) =>
+                                            Order(userNumber: postUser.phoneNo),
                                       ),
                                     );
-                                  }),
-                              Text(
-                                '${post.comments.length}',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              Expanded(
-                                child: SizedBox(width: 3),
-                              ),
-                              IconButton(
-                                icon: Icon(faf.FontAwesomeIcons.shoppingCart),
-                                color: Color(0xffBDADE0),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Order(),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                ],
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
             );
     },

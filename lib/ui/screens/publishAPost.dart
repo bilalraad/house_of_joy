@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/functions/validations.dart';
@@ -6,12 +7,13 @@ import 'package:house_of_joy/models/post.dart';
 import 'package:house_of_joy/models/user.dart';
 import 'package:house_of_joy/services/data_base.dart';
 import 'package:house_of_joy/services/post_services.dart';
+import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
 import 'package:house_of_joy/ui/Costume_widgets/select_category.dart';
+import 'package:house_of_joy/ui/Costume_widgets/view_images.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'Costume_widgets/loading_dialog.dart';
-import 'Costume_widgets/view_images.dart';
+
 
 class PublishAPsost extends StatefulWidget {
   final Post oldPost;
@@ -50,13 +52,17 @@ class _PublishAPsostState extends State<PublishAPsost> {
   }
 
   getImageList() async {
+    setState(() {
+      images = [];
+    });
+
     images = await MultiImagePicker.pickImages(
           maxImages: 5,
           enableCamera: true,
         ).catchError((err) {
           print(err);
         }) ??
-        images;
+        [];
     setState(() {});
   }
 
@@ -68,6 +74,7 @@ class _PublishAPsostState extends State<PublishAPsost> {
       body: ModalProgress(
         costumeIndicator: LoadingDialog(),
         inAsyncCall: _loading,
+        opacity: 0,
         child: Stack(
           children: <Widget>[
             ListView(
@@ -78,18 +85,16 @@ class _PublishAPsostState extends State<PublishAPsost> {
                       children: <Widget>[
                         FlatButton(
                             child: Text(
-                              'Cancel',
-                              style:
-                                  TextStyle(fontFamily: 'Cambo', fontSize: 18),
+                              'الغاء',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'ae_Sindibad'),
                             ),
                             onPressed: () {
                               Navigator.of(context).pushReplacementNamed('/');
                             }),
-                        Expanded(
-                          child: SizedBox(
-                            width: 5,
-                          ),
-                        ),
+                        Expanded(child: SizedBox(width: 5)),
                         Text(
                           'اضافة مشروع',
                           style: TextStyle(
@@ -98,15 +103,14 @@ class _PublishAPsostState extends State<PublishAPsost> {
                             color: Color(0xffE10586),
                           ),
                         ),
-                        Expanded(
-                          child: SizedBox(
-                            width: 5,
-                          ),
-                        ),
+                        Expanded(child: SizedBox(width: 5)),
                         FlatButton(
                           child: Text(
-                            'Done',
-                            style: TextStyle(fontFamily: 'Cambo', fontSize: 18),
+                            'تم',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'ae_Sindibad'),
                           ),
                           //TOFO: show loading
                           onPressed: () => onPressedDone(user),
@@ -178,18 +182,14 @@ class _PublishAPsostState extends State<PublishAPsost> {
                               getImageList();
                             },
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     SelectCatigory(
                       initialValue: _selectedCategory,
                       onSelectedCategory: (selectedCategory) {
                         _selectedCategory = selectedCategory;
                       },
                     ),
-                    SizedBox(
-                      height: 60,
-                    ),
+                    SizedBox(height: 60),
                   ],
                 ),
               ],
@@ -201,41 +201,50 @@ class _PublishAPsostState extends State<PublishAPsost> {
   }
 
   void onPressedDone(User user) async {
-    setState(() => _loading = true);
-    if (_key.currentState.validate() && _selectedCategory.isNotEmpty) {
-      if (images.isEmpty&& imagesUrl.isEmpty) {
-        showFlushSnackBar(context, 'رجاءا اختيار صور للمنتج الذي تعرضة');
-      } else {
-        for (var imageFile in images) {
-          await DatabaseService(user.uid)
-              .postImageToFireBase(imageFile)
-              .then((downloadUrl) {
-            // Get the download URL
-            imagesUrl.add(downloadUrl);
-          }).catchError((err) {
-            print(err);
-          });
-        }
-        var newPost = Post(
-          userId: user.uid,
-          postId: widget.oldPost.postId ?? Uuid().v4(),
-          imagesUrl: imagesUrl,
-          comments: [],
-          description: _controllerForDescription.text,
-          likes: [],
-          category: _selectedCategory,
-        );
-        await PostServices(newPost.postId).updatePostData(newPost);
-        showFlushSnackBar(context, 'تم نشر المنشور الخاص بك');
-        Navigator.of(context).pushReplacementNamed('/');
+    FocusScope.of(context).unfocus();
+
+    if (_selectedCategory.isEmpty) {
+      showFlushSnackBar(context, 'رجاءا قم باختيار القسم الخاص بمشروعك');
+      return;
+    }
+
+    if (images.isEmpty && imagesUrl.isEmpty) {
+      showFlushSnackBar(context, 'رجاءا اختيار صور للمنتج الذي تعرضة');
+      return;
+    }
+
+    if (_key.currentState.validate()) {
+      setState(() => _loading = true);
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.of(context).pushReplacementNamed('/');
+
+      for (var imageFile in images) {
+        await DatabaseService(user.uid)
+            .postImageToFireBase(imageFile)
+            .then((downloadUrl) {
+          // Get the download URL
+          imagesUrl.add(downloadUrl);
+        });
       }
+      var newPost = Post(
+        userId: user.uid,
+        postId: widget.oldPost?.postId ?? Uuid().v4(),
+        imagesUrl: imagesUrl,
+        comments: widget.oldPost?.comments ?? [],
+        description: _controllerForDescription.text,
+        likes: widget.oldPost?.likes ?? [],
+        category: _selectedCategory,
+      );
+      var err = await PostServices(newPost.postId).updatePostData(newPost);
+
+      BotToast.showSimpleNotification(
+          title: err == null ? 'تم نشر المنشور الخاص بك' : err,
+          align: Alignment.centerRight,
+          hideCloseButton: true);
     } else {
       setState(() {
         _autoValidate = true;
       });
-      if (_selectedCategory.isEmpty)
-        showFlushSnackBar(context, 'رجاءا قم باختيار القسم الخاص بمشروعك');
     }
-    setState(() => _loading = false);
   }
 }

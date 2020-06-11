@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:house_of_joy/functions/lunch_whatsApp.dart';
+import 'package:house_of_joy/functions/validations.dart';
 
 class Order extends StatefulWidget {
+  final String userNumber;
+
+  const Order({@required this.userNumber});
   @override
   _OrderState createState() => _OrderState();
 }
@@ -22,7 +27,7 @@ class _OrderState extends State<Order> {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(
-                          'images/backgroundImage.jpg',
+                          'images/backgroundImage.png',
                         ),
                         fit: BoxFit.fitWidth)),
                 child: Container(
@@ -39,28 +44,22 @@ class _OrderState extends State<Order> {
                             onPressed: () {
                               Navigator.pop(context);
                             }),
-                        Expanded(
-                          child: SizedBox(
-                            height: 75,
-                          ),
-                        ),
+                        Expanded(child: SizedBox(height: 75)),
                         Text(
-                          'الطلبيات',
+                          'ارسال طلب',
                           style: TextStyle(
                             color: Color(0xffE10586),
                             fontSize: 26,
                             fontFamily: 'ae_Sindibad',
                           ),
                         ),
-                        Expanded(
-                          child: SizedBox(
-                            height: 75,
-                          ),
-                        ),
-                        IconButton(
-                            icon: Icon(Icons.home),
-                            iconSize: 30,
-                            onPressed: () {}),
+                        Expanded(child: SizedBox(height: 75)),
+                        // IconButton(
+                        //     icon: Icon(Icons.home),
+                        //     iconSize: 30,
+                        //     onPressed: () {
+
+                        //     }),
                       ],
                     ),
                   ),
@@ -71,9 +70,7 @@ class _OrderState extends State<Order> {
           Container(
             child: Column(
               children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 Text(
                   'أحجز طلبيتك عبر الواتساب',
                   style: TextStyle(
@@ -82,9 +79,7 @@ class _OrderState extends State<Order> {
                     fontFamily: 'ae_Sindibad',
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
                 Container(
                   width: MediaQuery.of(context).size.width / 1.8,
                   height: 45,
@@ -94,9 +89,15 @@ class _OrderState extends State<Order> {
                   ),
                   child: RaisedButton(
                     color: Colors.white,
-                    onPressed: () => {
-                      //  Navigator.push(context, MaterialPageRoute(builder: (context)=>signUp()),),
-                    },
+                    onPressed: widget.userNumber.isEmpty
+                        ? null
+                        : () async {
+                            try {
+                             await launchWhatsApp(phone: widget.userNumber);
+                            } catch (e) {
+                              showFlushSnackBar(context, e);
+                            }
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -109,9 +110,7 @@ class _OrderState extends State<Order> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 5,
-                        ),
+                        SizedBox(width: 5),
                         Text(
                           'WhatsApp',
                           style: TextStyle(
@@ -119,9 +118,7 @@ class _OrderState extends State<Order> {
                             fontSize: 24,
                           ),
                         ),
-                        SizedBox(
-                          width: 20,
-                        ),
+                        SizedBox(width: 20),
                       ],
                     ),
                     padding: const EdgeInsets.all(5.0),
@@ -130,6 +127,9 @@ class _OrderState extends State<Order> {
                     ),
                   ),
                 ),
+                widget.userNumber.isEmpty
+                        ? Text('لم يضع صاحب المنشور رقم هاتفه، يمكنك طلب ذلك من خلال التعليقات')
+                        :Container()
               ],
             ),
           )

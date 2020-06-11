@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:house_of_joy/services/auth.dart';
 import 'package:house_of_joy/services/shered_Preference.dart';
-import 'package:house_of_joy/ui/start.dart';
+
+import '../../main.dart';
 
 class Logout extends StatefulWidget {
   @override
@@ -13,64 +14,48 @@ class Logout extends StatefulWidget {
 class _LogoutState extends State<Logout> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xffFAFBFD),
-      body: ListView(
-        children: <Widget>[
-          Column(
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage(
+                'images/backgroundImage.png',
+              ),
+              fit: BoxFit.fill)),
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+        body: SingleChildScrollView(
+          child: Column(
             children: <Widget>[
-              Stack(
+              Column(
                 children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(
-                              'images/backgroundImage.jpg',
-                            ),
-                            fit: BoxFit.fitWidth)),
-                    child: Container(
-                      color: Color.fromRGBO(250, 251, 253, 75),
-                      child: Column(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: IconButton(
-                                icon: Icon(Icons.arrow_back_ios),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                }),
-                          ),
-                          SizedBox(
-                            height: 75,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 30),
-                            child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                'Logout',
-                                style: TextStyle(
-                                    color: Color(0xFFCA39E3),
-                                    fontSize: 24,
-                                    fontFamily: 'Cambo'),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
+                  SafeArea(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                          icon: Icon(Icons.arrow_back_ios),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }),
+                    ),
+                  ),
+                  SizedBox(height: 75),
+                  Padding(
+                    padding: EdgeInsets.only(left: 30),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        'تسجيل الخروج',
+                        style: TextStyle(
+                            color: Color(0xFFCA39E3),
+                            fontSize: 24,
+                            fontFamily: 'ae_Sindibad'),
                       ),
                     ),
                   ),
+                  SizedBox(height: 20),
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                height: 80,
-              ),
+              SizedBox(height: 95),
               Stack(
                 children: <Widget>[
                   Container(
@@ -94,8 +79,9 @@ class _LogoutState extends State<Logout> {
                         ),
                         child: Center(
                           child: Text(
-                            'Are you sure you want to log out ?',
-                            style: TextStyle(fontSize: 18, fontFamily: 'Cambo'),
+                            'هل تريد تسجيل الخروج؟',
+                            style: TextStyle(
+                                fontSize: 18, fontFamily: 'ae_Sindibad'),
                           ),
                         )),
                   )
@@ -138,27 +124,23 @@ class _LogoutState extends State<Logout> {
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => Start(),
+                                      builder: (context) => Wrapper(),
                                     ),
                                     (Route<dynamic> route) => false);
                               },
                               child: Text(
-                                'Yes',
+                                'نعم',
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Color(0xff06E306),
-                                    fontFamily: 'Cambo'),
+                                    fontFamily: 'ae_Sindibad'),
                               ),
                             ),
                           ),
                         )
                       ],
                     ),
-                    Expanded(
-                      child: SizedBox(
-                        width: 3,
-                      ),
-                    ),
+                    Expanded(child: SizedBox(width: 3)),
                     Stack(
                       children: <Widget>[
                         Container(
@@ -176,24 +158,26 @@ class _LogoutState extends State<Logout> {
                         Transform.translate(
                           offset: Offset(0, -5),
                           child: Container(
-                              width: MediaQuery.of(context).size.width / 2.4,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(40)),
-                                color: Colors.white,
+                            width: MediaQuery.of(context).size.width / 2.4,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              color: Colors.white,
+                            ),
+                            child: FlatButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'لا',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color(0xffFF0000),
+                                    fontFamily: 'ae_Sindibad'),
                               ),
-                              child: FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text(
-                                    'No',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: Color(0xffFF0000),
-                                        fontFamily: 'Cambo'),
-                                  ))),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -202,7 +186,7 @@ class _LogoutState extends State<Logout> {
               )
             ],
           ),
-        ],
+        ),
       ),
     );
   }

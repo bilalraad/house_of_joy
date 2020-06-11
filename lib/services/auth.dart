@@ -15,7 +15,7 @@ abstract class BaseAuth {
 
   Future<String> signUp(String email, String password, User user);
 
-  Future<FirebaseUser> getCurrentUser();
+  Stream<FirebaseUser> getCurrentUser();
 
   Future<void> sendEmailVerification();
 
@@ -32,15 +32,30 @@ abstract class BaseAuth {
   Future<String> signInWithFacebook();
 }
 
+enum AuthState {
+  lohedIn,
+  notLogedIn,
+  error,
+}
+
 class Auth implements BaseAuth {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FacebookLogin facebookSignIn = new FacebookLogin();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  static StreamController<AuthState> authState = StreamController.broadcast();
+
+  static void dispose() {
+    authState.close();
+  }
+
   Future<String> signIn(String email, String password, String userName) async {
+     
     if (userName.isNotEmpty) {
       email = await DatabaseService('').getEmailByUsername(userName);
       if (email == null || email.isEmpty) {
+        addState(AuthState.notLogedIn);
+
         return 'اسم المستخدم غير موجود';
       }
     }
@@ -52,19 +67,16 @@ class Auth implements BaseAuth {
       FirebaseUser firebaseuser = result.user;
       if (firebaseuser.isEmailVerified) {
         final user = await DatabaseService(firebaseuser.uid).getUserData();
-        SharedPrefs().setUser(
-          uid: user.uid,
-          email: user.email,
-          fullName: user.fullName,
-          imageUrl: user.imageUrl,
-          phoneNo: user.phoneNo,
-          userName: user.userName,
-        );
+        SharedPrefs().setUserId(uid: user.uid);
+        addState(AuthState.lohedIn);
+
         return null;
       } else {
+        addState(AuthState.notLogedIn);
         return 'رجاء،اقم بتاكيد الحساب الخاص بك اولا';
       }
     } catch (e) {
+      addState(AuthState.error);
       if (e is PlatformException) {
         String errorMessege = '';
         if (e.code == 'ERROR_USER_NOT_FOUND')
@@ -92,9 +104,10 @@ class Auth implements BaseAuth {
       await DatabaseService(firebaseUser.uid)
           .updateUserData(user.copyWith(uid: firebaseUser.uid));
       await firebaseUser.sendEmailVerification();
-
       return null;
     } catch (e) {
+      addState(AuthState.error);
+
       if (e is PlatformException) {
         String errorMessege = '';
         if (e.code == 'ERROR_INVALID_EMAIL')
@@ -115,17 +128,19 @@ class Auth implements BaseAuth {
         return errorMessege;
       } else {
         print(e);
-        return '';
+        return 'حدث خطا غير معروف';
       }
     }
   }
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user;
+
+  Stream<FirebaseUser> getCurrentUser() {
+    return _firebaseAuth.onAuthStateChanged;
   }
 
   Future<void> signOut() async {
+    addState(AuthState.notLogedIn);
+
     _firebaseAuth.signOut();
     await googleSignout();
     await facebookSignout();
@@ -171,17 +186,11 @@ class Auth implements BaseAuth {
       if (user.userName.isEmpty)
         await DatabaseService(firebaseUser.uid).updateUserData(user);
 
-      SharedPrefs().setUser(
-        uid: user.uid,
-        fullName: user.fullName,
-        userName: '',
-        phoneNo: user.phoneNo,
-        email: user.email,
-        imageUrl: user.imageUrl,
-      );
-
+      SharedPrefs().setUserId(uid: user.uid);
+      addState(AuthState.lohedIn);
       return null;
     } catch (e) {
+      addState(AuthState.error);
       if (e is PlatformException) {
         String errorMessege = '';
         if (e.code == 'sign_in_failed') {
@@ -208,7 +217,7 @@ class Auth implements BaseAuth {
   Future<void> resetPassword(String email) async {
     if (!await connected()) {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
-      return null;
+      return;
     }
     await _firebaseAuth.sendPasswordResetEmail(email: email);
     BotToast.showSimpleNotification(
@@ -299,22 +308,18 @@ class Auth implements BaseAuth {
           if (user.userName.isEmpty)
             await DatabaseService(firebaseUser.uid).updateUserData(user);
           // }
-          SharedPrefs().setUser(
-            uid: user.uid,
-            fullName: user.fullName,
-            userName: '',
-            phoneNo: user.phoneNo,
-            email: user.email,
-            imageUrl: user.imageUrl,
-          );
+          SharedPrefs().setUserId(uid: user.uid);
+          addState(AuthState.lohedIn);
           return null;
           break;
         case FacebookLoginStatus.cancelledByUser:
+          addState(AuthState.notLogedIn);
           print('Login cancelled by the user.');
           return '';
 
           break;
         case FacebookLoginStatus.error:
+          addState(AuthState.error);
           print('Something went wrong with the login process.\n'
               'Here\'s the error Facebook gave us: ${result.errorMessage}');
           return 'حدث خطا غير معروف، الرجاء المحاولة مرة اخرى';
@@ -322,6 +327,7 @@ class Auth implements BaseAuth {
           break;
       }
     } catch (e) {
+      addState(AuthState.error);
       if (e is PlatformException) {
         String errorMessege = '';
         if (e.code == 'sign_in_failed') {
@@ -344,5 +350,9 @@ class Auth implements BaseAuth {
   Future<bool> facebookSignout() async {
     if (await facebookSignIn.isLoggedIn) await facebookSignIn.logOut();
     return true;
+  }
+
+  static void addState(AuthState state) {
+    authState.sink.add(state);
   }
 }

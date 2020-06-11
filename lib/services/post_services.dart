@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:house_of_joy/models/post.dart';
 import 'package:house_of_joy/models/user.dart';
 import 'package:house_of_joy/services/data_base.dart';
@@ -87,11 +88,12 @@ class PostServices {
         .map(_commentsListFromSnapshot);
   }
 
-  Stream<List<Post>> listenToUserPosts(String uid) {
-    if (uid == null) return null;
-    return postsCollection
-        .where('userId', isEqualTo: uid)
-        .snapshots()
-        .map(_postsListFromSnapshot);
+  Future<List<Post>> getUserPosts([String uid]) async {
+    final firebaseuser = await FirebaseAuth.instance.onAuthStateChanged.first;
+    if (firebaseuser == null) return null;
+
+    return _postsListFromSnapshot(await postsCollection
+        .where('userId', isEqualTo: uid ?? firebaseuser.uid)
+        .getDocuments());
   }
 }

@@ -42,32 +42,6 @@ class _Login extends State<Login> {
         : Container();
   }
 
-  int _validate() {
-    String userNameOrEmail = userNameOrEmailController.text;
-    String password = passwordController.text;
-    int errors = 0;
-
-    var emailRegEx = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-
-    if (userNameOrEmail.isEmpty) {
-      emailOrUNError = 'الرجاء ملء الحقل';
-      errors++;
-    } else if (!emailRegEx.hasMatch(userNameOrEmail)) {
-      isUsername = true;
-    }
-
-    if (password.isEmpty) {
-      passwordNError = 'الرجاء ادخال كلمة السر';
-      errors++;
-    } else if (password.length < 6) {
-      passwordNError = 'كلمة السر خاطئة';
-      errors++;
-    }
-    setState(() {});
-    return errors;
-  }
-
   @override
   Widget build(BuildContext context) {
     bool showOrHidenPassword() {
@@ -95,7 +69,7 @@ class _Login extends State<Login> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage(
-                              'images/backgroundImage.jpg',
+                              'images/backgroundImage.png',
                             ),
                             fit: BoxFit.fitWidth)),
                     child: Container(
@@ -110,9 +84,7 @@ class _Login extends State<Login> {
                                   Navigator.pop(context);
                                 }),
                           ),
-                          SizedBox(
-                            height: 75,
-                          ),
+                          SizedBox(height: 75),
                           Padding(
                             padding: EdgeInsets.only(right: 30),
                             child: Align(
@@ -127,25 +99,20 @@ class _Login extends State<Login> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
+                          SizedBox(height: 20),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Container(
                   width: MediaQuery.of(context).size.width / 1.2,
                   height: 45,
-                  padding:
-                      EdgeInsets.only(right: 25),
+                  padding: EdgeInsets.only(right: 25),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                       color: Colors.white,
@@ -170,9 +137,7 @@ class _Login extends State<Login> {
                 ),
               ),
               showError(emailOrUNError),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Container(
@@ -247,9 +212,7 @@ class _Login extends State<Login> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 25,
-              ),
+              SizedBox(height: 25),
               Container(
                 width: MediaQuery.of(context).size.width / 1.2,
                 height: 45,
@@ -260,36 +223,7 @@ class _Login extends State<Login> {
                       BoxShadow(color: Colors.black12, blurRadius: 5),
                     ]),
                 child: RaisedButton(
-                  onPressed: loading
-                      ? null
-                      : () async {
-                          FocusScope.of(context).unfocus();
-                          setState(() {
-                            loading = true;
-                          });
-                          var errors = _validate();
-                          if (errors == 0) {
-                            var error = await Auth().signIn(
-                              isUsername ? '' : userNameOrEmailController.text,
-                              passwordController.text,
-                              isUsername ? userNameOrEmailController.text : '',
-                            );
-                            if (error == null) {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        Wrapper(isLogesdIn: true)),
-                                (Route<dynamic> route) => false,
-                              );
-                            } else {
-                              showFlushSnackBar(context, error);
-                            }
-                          }
-                          setState(() {
-                            loading = false;
-                          });
-                        },
+                  onPressed: loading ? null : _onLogInPressd,
                   color: Color(0xffFFAADC),
                   child: Text(
                     'تسجيل',
@@ -343,5 +277,58 @@ class _Login extends State<Login> {
         ],
       ),
     );
+  }
+
+  void _onLogInPressd() async {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      loading = true;
+    });
+    var errors = _validate();
+    if (errors == 0) {
+      var error = await Auth().signIn(
+        isUsername ? '' : userNameOrEmailController.text,
+        passwordController.text,
+        isUsername ? userNameOrEmailController.text : '',
+      );
+      if (error == null) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Wrapper()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        showFlushSnackBar(context, error);
+      }
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  int _validate() {
+    String userNameOrEmail = userNameOrEmailController.text;
+    String password = passwordController.text;
+    int errors = 0;
+
+    var emailRegEx = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    if (userNameOrEmail.isEmpty) {
+      emailOrUNError = 'الرجاء ملء الحقل';
+      errors++;
+    } else if (!emailRegEx.hasMatch(userNameOrEmail)) {
+      isUsername = true;
+    }
+
+    if (password.isEmpty) {
+      passwordNError = 'الرجاء ادخال كلمة السر';
+      errors++;
+    } else if (password.length < 6) {
+      passwordNError = 'كلمة السر خاطئة';
+      errors++;
+    }
+    setState(() {});
+    return errors;
   }
 }

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:house_of_joy/functions/creat_route.dart';
 import 'package:house_of_joy/functions/validations.dart';
 import 'package:house_of_joy/models/post.dart';
 import 'package:house_of_joy/models/user.dart';
+import 'package:house_of_joy/services/data_base.dart';
 import 'package:house_of_joy/services/post_services.dart';
+import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
 import 'package:house_of_joy/ui/Costume_widgets/post_widget.dart';
-import 'package:house_of_joy/ui/comments.dart';
-import 'package:house_of_joy/ui/order.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
-import 'package:house_of_joy/ui/publishAPost.dart';
 
-import 'Costume_widgets/loading_dialog.dart';
-import 'Costume_widgets/post_widget.dart';
-import 'Costume_widgets/view_images.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
+import 'package:house_of_joy/ui/Costume_widgets/view_images.dart';
+import 'package:house_of_joy/ui/screens/publishAPost.dart';
+import 'package:provider/provider.dart';
+
+import 'comments.dart';
+import 'order.dart';
+
 
 enum PopMenuItem {
   editPost,
@@ -40,69 +44,58 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xffFAFBFD),
-      body: ModalProgress(
-        inAsyncCall: loading,
-        costumeIndicator: LoadingDialog(),
-        child: Column(
-          children: <Widget>[
-            Container(
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.25,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            'images/backgroundImage.jpg',
-                          ),
-                          fit: BoxFit.cover),
-                    ),
-                    child: Container(
-                      color: Color.fromRGBO(250, 251, 253, 75),
-                      alignment: Alignment.topLeft,
-                    ),
-                  ),
-                  SafeArea(
-                    child: Row(
-                      children: <Widget>[
-                        IconButton(
-                            icon: Icon(Icons.arrow_back_ios),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            }),
-                        Expanded(
-                          child: SizedBox(
-                            width: 3,
-                          ),
-                        ),
-                        Text(
-                          '${widget.post.category}',
-                          style: TextStyle(
-                              color: Color(0xffE10586),
-                              fontSize: 26,
-                              fontFamily: 'ae_Sindibad'),
-                        ),
-                        Expanded(child: SizedBox(width: 5)),
-                        Container(child: SizedBox(width: 50)),
-                      ],
-                    ),
-                  ),
-                ],
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage(
+                'images/backgroundImage.png',
               ),
-            ),
-            containerShowTheGoods(widget.user),
-          ],
+              fit: BoxFit.fill)),
+      child: Scaffold(
+        backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+        body: ModalProgress(
+          inAsyncCall: loading,
+          costumeIndicator: LoadingDialog(),
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Stack(
+                  children: <Widget>[
+                    SafeArea(
+                      child: Row(
+                        children: <Widget>[
+                          IconButton(
+                              icon: Icon(Icons.arrow_back_ios),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              }),
+                          Expanded(child: SizedBox(width: 3)),
+                          Text(
+                            '${widget.post.category}',
+                            style: TextStyle(
+                                color: Color(0xffE10586),
+                                fontSize: 26,
+                                fontFamily: 'ae_Sindibad'),
+                          ),
+                          Expanded(child: SizedBox(width: 5)),
+                          Container(child: SizedBox(width: 50)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              buildSelectedPost(widget.user),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget containerShowTheGoods(User currentUser) {
+  Widget buildSelectedPost(User currentUser) {
     return Container(
-      padding: EdgeInsets.only(right: 8),
+      padding: EdgeInsets.only(top: 100),
       width: MediaQuery.of(context).size.width / 1.1,
       child: Column(
         children: <Widget>[
@@ -119,9 +112,7 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                     boxShape: BoxShape.circle,
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+                SizedBox(width: 10),
                 Text(
                   '${currentUser.fullName}',
                   style: TextStyle(
@@ -129,21 +120,13 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                       fontSize: 20,
                       fontFamily: 'ae_Sindibad'),
                 ),
-                Expanded(
-                  child: SizedBox(
-                    width: 10,
-                  ),
-                ),
+                Expanded(child: SizedBox(width: 10)),
                 widget.showOptions ? buildPopupMenuButton() : Container(),
-                SizedBox(
-                  width: 10,
-                )
+                SizedBox(width: 10)
               ],
             ),
           ),
-          SizedBox(
-            height: 5,
-          ),
+          SizedBox(height: 5),
           Container(
             width: MediaQuery.of(context).size.width / 1.2,
             child: Text(
@@ -154,9 +137,7 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                   color: Colors.black, fontSize: 18, fontFamily: 'ae_Sindibad'),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           Container(
             width: MediaQuery.of(context).size.width / 1.1,
             color: Color(0xffF9F5F7),
@@ -176,9 +157,7 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                         user: currentUser,
                       ),
                       Expanded(
-                        child: SizedBox(
-                          width: 3,
-                        ),
+                        child: SizedBox(width: 3),
                       ),
                       IconButton(
                           icon: Icon(Icons.mode_comment),
@@ -187,10 +166,14 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => Comments(
-                                  postId: widget.post.postId,
-                                  postOwnerId: widget.post.userId,
+                              createRoute(
+                                FutureProvider<User>(
+                                  create: (context) =>
+                                      DatabaseService('').getCurrentUserData(),
+                                  child: Comments(
+                                    postId: widget.post.postId,
+                                    postOwnerId: widget.post.userId,
+                                  ),
                                 ),
                               ),
                             );
@@ -200,9 +183,7 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                         style: TextStyle(color: Colors.grey),
                       ),
                       Expanded(
-                        child: SizedBox(
-                          width: 3,
-                        ),
+                        child: SizedBox(width: 3),
                       ),
                       IconButton(
                           icon: Icon(faf.FontAwesomeIcons.shoppingCart),
@@ -211,7 +192,8 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Order(),
+                                builder: (context) =>
+                                    Order(userNumber: currentUser.phoneNo),
                               ),
                             );
                           }),

@@ -56,7 +56,7 @@ class CustomTextField extends StatelessWidget {
             hintText: hint,
             contentPadding: EdgeInsets.all(10),
             hintStyle: TextStyle(
-              fontFamily: 'Cambo',
+              fontFamily: 'ae_Sindibad',
               color: Color(0xffA2A2A2),
             ),
             suffixIcon: suffixWidget ??
