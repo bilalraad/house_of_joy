@@ -6,7 +6,6 @@ import './services/auth.dart';
 import './ui/Auth/start.dart';
 import './ui/Home/homeScreen.dart';
 import './services/shered_Preference.dart';
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(
