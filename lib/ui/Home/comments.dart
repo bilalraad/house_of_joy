@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/functions/show_dialog.dart';
-
-import 'package:house_of_joy/functions/validations.dart';
-import 'package:house_of_joy/models/post.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/services/post_services.dart';
-import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
 import 'package:provider/provider.dart';
+
+import '../../models/post.dart';
+import '../../models/user.dart';
+import '../../services/data_base.dart';
+import '../../functions/show_dialog.dart';
+import '../../functions/validations.dart';
+import '../../services/post_services.dart';
+import '../Costume_widgets/loading_dialog.dart';
 
 class Comments extends StatefulWidget {
   final String postId;
@@ -25,7 +23,7 @@ class Comments extends StatefulWidget {
 
 class _CommentsState extends State<Comments> {
   List<Comment> _comments;
-  var _controllercomment = TextEditingController();
+  final _controllercomment = TextEditingController();
   bool enable = false;
 
   @override
@@ -43,14 +41,14 @@ class _CommentsState extends State<Comments> {
       builder: (context, snapshot) {
         _comments = snapshot.data;
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage(
                     'images/backgroundImage.png',
                   ),
                   fit: BoxFit.fill)),
           child: Scaffold(
-            backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+            backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
             body: SingleChildScrollView(
               child: Column(children: <Widget>[
                 SafeArea(
@@ -59,21 +57,21 @@ class _CommentsState extends State<Comments> {
                       Row(
                         children: <Widget>[
                           IconButton(
-                              icon: Icon(Icons.arrow_back_ios),
+                              icon: const Icon(Icons.arrow_back_ios),
                               onPressed: () {
                                 Navigator.pop(context);
                               }),
-                          Expanded(child: SizedBox(width: 3)),
-                          Text(
+                          const Expanded(child: SizedBox(width: 3)),
+                          const Text(
                             'التعليقات',
                             style: TextStyle(
                                 color: Color(0xffE10586),
                                 fontSize: 26,
                                 fontFamily: 'ae_Sindibad'),
                           ),
-                          Expanded(child: SizedBox(width: 3)),
+                          const Expanded(child: SizedBox(width: 3)),
                           IconButton(
-                              icon: Icon(Icons.home),
+                              icon: const Icon(Icons.home),
                               iconSize: 30,
                               onPressed: () {
                                 showCostumeDialog(context);
@@ -83,9 +81,9 @@ class _CommentsState extends State<Comments> {
                     ],
                   ),
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 _comments == null
-                    ? LoadingDialog()
+                    ? const LoadingDialog()
                     : Container(
                         height: MediaQuery.of(context).size.height * 0.75,
                         child: ListView.builder(
@@ -101,19 +99,19 @@ class _CommentsState extends State<Comments> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: 50,
-                  color: Color(0xffFFAADC),
+                  color: const Color(0xffFFAADC),
                   child: Row(
                     children: <Widget>[
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Container(
                           height: 35,
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                             top: 13,
                             left: 25,
                             right: 16,
                           ),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(50)),
                               color: Colors.white,
@@ -125,7 +123,7 @@ class _CommentsState extends State<Comments> {
                             child: TextField(
                               controller: _controllercomment,
                               autofocus: false,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 hintText: 'أضف تعليق',
                                 isDense: true,
@@ -135,40 +133,41 @@ class _CommentsState extends State<Comments> {
                                 ),
                               ),
                               onChanged: (input) {
-                                if (!input.startsWith(' '))
+                                if (!input.startsWith(' ')) {
                                   setState(() {
                                     enable = input.isNotEmpty;
                                   });
+                                }
                               },
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(width: 3),
+                      const SizedBox(width: 3),
                       Container(
                         height: 30,
                         width: 30,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.white),
                         child: Transform.translate(
-                          offset: Offset(-5, -5),
+                          offset: const Offset(-5, -5),
                           child: !enable
                               ? IconButton(
-                                  icon: Icon(Icons.clear),
-                                  color: Color(0xffFFAADC),
+                                  icon: const Icon(Icons.clear),
+                                  color: const Color(0xffFFAADC),
                                   enableFeedback: true,
                                   onPressed: () =>
                                       FocusScope.of(context).unfocus(),
                                 )
                               : IconButton(
-                                  icon: Icon(Icons.arrow_upward),
-                                  color: Color(0xffFFAADC),
+                                  icon: const Icon(Icons.arrow_upward),
+                                  color: const Color(0xffFFAADC),
                                   enableFeedback: true,
                                   onPressed: () => submmetComment(currentUser),
                                 ),
                         ),
                       ),
-                      SizedBox(width: 3),
+                      const SizedBox(width: 3),
                     ],
                   ),
                 ),
@@ -218,22 +217,22 @@ class _CommentsState extends State<Comments> {
         return snapshot.data == null
             ? Container()
             : Container(
-                padding: EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.only(right: 10),
                 width: MediaQuery.of(context).size.width / 1.1,
                 child: Column(
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Expanded(child: SizedBox(width: 10)),
+                        const Expanded(child: SizedBox(width: 10)),
                         Text(
                           '${commentUser.fullName}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 20,
                             fontFamily: 'ae_Sindibad',
                           ),
                         ),
-                        SizedBox(width: 5),
+                        const SizedBox(width: 5),
                         Container(
                           width: 40,
                           height: 40,
@@ -243,7 +242,7 @@ class _CommentsState extends State<Comments> {
                                     ? NetworkImage(
                                         commentUser.imageUrl,
                                       )
-                                    : AssetImage('images/personal.png'),
+                                    : const AssetImage('images/personal.png'),
                                 fit: BoxFit.cover),
                             boxShadow: [BoxShadow(color: Colors.grey[300])],
                             shape: BoxShape.circle,
@@ -251,14 +250,14 @@ class _CommentsState extends State<Comments> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       child: Text(
                         '${comment.comment}',
                         textAlign: TextAlign.right,
                         textDirection: TextDirection.rtl,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 14,
                         ),

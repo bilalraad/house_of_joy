@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
-import 'package:house_of_joy/functions/validations.dart';
+import '../../functions/validations.dart';
 
+///this is a costume text feid that  can accepte aysnc validators
 class FieldValidationFormBloc extends FormBloc<String, String> {
-  final username = TextFieldBloc(
-    asyncValidatorDebounceTime: Duration(milliseconds: 300),
+  final TextFieldBloc username = TextFieldBloc(
+    asyncValidatorDebounceTime: const Duration(milliseconds: 300),
   );
 
-  final email = TextFieldBloc(
-    asyncValidatorDebounceTime: Duration(milliseconds: 300),
+  final TextFieldBloc email = TextFieldBloc(
+    asyncValidatorDebounceTime: const Duration(milliseconds: 300),
   );
 
-  final password = TextFieldBloc();
+  final TextFieldBloc password = TextFieldBloc();
 
-  final passwordConfirm = TextFieldBloc();
+  final TextFieldBloc passwordConfirm = TextFieldBloc();
 
-  final fullName = TextFieldBloc();
-  final number = TextFieldBloc();
+  final TextFieldBloc fullName = TextFieldBloc();
+  final TextFieldBloc number = TextFieldBloc();
 
   FieldValidationFormBloc() {
     addFieldBlocs(fieldBlocs: [
@@ -38,6 +39,7 @@ class FieldValidationFormBloc extends FormBloc<String, String> {
     username.addAsyncValidators([validateUsername]);
   }
 
+  ///this will check the validation of the wanted data and return them if validated
   @override
   Map<String, String> onSubmitting({
     bool hasEmail = false,
@@ -47,7 +49,7 @@ class FieldValidationFormBloc extends FormBloc<String, String> {
     bool hasUsername = false,
     bool hasFullName = false,
   }) {
-    Map<String, String> data = {
+    final data = {
       'email': email.value,
       'password': password.value,
       'fullName': fullName.value,
@@ -136,13 +138,13 @@ class BlocTextFormField extends StatelessWidget {
                         ? SuffixButton.obscureText
                         : SuffixButton.asyncValidating,
                     obscureTextFalseIcon:
-                        Icon(Icons.visibility, color: Color(0xffFFAADC)),
-                    obscureTextTrueIcon:
-                        Icon(Icons.visibility_off, color: Color(0xffFFAADC)),
+                        const Icon(Icons.visibility, color: Color(0xffFFAADC)),
+                    obscureTextTrueIcon: const Icon(Icons.visibility_off,
+                        color: Color(0xffFFAADC)),
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(10),
+                      contentPadding: const EdgeInsets.all(10),
                       hintText: hint,
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                         fontFamily: 'ae_Sindibad',
                         color: Color(0xffA2A2A2),
                       ),

@@ -1,28 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/services/auth.dart';
-import 'package:house_of_joy/services/shered_Preference.dart';
 
-import '../../main.dart';
+import '../Auth/start.dart';
+import '../../services/auth.dart';
 
-class Logout extends StatefulWidget {
-  @override
-  _LogoutState createState() {
-    return _LogoutState();
-  }
-}
-
-class _LogoutState extends State<Logout> {
+class Logout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage(
                 'images/backgroundImage.png',
               ),
               fit: BoxFit.fill)),
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+        backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -32,14 +24,14 @@ class _LogoutState extends State<Logout> {
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
-                          icon: Icon(Icons.arrow_back_ios),
+                          icon: const Icon(Icons.arrow_back_ios),
                           onPressed: () {
                             Navigator.pop(context);
                           }),
                     ),
                   ),
-                  SizedBox(height: 75),
-                  Padding(
+                  const SizedBox(height: 75),
+                  const Padding(
                     padding: EdgeInsets.only(left: 30),
                     child: Align(
                       alignment: Alignment.bottomRight,
@@ -52,16 +44,16 @@ class _LogoutState extends State<Logout> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
-              SizedBox(height: 95),
+              const SizedBox(height: 95),
               Stack(
                 children: <Widget>[
                   Container(
                     width: MediaQuery.of(context).size.width / 1.1,
                     height: 60,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         color: Color.fromRGBO(240, 240, 240, 50),
                         boxShadow: [
@@ -69,15 +61,15 @@ class _LogoutState extends State<Logout> {
                         ]),
                   ),
                   Transform.translate(
-                    offset: Offset(0, -5),
+                    offset: const Offset(0, -5),
                     child: Container(
                         width: MediaQuery.of(context).size.width / 1.1,
                         height: 60,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           color: Colors.white,
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             'هل تريد تسجيل الخروج؟',
                             style: TextStyle(
@@ -87,7 +79,7 @@ class _LogoutState extends State<Logout> {
                   )
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: MediaQuery.of(context).size.width / 1.1,
                 child: Row(
@@ -97,7 +89,7 @@ class _LogoutState extends State<Logout> {
                         Container(
                           width: MediaQuery.of(context).size.width / 2.4,
                           height: 50,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
                               color: Color.fromRGBO(240, 240, 240, 50),
@@ -107,28 +99,27 @@ class _LogoutState extends State<Logout> {
                               ]),
                         ),
                         Transform.translate(
-                          offset: Offset(0, -5),
+                          offset: const Offset(0, -5),
                           child: Container(
                             width: MediaQuery.of(context).size.width / 2.4,
                             height: 50,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
                               color: Colors.white,
                             ),
                             child: FlatButton(
                               onPressed: () async {
-                                await SharedPrefs().deleteUser();
                                 await Auth().signOut();
 
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => Wrapper(),
+                                      builder: (context) => Start(),
                                     ),
-                                    (Route<dynamic> route) => false);
+                                    (route) => false);
                               },
-                              child: Text(
+                              child: const Text(
                                 'نعم',
                                 style: TextStyle(
                                     fontSize: 18,
@@ -140,13 +131,13 @@ class _LogoutState extends State<Logout> {
                         )
                       ],
                     ),
-                    Expanded(child: SizedBox(width: 3)),
+                    const Expanded(child: SizedBox(width: 3)),
                     Stack(
                       children: <Widget>[
                         Container(
                           width: MediaQuery.of(context).size.width / 2.4,
                           height: 50,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
                               color: Color.fromRGBO(240, 240, 240, 50),
@@ -156,11 +147,11 @@ class _LogoutState extends State<Logout> {
                               ]),
                         ),
                         Transform.translate(
-                          offset: Offset(0, -5),
+                          offset: const Offset(0, -5),
                           child: Container(
                             width: MediaQuery.of(context).size.width / 2.4,
                             height: 50,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
                               color: Colors.white,
@@ -169,7 +160,7 @@ class _LogoutState extends State<Logout> {
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: Text(
+                              child: const Text(
                                 'لا',
                                 style: TextStyle(
                                     fontSize: 18,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+///this just a normal custumized text form field 
 class CustomTextField extends StatelessWidget {
   CustomTextField({
     Key key,
@@ -54,18 +55,18 @@ class CustomTextField extends StatelessWidget {
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: hint,
-            contentPadding: EdgeInsets.all(10),
-            hintStyle: TextStyle(
+            contentPadding: const EdgeInsets.all(10),
+            hintStyle: const TextStyle(
               fontFamily: 'ae_Sindibad',
               color: Color(0xffA2A2A2),
             ),
             suffixIcon: suffixWidget ??
                 Padding(
                   child: IconTheme(
-                    data: IconThemeData(color: Colors.black),
+                    data: const IconThemeData(color: Colors.black),
                     child: suffixIcon ?? Container(width: 0),
                   ),
-                  padding: EdgeInsets.only(left: 30, right: 10),
+                  padding: const EdgeInsets.only(left: 30, right: 10),
                 ),
           ),
         ),

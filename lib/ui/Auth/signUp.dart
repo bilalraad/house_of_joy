@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
-import 'package:house_of_joy/functions/validations.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/auth.dart';
-import 'package:house_of_joy/ui/Auth/veritfication.dart';
-import 'package:house_of_joy/ui/Costume_widgets/bloc_text_form_field.dart';
+
 import '../../main.dart';
+import './veritfication.dart';
+import '../../models/user.dart';
+import '../../services/auth.dart';
+import '../../functions/validations.dart';
+import '../Costume_widgets/bloc_text_form_field.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -16,17 +17,17 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUp extends State<SignUp> {
-  bool _obscureText = true;
-  bool lenth = false;
-  bool char = false;
-  bool insertPassord = false;
-  bool loading = false;
+  final _obscureText = true;
+  var _lenth = false;
+  var _char = false;
+  var _insertPassord = false;
+  var _loading = false;
   FieldValidationFormBloc _formBloc;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFAFBFD),
+      backgroundColor: const Color(0xffFAFBFD),
       body: SingleChildScrollView(
         child: BlocProvider(
           create: (context) => FieldValidationFormBloc(),
@@ -37,28 +38,28 @@ class _SignUp extends State<SignUp> {
                 Stack(
                   children: <Widget>[
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           image: DecorationImage(
                               image: AssetImage(
                                 'images/backgroundImage.png',
                               ),
                               fit: BoxFit.fitWidth)),
                       child: Container(
-                        color: Color.fromRGBO(250, 251, 253, 75),
+                        color: const Color.fromRGBO(250, 251, 253, 75),
                         child: Column(
                           children: <Widget>[
                             SafeArea(
                               child: Align(
                                 alignment: Alignment.topLeft,
                                 child: IconButton(
-                                    icon: Icon(Icons.arrow_back_ios),
+                                    icon: const Icon(Icons.arrow_back_ios),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     }),
                               ),
                             ),
-                            SizedBox(height: 75),
-                            Padding(
+                            const SizedBox(height: 75),
+                            const Padding(
                               padding: EdgeInsets.only(right: 30),
                               child: Align(
                                 alignment: Alignment.bottomRight,
@@ -71,7 +72,7 @@ class _SignUp extends State<SignUp> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
@@ -80,11 +81,11 @@ class _SignUp extends State<SignUp> {
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(top: 40),
+                  padding: const EdgeInsets.only(top: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       BlocTextFormField(
                         hint: 'الاسم الكامل',
                         textFieldBloc: _formBloc.fullName,
@@ -116,22 +117,21 @@ class _SignUp extends State<SignUp> {
                         textFieldBloc: _formBloc.number,
                       ),
                       SizedBox(
-                        // height: 30,
                         width: MediaQuery.of(context).size.height * 0.5,
-                        child: Text(
+                        child: const Text(
                           'يجب ان يكون الرقم مربوط بالواتساب الخاص بك ليتمكن\n المشترون من مراسلتك',
                           style: TextStyle(color: Colors.grey),
                           // textDirection: TextDirection.rtl,
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 1.2,
                         child: RaisedButton(
-                          onPressed: loading ? null : onSignUpPressed,
-                          color: Color(0xffFFAADC),
-                          child: Text(
+                          onPressed: _loading ? null : onSignUpPressed,
+                          color: const Color(0xffFFAADC),
+                          child: const Text(
                             'انشاء حساب',
                             style: TextStyle(
                                 color: Colors.white,
@@ -144,19 +144,19 @@ class _SignUp extends State<SignUp> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       Container(
                         width: MediaQuery.of(context).size.width / 1.2,
                         child: Row(
                           children: <Widget>[
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               child: Container(
                                 height: 1,
                                 color: Colors.black26,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                                 width: 30,
                                 child: Align(
                                   alignment: Alignment.center,
@@ -171,22 +171,22 @@ class _SignUp extends State<SignUp> {
                                 color: Colors.black26,
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                           ],
                         ),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       Container(
                         width: MediaQuery.of(context).size.width / 1.1,
                         child: Row(
                           children: <Widget>[
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             Expanded(
                               child: FlatButton.icon(
-                                onPressed: loading ? null : onFacebookSignUp,
-                                color: Color(0xff6B6BD9),
+                                onPressed: _loading ? null : onFacebookSignUp,
+                                color: const Color(0xff6B6BD9),
                                 disabledColor: Colors.grey,
-                                icon: Padding(
+                                icon: const Padding(
                                   padding: EdgeInsets.only(bottom: 5, top: 5),
                                   child: Icon(
                                     faf.FontAwesomeIcons.facebookF,
@@ -194,7 +194,7 @@ class _SignUp extends State<SignUp> {
                                     color: Colors.white,
                                   ),
                                 ),
-                                label: Text(
+                                label: const Text(
                                   'Facebook',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 22),
@@ -205,21 +205,21 @@ class _SignUp extends State<SignUp> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 15),
+                            const SizedBox(width: 15),
                             Expanded(
                               child: Container(
                                 height: 45,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      width: 1, color: Color(0xFFCA39E3)),
+                                      width: 1, color: const Color(0xFFCA39E3)),
                                   borderRadius: BorderRadius.circular(30.0),
                                 ),
                                 width: MediaQuery.of(context).size.width / 3,
                                 child: FlatButton.icon(
-                                  onPressed: loading ? null : onGoogleSignUp,
-                                  color: Color(0xffffffff),
+                                  onPressed: _loading ? null : onGoogleSignUp,
+                                  color: const Color(0xffffffff),
                                   disabledColor: Colors.grey,
-                                  label: Text(
+                                  label: const Text(
                                     'Google',
                                     style: TextStyle(
                                         color: Colors.black, fontSize: 24),
@@ -227,7 +227,7 @@ class _SignUp extends State<SignUp> {
                                   icon: Container(
                                     height: 30,
                                     width: 30,
-                                    child: Image(
+                                    child: const Image(
                                       image: AssetImage('images/google.png'),
                                       fit: BoxFit.cover,
                                     ),
@@ -239,11 +239,11 @@ class _SignUp extends State<SignUp> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Container(
                         width: MediaQuery.of(context).size.width / 1.2,
                         child: Row(
@@ -251,22 +251,22 @@ class _SignUp extends State<SignUp> {
                           children: <Widget>[
                             GestureDetector(
                               onTap: () => Navigator.pop(context),
-                              child: Text(
+                              child: const Text(
                                 'تسجيل دخول',
                                 style: TextStyle(
                                     color: Color(0xffFFAADC),
                                     fontFamily: 'ae_Sindibad'),
                               ),
                             ),
-                            SizedBox(width: 10),
-                            Text(
+                            const SizedBox(width: 10),
+                            const Text(
                               'لديك حساب قديم؟',
                               style: TextStyle(color: Colors.black),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -279,9 +279,7 @@ class _SignUp extends State<SignUp> {
   }
 
   void onSignUpPressed() async {
-    setState(() {
-      loading = true;
-    });
+    setState(() => _loading = true);
     _formBloc.submit();
     var data = _formBloc.onSubmitting(
       hasEmail: true,
@@ -317,91 +315,85 @@ class _SignUp extends State<SignUp> {
         showFlushSnackBar(context, error);
       }
     }
-    setState(() {
-      loading = false;
-    });
+    setState(() => _loading = false);
   }
 
   void onFacebookSignUp() async {
-    setState(() {
-      loading = true;
-    });
+    setState(() => _loading = true);
     var error = await Auth().signInWithFacebook();
     if (error == null && error.isNotEmpty) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Wrapper()),
-        (Route<dynamic> route) => false,
+        (route) => false,
       );
     } else {
       if (error.isNotEmpty) showFlushSnackBar(context, error);
     }
-    setState(() {
-      loading = false;
-    });
+    setState(() => _loading = false);
   }
 
   void onGoogleSignUp() async {
-    setState(() {
-      loading = true;
-    });
+    setState(() => _loading = true);
     var error = await Auth().signInWithGoogle();
 
     if (error == null) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Wrapper()),
-        (Route<dynamic> route) => false,
+        (route) => false,
       );
     } else {
       showFlushSnackBar(context, error);
     }
-    setState(() {
-      loading = false;
-    });
+    setState(() => _loading = false);
   }
 
   void checkChangePassword(String input) {
-    if (input.length > 7)
-      lenth = true;
-    else
-      lenth = false;
-    int x = 0;
-    for (int i = 0; i < input.length; i++)
+    if (input.length > 7) {
+      _lenth = true;
+    } else {
+      _lenth = false;
+    }
+    var x = 0;
+    for (var i = 0; i < input.length; i++) {
       if (input.codeUnitAt(i) > 66 &&
           input.codeUnitAt(input.length - 1) < 122) {
         x++;
       }
+    }
 
-    if (x > 0)
-      char = true;
-    else
-      char = false;
+    if (x > 0) {
+      _char = true;
+    } else {
+      _char = false;
+    }
 
-    if (input.isEmpty)
-      insertPassord = false;
-    else
-      insertPassord = true;
+    if (input.isEmpty) {
+      _insertPassord = false;
+    } else {
+      _insertPassord = true;
+    }
 
     setState(() {});
   }
 
   Widget checkYourPassword(BuildContext context) {
-    bool one = false;
-    bool two = false;
-    if (lenth || char) one = true;
-    if (lenth && char) two = true;
+    var one = false;
+    var two = false;
+    if (_lenth || _char) one = true;
+    if (_lenth && _char) two = true;
     return Container(
       width: MediaQuery.of(context).size.width / 1.2,
       child: Row(
         children: <Widget>[
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Expanded(
             child: Container(
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: insertPassord ? Color(0xffFFAADC) : Colors.grey,
+                color: _insertPassord ? const Color(0xffFFAADC) : Colors.grey,
               ),
             ),
           ),
@@ -409,7 +401,7 @@ class _SignUp extends State<SignUp> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-                color: one ? Color(0xffFFAADC) : Colors.grey,
+                color: one ? const Color(0xffFFAADC) : Colors.grey,
                 shape: BoxShape.circle),
           ),
           Expanded(
@@ -417,7 +409,7 @@ class _SignUp extends State<SignUp> {
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: one ? Color(0xffFFAADC) : Colors.grey,
+                color: one ? const Color(0xffFFAADC) : Colors.grey,
               ),
             ),
           ),
@@ -425,7 +417,7 @@ class _SignUp extends State<SignUp> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-                color: two ? Color(0xffFFAADC) : Colors.grey,
+                color: two ? const Color(0xffFFAADC) : Colors.grey,
                 shape: BoxShape.circle),
           ),
           Expanded(
@@ -433,11 +425,11 @@ class _SignUp extends State<SignUp> {
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: two ? Color(0xffFFAADC) : Colors.grey,
+                color: two ? const Color(0xffFFAADC) : Colors.grey,
               ),
             ),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
         ],
       ),
     );

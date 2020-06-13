@@ -1,20 +1,17 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:house_of_joy/functions/creat_route.dart';
-import 'package:house_of_joy/functions/show_overlay.dart';
-import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/ui/Auth/changePassword.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:house_of_joy/models/user.dart';
+import '../../models/user.dart';
+import '../Auth/changePassword.dart';
+import '../../services/data_base.dart';
+import '../../functions/creat_route.dart';
+import '../../functions/show_overlay.dart';
 
 class EditProfile extends StatefulWidget {
   final User user;
   const EditProfile({
-    Key key,
     @required this.user,
   }) : assert(user != null, 'user data should be provided');
 
@@ -24,12 +21,12 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
-  var fullNameController = TextEditingController();
-  var userNameController = TextEditingController();
-  var emailController = TextEditingController();
-  var phoneNoController = TextEditingController();
+  var _fullNameController = TextEditingController();
+  var _userNameController = TextEditingController();
+  var _emailController = TextEditingController();
+  var _phoneNoController = TextEditingController();
   File imageFile;
-  final picker = ImagePicker();
+  final _picker = ImagePicker();
   NetworkImage profilepic;
   bool dataLoaded = false;
   bool loading = false;
@@ -37,12 +34,13 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void didChangeDependencies() {
     if (!dataLoaded) {
-      if (widget.user.imageUrl.isNotEmpty)
+      if (widget.user.imageUrl.isNotEmpty) {
         profilepic = NetworkImage(widget.user.imageUrl);
-      fullNameController = TextEditingController(text: widget.user.fullName);
-      userNameController = TextEditingController(text: widget.user.userName);
-      emailController = TextEditingController(text: widget.user.email);
-      phoneNoController = TextEditingController(
+      }
+      _fullNameController = TextEditingController(text: widget.user.fullName);
+      _userNameController = TextEditingController(text: widget.user.userName);
+      _emailController = TextEditingController(text: widget.user.email);
+      _phoneNoController = TextEditingController(
           text: widget.user.phoneNo.replaceAll('+964', '0'));
     }
     dataLoaded = true;
@@ -50,7 +48,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   _openGellery(BuildContext context) async {
-    var pickedFile = await picker.getImage(source: ImageSource.gallery);
+    var pickedFile = await _picker.getImage(source: ImageSource.gallery);
     this.setState(() {
       if (pickedFile.path.isNotEmpty) {
         imageFile = File(pickedFile.path);
@@ -61,7 +59,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   _openCamera(BuildContext context) async {
-    var pickedFile = await picker.getImage(source: ImageSource.camera);
+    var pickedFile = await _picker.getImage(source: ImageSource.camera);
     this.setState(() {
       if (pickedFile.path.isNotEmpty) {
         imageFile = File(pickedFile.path);
@@ -72,32 +70,33 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   _decideImageView() {
-    if (imageFile == null)
-      return AssetImage('images/personal.png');
-    else
+    if (imageFile == null) {
+      return const AssetImage('images/personal.png');
+    } else {
       return FileImage(imageFile);
+    }
   }
 
   Future<void> _showDialog(BuildContext context) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
-            title: Text('اختر صورة'),
+            title: const Text('اختر صورة'),
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
                   GestureDetector(
-                    child: Text('المعرض'),
+                    child: const Text('المعرض'),
                     onTap: () {
                       _openGellery(context);
                     },
                   ),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   GestureDetector(
-                    child: Text('الكاميرا'),
+                    child: const Text('الكاميرا'),
                     onTap: () {
                       _openCamera(context);
                     },
@@ -113,7 +112,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    var inputDecoration = InputDecoration(
+    var inputDecoration = const InputDecoration(
       focusedBorder: UnderlineInputBorder(
         borderSide: BorderSide(
           color: Color(0xffFFAADC),
@@ -125,14 +124,14 @@ class _EditProfileState extends State<EditProfile> {
       ),
     );
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage(
                 'images/backgroundImage.png',
               ),
               fit: BoxFit.fill)),
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+        backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: Directionality(
           textDirection: TextDirection.rtl,
           child: SingleChildScrollView(
@@ -147,7 +146,7 @@ class _EditProfileState extends State<EditProfile> {
                             children: <Widget>[
                               FlatButton(
                                 onPressed: _onPressedDone,
-                                child: Text(
+                                child: const Text(
                                   'تعديل',
                                   style: TextStyle(
                                       fontSize: 20,
@@ -155,12 +154,12 @@ class _EditProfileState extends State<EditProfile> {
                                       fontFamily: 'ae_Sindibad'),
                                 ),
                               ),
-                              Expanded(child: SizedBox(width: 5)),
+                              const Expanded(child: SizedBox(width: 5)),
                               FlatButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text(
+                                child: const Text(
                                   'الغاء',
                                   style: TextStyle(
                                       fontSize: 20,
@@ -171,8 +170,8 @@ class _EditProfileState extends State<EditProfile> {
                             ],
                           ),
                         )),
-                    SizedBox(height: 75),
-                    Padding(
+                    const SizedBox(height: 75),
+                    const Padding(
                       padding: EdgeInsets.only(right: 30),
                       child: Align(
                         alignment: Alignment.bottomRight,
@@ -185,29 +184,29 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Stack(
                   children: <Widget>[
                     Container(
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                          color: Color(0xffFFAADC),
+                          color: const Color(0xffFFAADC),
                           image: DecorationImage(
                               image: profilepic ?? _decideImageView(),
                               fit: BoxFit.cover),
                           shape: BoxShape.circle),
                     ),
                     Transform.translate(
-                      offset: Offset(-72, 0),
+                      offset: const Offset(-72, 0),
                       child: GestureDetector(
                         child: Container(
                           width: 35,
                           height: 35,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             image: DecorationImage(
                                 image: AssetImage('images/camera.png'),
                                 fit: BoxFit.cover),
@@ -227,7 +226,7 @@ class _EditProfileState extends State<EditProfile> {
                     child: Column(
                       children: <Widget>[
                         TextFormField(
-                          controller: fullNameController,
+                          controller: _fullNameController,
                           decoration: inputDecoration.copyWith(
                               hintText: 'الاسم االكامل'),
                           readOnly: loading,
@@ -240,38 +239,42 @@ class _EditProfileState extends State<EditProfile> {
                             return null;
                           },
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         TextFormField(
-                          controller: userNameController,
+                          controller: _userNameController,
                           decoration: inputDecoration.copyWith(
                               hintText: 'اسم المستخدم'),
                           readOnly: loading,
                           validator: (userName) {
                             var userNrexEx = RegExp(
                                 r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$");
-                            if (userName.isNotEmpty) if (userName.length <= 4) {
-                              return "اسم المستخدم قصير جدا";
-                            } else if (!userNrexEx.hasMatch(userName)) {
-                              return "يجب ان  لا يحتوي على نقط او فراغات";
+                            if (userName.isNotEmpty) {
+                              if (userName.length <= 4) {
+                                return "اسم المستخدم قصير جدا";
+                              } else {
+                                if (!userNrexEx.hasMatch(userName)) {
+                                  return "يجب ان  لا يحتوي على نقط او فراغات";
+                                }
+                              }
                             }
                             return null;
                           },
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         TextFormField(
-                          controller: emailController,
+                          controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: inputDecoration.copyWith(
                               hintText: 'البريد الالكتروني'),
                           enabled: false,
                           readOnly: true,
                         ),
-                        Text(
+                        const Text(
                           'لا تستطيع تغيير البريد الالكتروني في الوقت الحالي',
                           style: TextStyle(color: Colors.grey),
                         ),
                         TextFormField(
-                          controller: phoneNoController,
+                          controller: _phoneNoController,
                           keyboardType: TextInputType.phone,
                           decoration:
                               inputDecoration.copyWith(hintText: 'رقم الهاتف'),
@@ -287,7 +290,7 @@ class _EditProfileState extends State<EditProfile> {
                           },
                         ),
                         widget.user.phoneNo.isEmpty
-                            ? Text(
+                            ? const Text(
                                 'يجب ان يكون الرقم مربوط بالواتساب الخاص بك ليتمكن المشترون من مراسلتك',
                                 style: TextStyle(color: Colors.grey),
                               )
@@ -302,8 +305,8 @@ class _EditProfileState extends State<EditProfile> {
                                 readOnly: true,
                               ),
                               Transform.translate(
-                                offset: Offset(0, 10),
-                                child: Align(
+                                offset: const Offset(0, 10),
+                                child: const Align(
                                   alignment: Alignment.centerLeft,
                                   child: Icon(Icons.arrow_forward_ios),
                                 ),
@@ -324,13 +327,15 @@ class _EditProfileState extends State<EditProfile> {
                             });
                           },
                         ),
-                        SizedBox(height: 20),
-                        loading ? CircularProgressIndicator() : Container(),
+                        const SizedBox(height: 20),
+                        loading
+                            ? const CircularProgressIndicator()
+                            : Container(),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
               ],
             ),
           ),
@@ -343,27 +348,28 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       loading = true;
     });
-    bool isUserNameExcist = false;
-    var newUsername = userNameController.text;
+    var isUserNameExcist = false;
+    var newUsername = _userNameController.text;
     FocusScope.of(context).unfocus();
     if (_formKey.currentState.validate()) {
-      if (widget.user.userName != newUsername)
+      if (widget.user.userName != newUsername) {
         isUserNameExcist =
             await DatabaseService('').checkUserNameExcist(newUsername);
+      }
 
       if (!isUserNameExcist) {
-        final number = phoneNoController.text.isNotEmpty
-            ? '+964${phoneNoController.text.substring(1)}'
+        final number = _phoneNoController.text.isNotEmpty
+            ? '+964${_phoneNoController.text.substring(1)}'
             : '';
-        String newImageUrl = profilepic == null
+        var newImageUrl = profilepic == null
             ? await DatabaseService(widget.user.uid).uploadPic(imageFile)
             : widget.user.imageUrl;
         await DatabaseService(widget.user.uid).updateUserData(
           widget.user.copyWith(
-            fullName: fullNameController.text,
+            fullName: _fullNameController.text,
             imageUrl: newImageUrl ?? "",
             phoneNo: number,
-            userName: userNameController.text,
+            userName: _userNameController.text,
           ),
         );
         showOverlay(context: context, text: 'تم تعديل المعلومات');

@@ -1,10 +1,10 @@
 import 'package:flushbar/flushbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/services/data_base.dart';
+
+import '../services/data_base.dart';
 
 Future<String> validateEmail(String email) async {
-  var emailRegEx = RegExp(
+  final emailRegEx = RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   if (email == null || email.isEmpty) {
@@ -22,15 +22,18 @@ String validatePassword(String password) {
     return "الرجاء ادخال كلمة السر";
   } else if (password.length < 6) {
     return 'كلمة السر قصيرة جدا';
-  } else if (password.contains(' '))
-    return 'يجب ان لا تحتوي كلمة السر على مسافات';
+  } else {
+    if (password.contains(' ')) {
+      return 'يجب ان لا تحتوي كلمة السر على مسافات';
+    }
+  }
   return null;
 }
 
 Future<String> validateUsername(String userName) async {
-  var userNrexEx =
+  final userNrexEx =
       RegExp(r"^(?=.{4,20}$)(?:[a-zA-Z\d]+(?:(?:\.|-|_)[a-zA-Z\d])*)+$");
-  bool isUserNameExcist =
+  final isUserNameExcist =
       await DatabaseService('').checkUserNameExcist(userName);
   if (userName.isNotEmpty) {
     if (isUserNameExcist != null && isUserNameExcist) {
@@ -45,7 +48,7 @@ Future<String> validateUsername(String userName) async {
 }
 
 String validatePhoneNo(String phoneNo) {
-  var phoneRegEx = RegExp(r"07[3-9][0-9]{8}");
+  final phoneRegEx = RegExp(r"07[3-9][0-9]{8}");
   if (phoneNo.isEmpty == null || phoneNo.isEmpty) {
     return "رجاءا ادخل رقم الهاتف";
   } else if (!phoneRegEx.hasMatch(phoneNo) || phoneNo.length > 11) {
@@ -69,8 +72,8 @@ void showFlushSnackBar(BuildContext context, String messege) {
     messageText: Text(
       messege,
       textDirection: TextDirection.rtl,
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
     ),
-    duration: Duration(seconds: 3),
+    duration: const Duration(seconds: 3),
   )..show(context);
 }

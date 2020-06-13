@@ -1,31 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:house_of_joy/functions/show_dialog.dart';
-import 'package:house_of_joy/models/post.dart';
-import 'package:house_of_joy/services/post_services.dart';
-import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
-import 'package:house_of_joy/ui/Costume_widgets/post_widget.dart';
-
+import '../../models/post.dart';
+import '../../functions/show_dialog.dart';
+import '../../services/post_services.dart';
+import '../Costume_widgets/post_widget.dart';
+import '../Costume_widgets/loading_dialog.dart';
 
 class ShowThwGoods extends StatefulWidget {
-  final String _title;
+  final String title;
 
-  ShowThwGoods(
-    this._title,
-  );
+  ShowThwGoods(this.title);
 
   @override
-  _ShowThwGoodsState createState() => _ShowThwGoodsState(_title);
+  _ShowThwGoodsState createState() => _ShowThwGoodsState(title);
 }
 
 class _ShowThwGoodsState extends State<ShowThwGoods> {
-  String _title;
+  final String _title;
 
   _ShowThwGoodsState(this._title);
 
   Color colorLike = Colors.red;
-  Color colorNotlike = Color(0xffBDADE0);
+  Color colorNotlike = const Color(0xffBDADE0);
   List<Post> posts;
 
   @override
@@ -40,31 +37,31 @@ class _ShowThwGoodsState extends State<ShowThwGoods> {
       builder: (context, snapshot) {
         posts = snapshot.data;
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage(
                     'images/backgroundImage.png',
                   ),
                   fit: BoxFit.fill)),
           child: Scaffold(
-            backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+            backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
             body: SafeArea(
               child: Stack(
                 children: <Widget>[
                   ModalProgress(
-                    costumeIndicator: LoadingDialog(),
+                    costumeIndicator: const LoadingDialog(),
                     inAsyncCall: !snapshot.hasData,
                     child: Container(
-                      padding: EdgeInsets.only(top: 100),
+                      padding: const EdgeInsets.only(top: 100),
                       child: posts == null
                           ? Container()
                           : posts.isEmpty
-                              ? Center(child: Text('لايوجد مشاريع هنا'))
+                              ? const Center(child: Text('لايوجد مشاريع هنا'))
                               : ListView.builder(
                                   itemCount: posts.length,
                                   itemBuilder: (context, index) {
                                     return buildPostWidget(
-                                        posts[index], context,index);
+                                        posts[index], context, index);
                                   },
                                 ),
                     ),
@@ -72,25 +69,21 @@ class _ShowThwGoodsState extends State<ShowThwGoods> {
                   Row(
                     children: <Widget>[
                       IconButton(
-                          icon: Icon(Icons.arrow_back_ios),
+                          icon: const Icon(Icons.arrow_back_ios),
                           onPressed: () {
                             Navigator.pop(context);
                           }),
-                      Expanded(
-                        child: SizedBox(width: 3),
-                      ),
+                      const Expanded(child: SizedBox(width: 3)),
                       Text(
                         '$_title',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Color(0xffE10586),
                             fontSize: 26,
                             fontFamily: 'ae_Sindibad'),
                       ),
-                      Expanded(
-                        child: SizedBox(width: 3),
-                      ),
+                      const Expanded(child: SizedBox(width: 3)),
                       IconButton(
-                        icon: Icon(Icons.home),
+                        icon: const Icon(Icons.home),
                         iconSize: 30,
                         onPressed: () {
                           showCostumeDialog(context);

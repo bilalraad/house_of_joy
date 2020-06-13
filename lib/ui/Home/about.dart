@@ -7,14 +7,14 @@ class About extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage(
                 'images/backgroundImage.png',
               ),
               fit: BoxFit.fill)),
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+        backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: SingleChildScrollView(
           child: SafeArea(
             child: Column(
@@ -24,37 +24,37 @@ class About extends StatelessWidget {
                     Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
-                          icon: Icon(Icons.arrow_back_ios),
+                          icon: const Icon(Icons.arrow_back_ios),
                           onPressed: () {
                             Navigator.pop(context);
                           }),
                     ),
-                    SizedBox(height: 75),
+                    const SizedBox(height: 75),
                     Padding(
-                      padding: EdgeInsets.only(right: 30),
+                      padding: const EdgeInsets.only(right: 30),
                       child: Align(
                         alignment: Alignment.bottomRight,
                         child: Text(
                           isAboutApp ? 'حول التطبيق' : 'حول المبادرة',
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Color(0xFFCA39E3),
                               fontSize: 24,
                               fontFamily: 'ae_Sindibad'),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width / 1.4,
                   height: 220,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       image: DecorationImage(
                           image: AssetImage('images/codeForIraq.jpg'),
                           fit: BoxFit.cover)),
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Directionality(
                   textDirection: TextDirection.rtl,
                   child: Container(
@@ -62,7 +62,7 @@ class About extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         isAboutApp
-                            ? Text(
+                            ? const Text(
                                 'عمل تطبيق خاص للمشاريع الصغيرة المنزلية بكل انواعها للنساء '
                                 'يتكون التطبيق من اقسام مثلا قسم خاص للأكلات والحلويات'
                                 ' وقسم خاص للاعمال اليدوية وقسم خاص للخياطة وغيرها.'
@@ -74,13 +74,13 @@ class About extends StatelessWidget {
                                 'وكذلك أعطاء رأيه وترك تعليق على الذي طلبه مسبقا ليسهل للبقية معرفة اراء الزائرين.',
                                 style: TextStyle(fontSize: 18),
                               )
-                            : Text(
+                            : const Text(
                                 'وهي مبادرة انسانية غير ربحية تهدف الى خدمة المجتمع عن طريق البرمجة (Programming). '
                                 'تعتبر "Code for Iraq" مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب '
                                 'بأستخدام التقنيات مفتوحة المصدر Open source  , كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما .',
                                 style: TextStyle(fontSize: 18),
                               ),
-                        SizedBox(height: 30)
+                        const SizedBox(height: 30)
                       ],
                     ),
                   ),
@@ -98,14 +98,14 @@ class Staff extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage(
                 'images/backgroundImage.png',
               ),
               fit: BoxFit.fill)),
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+        backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -115,13 +115,13 @@ class Staff extends StatelessWidget {
                     Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
-                          icon: Icon(Icons.arrow_back_ios),
+                          icon: const Icon(Icons.arrow_back_ios),
                           onPressed: () {
                             Navigator.pop(context);
                           }),
                     ),
-                    SizedBox(height: 75),
-                    Padding(
+                    const SizedBox(height: 75),
+                    const Padding(
                       padding: EdgeInsets.only(right: 30),
                       child: Align(
                         alignment: Alignment.bottomRight,
@@ -134,25 +134,25 @@ class Staff extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
               _createNewEmloyee(context, 'Muhammed Essa',
                   'Manager code for Iraq', 'Kirkuk', 'images/MuhammedEssa.jpg'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _createNewEmloyee(context, 'Zahraa Ali', 'Project manager',
                   'Wasit', 'images/ZahraAli.jpg'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _createNewEmloyee(context, 'Noor Al-huda Lateef', 'ui/ux design',
                   'Wasit', 'images/NoorAlhuda.jpg'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _createNewEmloyee(context, 'Ahmed Yaseen', 'Programmer',
                   'Salah Al-din', 'images/AhmedYaseen.jpg'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _createNewEmloyee(context, 'Murtada Hamid', 'Logc designer',
                   'Baghdad', 'images/MurtadaHamid.jpg'),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -171,20 +171,20 @@ class Staff extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Color(0xffFFAADC),
+              color: const Color(0xffFFAADC),
               image: DecorationImage(
                   image: AssetImage(pathImage), fit: BoxFit.cover),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          SizedBox(width: 5),
+          const SizedBox(width: 5),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 '$name',
-                style: TextStyle(
+                style: const TextStyle(
                     color: Color(0xFFCA39E3),
                     fontSize: 18,
                     fontFamily: 'ae_Sindibad',
@@ -193,7 +193,7 @@ class Staff extends StatelessWidget {
               ),
               Text(
                 '$position',
-                style: TextStyle(
+                style: const TextStyle(
                     color: Color(0xFFCA39E3),
                     fontSize: 14,
                     fontFamily: 'ae_Sindibad',
@@ -201,7 +201,7 @@ class Staff extends StatelessWidget {
               ),
               Text(
                 '$city',
-                style: TextStyle(
+                style: const TextStyle(
                     color: Color(0xFFCA39E3),
                     fontSize: 14,
                     fontFamily: 'ae_Sindibad',

@@ -1,21 +1,22 @@
 import 'dart:async';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/services/shered_Preference.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+
+import './data_base.dart';
+import '../models/user.dart';
+import './shered_Preference.dart';
 
 abstract class BaseAuth {
   Future<String> signIn(String email, String password, String userName);
 
   Future<String> signUp(String email, String password, User user);
-
-  Stream<FirebaseUser> getCurrentUser();
 
   Future<void> sendEmailVerification();
 
@@ -29,6 +30,8 @@ abstract class BaseAuth {
 
   Future<void> resetPassword(String email);
 
+  Future<String> changePassword(String oldPassword, String newPassword);
+
   Future<String> signInWithFacebook();
 }
 
@@ -40,7 +43,7 @@ enum AuthState {
 
 class Auth implements BaseAuth {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FacebookLogin facebookSignIn = new FacebookLogin();
+  final FacebookLogin facebookSignIn = FacebookLogin();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   static StreamController<AuthState> authState = StreamController.broadcast();
@@ -50,7 +53,6 @@ class Auth implements BaseAuth {
   }
 
   Future<String> signIn(String email, String password, String userName) async {
-     
     if (userName.isNotEmpty) {
       email = await DatabaseService('').getEmailByUsername(userName);
       if (email == null || email.isEmpty) {
@@ -60,11 +62,11 @@ class Auth implements BaseAuth {
       }
     }
     try {
-      AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
+      final result = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      FirebaseUser firebaseuser = result.user;
+      var firebaseuser = result.user;
       if (firebaseuser.isEmailVerified) {
         final user = await DatabaseService(firebaseuser.uid).getUserData();
         SharedPrefs().setUserId(uid: user.uid);
@@ -78,19 +80,22 @@ class Auth implements BaseAuth {
     } catch (e) {
       addState(AuthState.error);
       if (e is PlatformException) {
-        String errorMessege = '';
-        if (e.code == 'ERROR_USER_NOT_FOUND')
-          errorMessege = 'عذرا لا يوجد حساب بهذا الايميل';
-        else if (e.code == 'ERROR_WRONG_PASSWORD')
-          errorMessege = 'كلمة السر غير صحيحة';
-        else if (e.code == 'ERROR_NETWORK_REQUEST_FAILED')
-          errorMessege = 'لايوجد اتصال بالانترنت';
-        else
-          errorMessege = 'حدث خطا غير معروف الرجاء المحاولة لاحقا';
+        var errorMessege = '';
+        if (e.code == 'ERROR_USER_NOT_FOUND') {
+          errorMessege = 'عذرا لا يوجد حساب بهذا البريد الالكتروني';
+        } else {
+          if (e.code == 'ERROR_WRONG_PASSWORD') {
+            errorMessege = 'كلمة السر غير صحيحة';
+          } else if (e.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+            errorMessege = 'لايوجد اتصال بالانترنت';
+          } else {
+            errorMessege = 'حدث خطا غير معروف الرجاء المحاولة لاحقا';
+          }
+        }
 
         return errorMessege;
       } else {
-        print(e);
+        debugPrint(e);
       }
     }
     return null;
@@ -98,9 +103,9 @@ class Auth implements BaseAuth {
 
   Future<String> signUp(String email, String password, User user) async {
     try {
-      AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
+      final result = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser firebaseUser = result.user;
+      final firebaseUser = result.user;
       await DatabaseService(firebaseUser.uid)
           .updateUserData(user.copyWith(uid: firebaseUser.uid));
       await firebaseUser.sendEmailVerification();
@@ -109,45 +114,49 @@ class Auth implements BaseAuth {
       addState(AuthState.error);
 
       if (e is PlatformException) {
-        String errorMessege = '';
-        if (e.code == 'ERROR_INVALID_EMAIL')
-          errorMessege = 'عذرا لايمكن التسجيل باستخدام هذا الايميل';
-        else if (e.code == 'ERROR_WEAK_PASSWORD')
-          errorMessege = 'الباسوورد ضعيف جدا';
-        else if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE')
-          errorMessege = 'الايميل مستخدم سابقا';
-        else if (e.code == 'network_error')
-          errorMessege = 'لايوجد اتصال بالانترنت';
-        else if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE')
-          errorMessege = await _getEmailAlreadyInUseError(email);
-        else if (e.code == 'ERROR_NETWORK_REQUEST_FAILED')
-          errorMessege = 'لايوجد اتصال بالانترنت';
-        else
-          errorMessege = 'حدث خطا غير معروف الرجاء المحاولة لاحقا';
+        var errorMessege = '';
+        if (e.code == 'ERROR_INVALID_EMAIL') {
+          errorMessege = 'عذرا لايمكن التسجيل باستخدام هذا البريد الالكتروني';
+        } else {
+          if (e.code == 'ERROR_WEAK_PASSWORD') {
+            errorMessege = 'الباسوورد ضعيف جدا';
+          } else {
+            if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+              errorMessege = 'الايميل مستخدم سابقا';
+            } else {
+              if (e.code == 'network_error') {
+                errorMessege = 'لايوجد اتصال بالانترنت';
+              } else if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+                errorMessege = await _getEmailAlreadyInUseError(email);
+              } else if (e.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+                errorMessege = 'لايوجد اتصال بالانترنت';
+              } else {
+                errorMessege = 'حدث خطا غير معروف الرجاء المحاولة لاحقا';
+              }
+            }
+          }
+        }
 
         return errorMessege;
       } else {
-        print(e);
+        debugPrint(e);
         return 'حدث خطا غير معروف';
       }
     }
   }
 
-
-  Stream<FirebaseUser> getCurrentUser() {
-    return _firebaseAuth.onAuthStateChanged;
-  }
-
   Future<void> signOut() async {
     addState(AuthState.notLogedIn);
 
+    await SharedPrefs().deleteUser();
     _firebaseAuth.signOut();
     await googleSignout();
     await facebookSignout();
   }
 
+  /// this func. will send a link to user's email not a code
   Future<void> sendEmailVerification() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+    final user = await _firebaseAuth.currentUser();
     user.sendEmailVerification();
   }
 
@@ -155,17 +164,15 @@ class Auth implements BaseAuth {
     User user;
     String email;
     try {
-      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
+      final googleUser = await _googleSignIn.signIn();
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       email = googleUser.email;
-      final AuthResult authResult =
-          await _firebaseAuth.signInWithCredential(credential);
-      final FirebaseUser firebaseUser = authResult.user;
+      final authResult = await _firebaseAuth.signInWithCredential(credential);
+      final firebaseUser = authResult.user;
       assert(firebaseUser.email != null, 'the email is null');
       assert(firebaseUser.displayName != null, 'the display name is null');
       assert(!firebaseUser.isAnonymous, 'the user is anonymous');
@@ -183,8 +190,9 @@ class Auth implements BaseAuth {
             activities: [],
           );
 
-      if (user.userName.isEmpty)
+      if (user.userName.isEmpty) {
         await DatabaseService(firebaseUser.uid).updateUserData(user);
+      }
 
       SharedPrefs().setUserId(uid: user.uid);
       addState(AuthState.lohedIn);
@@ -192,7 +200,7 @@ class Auth implements BaseAuth {
     } catch (e) {
       addState(AuthState.error);
       if (e is PlatformException) {
-        String errorMessege = '';
+        var errorMessege = '';
         if (e.code == 'sign_in_failed') {
           errorMessege = 'حدث خطا غير معروف الرجاء المحاولة مرة اخرى';
         } else if (e.code == 'network_error') {
@@ -204,7 +212,7 @@ class Auth implements BaseAuth {
         }
         return errorMessege;
       }
-      print(e);
+      debugPrint(e);
     }
     return '';
   }
@@ -214,6 +222,7 @@ class Auth implements BaseAuth {
     return true;
   }
 
+  ///this func. will sent link to users's email to reset the password from the link
   Future<void> resetPassword(String email) async {
     if (!await connected()) {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
@@ -221,7 +230,9 @@ class Auth implements BaseAuth {
     }
     await _firebaseAuth.sendPasswordResetEmail(email: email);
     BotToast.showSimpleNotification(
-        title: 'reset passwod link was sent to your email');
+      title: 'تم ارسال رابط تغيير كلمة السر الى البريد الالكتروني الخاص بك',
+      align: Alignment.topRight,
+    );
   }
 
   Future<String> changePassword(
@@ -229,41 +240,42 @@ class Auth implements BaseAuth {
     String newPassword,
   ) async {
     try {
-      FirebaseUser user = await _firebaseAuth.currentUser();
-      String email = user.email;
-      AuthResult result = await user.reauthenticateWithCredential(
+      final user = await _firebaseAuth.currentUser();
+      final email = user.email;
+      final result = await user.reauthenticateWithCredential(
           EmailAuthProvider.getCredential(email: email, password: oldPassword));
       await result.user.updatePassword(newPassword);
       return null;
     } catch (error) {
       if (error is PlatformException) {
-        if (error.code == 'ERROR_WRONG_PASSWORD')
+        if (error.code == 'ERROR_WRONG_PASSWORD') {
           return 'كلمة السر غير صحيحة';
-        else if (error.code == 'ERROR_NETWORK_REQUEST_FAILED')
+        } else if (error.code == 'ERROR_NETWORK_REQUEST_FAILED') {
           return 'تاكد من اتصالك بالانترنت';
-        else
+        } else {
           return 'حدث خطا غير معروف الرجاء المحاولة لاحقا';
+        }
       }
     }
     return null;
   }
 
   Future<String> _getEmailAlreadyInUseError(String email) async {
-    var signInMethodsLinkedToEmail =
+    final signInMethodsLinkedToEmail =
         await _firebaseAuth.fetchSignInMethodsForEmail(email: email);
 
     if (signInMethodsLinkedToEmail.first == 'password') {
-      return ('الايميل مربوط  سابقا بحساب اخر');
+      return ('اليريد الالكتروني مربوط  سابقا بحساب اخر');
     } else if (signInMethodsLinkedToEmail.first == 'google.com') {
-      return ('الايميل مربوط  سابقا بحساب كوكل');
+      return ('البريد الالكتروني مربوط  سابقا بحساب كوكل');
     } else {
-      return ('الايميل مربوط سابقا بحساب فيسبوك');
+      return ('البريد الالكتروني مربوط سابقا بحساب فيسبوك');
     }
   }
 
   Future<bool> isSigendInWithEmailAndPassword() async {
     final user = await _firebaseAuth.currentUser();
-    var signInMethodsLinkedToEmail =
+    final signInMethodsLinkedToEmail =
         await _firebaseAuth.fetchSignInMethodsForEmail(email: user.email);
 
     if (signInMethodsLinkedToEmail.contains('password')) {
@@ -277,7 +289,7 @@ class Auth implements BaseAuth {
   Future<String> signInWithFacebook() async {
     String email;
     try {
-      final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
+      final result = await facebookSignIn.logIn(['email']);
 
       switch (result.status) {
         case FacebookLoginStatus.loggedIn:
@@ -290,7 +302,7 @@ class Auth implements BaseAuth {
           final profile = json.decode(graphResponse.body);
           email = profile['email'];
           User user;
-          final AuthResult authResult =
+          final authResult =
               await _firebaseAuth.signInWithCredential(credential);
           final firebaseUser = authResult.user;
           // if (await _isAlreadyLinked(profile['email'], toFacebook: true)) {
@@ -305,8 +317,9 @@ class Auth implements BaseAuth {
                 activities: [],
               );
           // } else {
-          if (user.userName.isEmpty)
+          if (user.userName.isEmpty) {
             await DatabaseService(firebaseUser.uid).updateUserData(user);
+          }
           // }
           SharedPrefs().setUserId(uid: user.uid);
           addState(AuthState.lohedIn);
@@ -314,13 +327,13 @@ class Auth implements BaseAuth {
           break;
         case FacebookLoginStatus.cancelledByUser:
           addState(AuthState.notLogedIn);
-          print('Login cancelled by the user.');
+          debugPrint('Login cancelled by the user.');
           return '';
 
           break;
         case FacebookLoginStatus.error:
           addState(AuthState.error);
-          print('Something went wrong with the login process.\n'
+          debugPrint('Something went wrong with the login process.\n'
               'Here\'s the error Facebook gave us: ${result.errorMessage}');
           return 'حدث خطا غير معروف، الرجاء المحاولة مرة اخرى';
 
@@ -329,7 +342,7 @@ class Auth implements BaseAuth {
     } catch (e) {
       addState(AuthState.error);
       if (e is PlatformException) {
-        String errorMessege = '';
+        var errorMessege = '';
         if (e.code == 'sign_in_failed') {
           errorMessege = 'حدث خطا غير معروف الرجاء المحاولة مرة اخرى';
         } else if (e.code == 'network_error') {
@@ -341,7 +354,7 @@ class Auth implements BaseAuth {
         }
         return errorMessege;
       }
-      print(e);
+      debugPrint(e);
     }
     return null;
   }

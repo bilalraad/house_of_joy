@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/functions/lunch_whatsApp.dart';
-import 'package:house_of_joy/functions/validations.dart';
+
+import '../../functions/lunch_whatsApp.dart';
+import '../../functions/validations.dart';
 
 class Order extends StatefulWidget {
   final String userNumber;
@@ -15,7 +15,7 @@ class _OrderState extends State<Order> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFAFBFD),
+      backgroundColor: const Color(0xffFAFBFD),
       body: ListView(
         children: <Widget>[
           Stack(
@@ -24,7 +24,7 @@ class _OrderState extends State<Order> {
                 alignment: Alignment.topLeft,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.25,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(
                           'images/backgroundImage.png',
@@ -34,18 +34,18 @@ class _OrderState extends State<Order> {
                   alignment: Alignment.topLeft,
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.25,
-                  color: Color.fromRGBO(250, 251, 253, 75),
+                  color: const Color.fromRGBO(250, 251, 253, 75),
                   child: Transform.translate(
-                    offset: Offset(0, -5),
+                    offset: const Offset(0, -5),
                     child: Row(
                       children: <Widget>[
                         IconButton(
-                            icon: Icon(Icons.arrow_back_ios),
+                            icon: const Icon(Icons.arrow_back_ios),
                             onPressed: () {
                               Navigator.pop(context);
                             }),
-                        Expanded(child: SizedBox(height: 75)),
-                        Text(
+                        const Expanded(child: SizedBox(height: 75)),
+                        const Text(
                           'ارسال طلب',
                           style: TextStyle(
                             color: Color(0xffE10586),
@@ -53,13 +53,7 @@ class _OrderState extends State<Order> {
                             fontFamily: 'ae_Sindibad',
                           ),
                         ),
-                        Expanded(child: SizedBox(height: 75)),
-                        // IconButton(
-                        //     icon: Icon(Icons.home),
-                        //     iconSize: 30,
-                        //     onPressed: () {
-
-                        //     }),
+                        const Expanded(child: SizedBox(height: 75)),
                       ],
                     ),
                   ),
@@ -70,8 +64,8 @@ class _OrderState extends State<Order> {
           Container(
             child: Column(
               children: <Widget>[
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   'أحجز طلبيتك عبر الواتساب',
                   style: TextStyle(
                     color: Color(0xFFCA39E3),
@@ -79,11 +73,11 @@ class _OrderState extends State<Order> {
                     fontFamily: 'ae_Sindibad',
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Container(
                   width: MediaQuery.of(context).size.width / 1.8,
                   height: 45,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(50)),
                     color: Colors.white,
                   ),
@@ -93,7 +87,7 @@ class _OrderState extends State<Order> {
                         ? null
                         : () async {
                             try {
-                             await launchWhatsApp(phone: widget.userNumber);
+                              await launchWhatsApp(phone: widget.userNumber);
                             } catch (e) {
                               showFlushSnackBar(context, e);
                             }
@@ -104,21 +98,21 @@ class _OrderState extends State<Order> {
                         Container(
                           height: 30,
                           width: 30,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage('images/whatsApp.png'),
                             ),
                           ),
                         ),
-                        SizedBox(width: 5),
-                        Text(
+                        const SizedBox(width: 5),
+                        const Text(
                           'WhatsApp',
                           style: TextStyle(
                             color: Color(0xFF68EC68),
                             fontSize: 24,
                           ),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                       ],
                     ),
                     padding: const EdgeInsets.all(5.0),
@@ -128,8 +122,9 @@ class _OrderState extends State<Order> {
                   ),
                 ),
                 widget.userNumber.isEmpty
-                        ? Text('لم يضع صاحب المنشور رقم هاتفه، يمكنك طلب ذلك من خلال التعليقات')
-                        :Container()
+                    ? const Text(
+                        'لم يضع صاحب المنشور رقم هاتفه، يمكنك طلب ذلك من خلال التعليقات')
+                    : Container()
               ],
             ),
           )

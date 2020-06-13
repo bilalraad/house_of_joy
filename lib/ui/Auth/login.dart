@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/functions/validations.dart';
-import 'package:house_of_joy/services/auth.dart';
-import 'package:house_of_joy/ui/Auth/forgetPassword.dart';
-import 'package:house_of_joy/ui/Auth/signUp.dart';
+
 import '../../main.dart';
+import '../Auth/signUp.dart';
+import '../../services/auth.dart';
+import '../Auth/forgetPassword.dart';
+import '../../functions/validations.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -13,20 +14,19 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
-  bool test = false;
-  bool _obscureText = true;
-  bool isUsername = false;
-  bool loading = false;
+  var _obscureText = true;
+  var _isUsername = false;
+  var _loading = false;
+  var _emailOrUNError = '';
+  var _passwordNError = '';
 
-  final userNameOrEmailController = TextEditingController();
-  final passwordController = TextEditingController();
-  String emailOrUNError = '';
-  String passwordNError = '';
+  final _userNameOrEmailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    userNameOrEmailController.dispose();
-    passwordController.dispose();
+    _userNameOrEmailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -35,7 +35,7 @@ class _Login extends State<Login> {
         ? Text(
             val,
             textDirection: TextDirection.rtl,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.red,
             ),
           )
@@ -44,21 +44,14 @@ class _Login extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    bool showOrHidenPassword() {
+    showOrHidenPassword() {
       setState(() {
-        if (test == true) {
-          test = false;
-          _obscureText = true;
-        } else {
-          test = true;
-          _obscureText = false;
-        }
+        _obscureText = !_obscureText;
       });
-      return test;
     }
 
     return Scaffold(
-      backgroundColor: Color(0xffFAFBFD),
+      backgroundColor: const Color(0xffFAFBFD),
       body: ListView(
         children: <Widget>[
           Column(
@@ -66,26 +59,26 @@ class _Login extends State<Login> {
               Stack(
                 children: <Widget>[
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage(
                               'images/backgroundImage.png',
                             ),
                             fit: BoxFit.fitWidth)),
                     child: Container(
-                      color: Color.fromRGBO(250, 251, 253, 75),
+                      color: const Color.fromRGBO(250, 251, 253, 75),
                       child: Column(
                         children: <Widget>[
                           Align(
                             alignment: Alignment.topLeft,
                             child: IconButton(
-                                icon: Icon(Icons.arrow_back_ios),
+                                icon: const Icon(Icons.arrow_back_ios),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 }),
                           ),
-                          SizedBox(height: 75),
-                          Padding(
+                          const SizedBox(height: 75),
+                          const Padding(
                             padding: EdgeInsets.only(right: 30),
                             child: Align(
                               alignment: Alignment.bottomRight,
@@ -99,52 +92,53 @@ class _Login extends State<Login> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Container(
                   width: MediaQuery.of(context).size.width / 1.2,
                   height: 45,
-                  padding: EdgeInsets.only(right: 25),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.only(right: 25),
+                  decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(color: Colors.black12, blurRadius: 5),
                       ]),
                   child: TextField(
-                    controller: userNameOrEmailController,
-                    decoration: InputDecoration(
+                    controller: _userNameOrEmailController,
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'البريد الالكتروني او اسم المستخدم',
                       hintStyle: TextStyle(
                           fontFamily: 'ae_Sindibad', color: Color(0xffA2A2A2)),
                     ),
                     onChanged: (value) {
-                      if (emailOrUNError.isNotEmpty)
+                      if (_emailOrUNError.isNotEmpty) {
                         setState(() {
-                          emailOrUNError = '';
+                          _emailOrUNError = '';
                         });
+                      }
                     },
                   ),
                 ),
               ),
-              showError(emailOrUNError),
-              SizedBox(height: 15),
+              showError(_emailOrUNError),
+              const SizedBox(height: 15),
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Container(
                   width: MediaQuery.of(context).size.width / 1.2,
                   height: 45,
-                  padding: EdgeInsets.only(left: 16, right: 25),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.only(left: 16, right: 25),
+                  decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                       color: Colors.white,
                       boxShadow: [
@@ -155,16 +149,17 @@ class _Login extends State<Login> {
                       Container(
                         width: 200,
                         child: TextField(
-                          key: ValueKey('txtPassword'),
+                          key: const ValueKey('txtPassword'),
                           obscureText: _obscureText,
                           onChanged: (value) {
-                            if (passwordNError.isNotEmpty)
+                            if (_passwordNError.isNotEmpty) {
                               setState(() {
-                                passwordNError = '';
+                                _passwordNError = '';
                               });
+                            }
                           },
-                          controller: passwordController,
-                          decoration: InputDecoration(
+                          controller: _passwordController,
+                          decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: 'كلمة السر',
                             hintStyle: TextStyle(
@@ -172,23 +167,21 @@ class _Login extends State<Login> {
                           ),
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Container(
                         child: IconButton(
-                            icon: test
-                                ? Icon(Icons.visibility,
+                            icon: _obscureText
+                                ? const Icon(Icons.visibility,
                                     color: Color(0xffFFAADC))
-                                : Icon(Icons.visibility_off,
+                                : const Icon(Icons.visibility_off,
                                     color: Color(0xffFFAADC)),
-                            onPressed: () {
-                              showOrHidenPassword();
-                            }),
+                            onPressed: showOrHidenPassword),
                       ),
                     ],
                   ),
                 ),
               ),
-              showError(passwordNError),
+              showError(_passwordNError),
               Container(
                 width: MediaQuery.of(context).size.width / 1.2,
                 height: 45,
@@ -202,8 +195,8 @@ class _Login extends State<Login> {
                             builder: (context) => ForgetPassword(),
                           ));
                     },
-                    child: Text(
-                      'هل سيت كلمة السر؟',
+                    child: const Text(
+                      'هل نسيت كلمة السر؟',
                       style: TextStyle(
                           color: Color(0xFFCA39E3),
                           fontSize: 16,
@@ -212,20 +205,20 @@ class _Login extends State<Login> {
                   ),
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               Container(
                 width: MediaQuery.of(context).size.width / 1.2,
                 height: 45,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(50)),
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(color: Colors.black12, blurRadius: 5),
                     ]),
                 child: RaisedButton(
-                  onPressed: loading ? null : _onLogInPressd,
-                  color: Color(0xffFFAADC),
-                  child: Text(
+                  onPressed: _loading ? null : _onLogInPressd,
+                  color: const Color(0xffFFAADC),
+                  child: const Text(
                     'تسجيل',
                     style: TextStyle(
                         color: Colors.white,
@@ -253,8 +246,8 @@ class _Login extends State<Login> {
                           ),
                         );
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(5.0),
                         child: Text(
                           'انشاء حساب',
                           style:
@@ -262,8 +255,8 @@ class _Login extends State<Login> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
+                    const Padding(
+                      padding: EdgeInsets.all(5.0),
                       child: Text(
                         'ليس لديك حساب؟',
                         style: TextStyle(fontSize: 20),
@@ -282,50 +275,50 @@ class _Login extends State<Login> {
   void _onLogInPressd() async {
     FocusScope.of(context).unfocus();
     setState(() {
-      loading = true;
+      _loading = true;
     });
     var errors = _validate();
     if (errors == 0) {
       var error = await Auth().signIn(
-        isUsername ? '' : userNameOrEmailController.text,
-        passwordController.text,
-        isUsername ? userNameOrEmailController.text : '',
+        _isUsername ? '' : _userNameOrEmailController.text,
+        _passwordController.text,
+        _isUsername ? _userNameOrEmailController.text : '',
       );
       if (error == null) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Wrapper()),
-          (Route<dynamic> route) => false,
+          (route) => false,
         );
       } else {
         showFlushSnackBar(context, error);
       }
     }
     setState(() {
-      loading = false;
+      _loading = false;
     });
   }
 
   int _validate() {
-    String userNameOrEmail = userNameOrEmailController.text;
-    String password = passwordController.text;
-    int errors = 0;
+    final userNameOrEmail = _userNameOrEmailController.text;
+    final password = _passwordController.text;
+    var errors = 0;
 
     var emailRegEx = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
     if (userNameOrEmail.isEmpty) {
-      emailOrUNError = 'الرجاء ملء الحقل';
+      _emailOrUNError = 'الرجاء ملء الحقل';
       errors++;
     } else if (!emailRegEx.hasMatch(userNameOrEmail)) {
-      isUsername = true;
+      _isUsername = true;
     }
 
     if (password.isEmpty) {
-      passwordNError = 'الرجاء ادخال كلمة السر';
+      _passwordNError = 'الرجاء ادخال كلمة السر';
       errors++;
     } else if (password.length < 6) {
-      passwordNError = 'كلمة السر خاطئة';
+      _passwordNError = 'كلمة السر خاطئة';
       errors++;
     }
     setState(() {});

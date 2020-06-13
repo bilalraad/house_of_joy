@@ -12,71 +12,71 @@ class Category {
   final String image;
   final CategoryTabType type;
 
-  Category({this.type, this.name, this.image});
+  const Category({this.type, this.name, this.image});
 }
 
-final categories = [
-  Category(
+final List<Category> categories = [
+  const Category(
     name: 'الأكل الشرقي',
     image: 'images/easternEating.jpg',
     type: CategoryTabType.cooking,
   ),
-  Category(
+  const Category(
     name: 'الأكل الغربي',
     image: 'images/westernEting.jpg',
     type: CategoryTabType.cooking,
   ),
-  Category(
+  const Category(
     name: 'الحلويات',
     image: 'images/candy.jpg',
     type: CategoryTabType.cooking,
   ),
-  Category(
+  const Category(
     name: 'تجهيز مناسبات',
     image: 'images/occasions.jpg',
     type: CategoryTabType.cooking,
   ),
-  Category(
+  const Category(
     name: 'كتب',
     image: 'images/book.jpg',
     type: CategoryTabType.books,
   ),
-  Category(
+  const Category(
     name: 'مواد التجميل',
     image: 'images/cosmeticMateral.jpg',
     type: CategoryTabType.cosmetic,
   ),
-  Category(
+  const Category(
     name: 'العناية بالبشرة',
     image: 'images/skinCare.jpg',
     type: CategoryTabType.cosmetic,
   ),
-  Category(
+  const Category(
     name: 'الأكسسوارات',
     image: 'images/accessories.jpg',
     type: CategoryTabType.craftworks,
   ),
-  Category(
+  const Category(
     name: 'الكوشات',
     image: 'images/handWork.jpg',
     type: CategoryTabType.craftworks,
   ),
-  Category(
+  const Category(
     name: 'التصوير',
     image: 'images/photogrphy.jpg',
     type: CategoryTabType.photography,
   ),
-  Category(
+  const Category(
     name: 'طباعة الصور',
     image: 'images/printPhoto.jpg',
     type: CategoryTabType.photography,
   ),
-  Category(
+  const Category(
     name: 'الخياطة',
     image: 'images/sewing.jpg',
     type: CategoryTabType.sewing,
   ),
-  Category(
+  const Category(
     name: 'التطريز',
     image: 'images/handWork.jpg',
     type: CategoryTabType.sewing,

@@ -1,29 +1,29 @@
 import 'dart:io';
-import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:house_of_joy/functions/validations.dart';
-import 'package:house_of_joy/models/post.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/services/post_services.dart';
-import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
-import 'package:house_of_joy/ui/Costume_widgets/select_category.dart';
-import 'package:house_of_joy/ui/Costume_widgets/view_images.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:provider/provider.dart';
+
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
+import '../../models/post.dart';
+import '../../models/user.dart';
+import '../../services/data_base.dart';
+import '../../functions/validations.dart';
+import '../../services/post_services.dart';
+import '../Costume_widgets/view_images.dart';
+import '../Costume_widgets/loading_dialog.dart';
+import '../Costume_widgets/select_category.dart';
 
-class PublishAPsost extends StatefulWidget {
+class PublishAPsostTab extends StatefulWidget {
   final Post oldPost;
 
-  const PublishAPsost({Key key, this.oldPost}) : super(key: key);
+  const PublishAPsostTab({Key key, this.oldPost}) : super(key: key);
   @override
-  _PublishAPsostState createState() => _PublishAPsostState();
+  _PublishAPsostTabState createState() => _PublishAPsostTabState();
 }
 
-class _PublishAPsostState extends State<PublishAPsost> {
+class _PublishAPsostTabState extends State<PublishAPsostTab> {
   final _key = GlobalKey<FormState>();
   var _controllerForDescription = TextEditingController();
   List<String> imagesUrl = [];
@@ -51,7 +51,7 @@ class _PublishAPsostState extends State<PublishAPsost> {
     super.initState();
   }
 
-  getImageList() async {
+  void getImageList() async {
     setState(() {
       images = [];
     });
@@ -59,20 +59,21 @@ class _PublishAPsostState extends State<PublishAPsost> {
     images = await MultiImagePicker.pickImages(
           maxImages: 5,
           enableCamera: true,
-        ).catchError((err) {
-          print(err);
-        }) ??
+        ).catchError((err) {}) ??
         [];
-    setState(() {});
+    setState(() {
+      //DO NOT delete it because its nessesary
+      //to updated the viewed images in the widget
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context, listen: false);
+    final user = Provider.of<User>(context);
 
     return Scaffold(
       body: ModalProgress(
-        costumeIndicator: LoadingDialog(),
+        costumeIndicator: const LoadingDialog(),
         inAsyncCall: _loading,
         opacity: 0,
         child: Stack(
@@ -84,7 +85,7 @@ class _PublishAPsostState extends State<PublishAPsost> {
                     Row(
                       children: <Widget>[
                         FlatButton(
-                            child: Text(
+                            child: const Text(
                               'الغاء',
                               style: TextStyle(
                                   fontSize: 20,
@@ -94,8 +95,8 @@ class _PublishAPsostState extends State<PublishAPsost> {
                             onPressed: () {
                               Navigator.of(context).pushReplacementNamed('/');
                             }),
-                        Expanded(child: SizedBox(width: 5)),
-                        Text(
+                        const Expanded(child: SizedBox(width: 5)),
+                        const Text(
                           'اضافة مشروع',
                           style: TextStyle(
                             fontFamily: 'ae_Sindibad',
@@ -103,9 +104,9 @@ class _PublishAPsostState extends State<PublishAPsost> {
                             color: Color(0xffE10586),
                           ),
                         ),
-                        Expanded(child: SizedBox(width: 5)),
+                        const Expanded(child: SizedBox(width: 5)),
                         FlatButton(
-                          child: Text(
+                          child: const Text(
                             'تم',
                             style: TextStyle(
                                 fontSize: 20,
@@ -120,7 +121,7 @@ class _PublishAPsostState extends State<PublishAPsost> {
                     Directionality(
                       textDirection: TextDirection.rtl,
                       child: Padding(
-                        padding: EdgeInsets.only(left: 10, right: 10),
+                        padding: const EdgeInsets.only(left: 10, right: 10),
                         child: Form(
                           key: _key,
                           child: TextFormField(
@@ -128,7 +129,7 @@ class _PublishAPsostState extends State<PublishAPsost> {
                             maxLines: 3,
                             textDirection: TextDirection.rtl,
                             controller: _controllerForDescription,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: "وصف المشروع ...",
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -152,20 +153,21 @@ class _PublishAPsostState extends State<PublishAPsost> {
                               ),
                             ),
                             validator: (value) {
-                              if (value.isEmpty)
+                              if (value.isEmpty) {
                                 return 'الرجاء ادخال وصف للمشروع';
+                              }
                               return null;
                             },
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     GestureDetector(
                       child: Container(
                         height: 200,
                         width: MediaQuery.of(context).size.width * 0.93,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                               image: AssetImage('images/photo.jpg'),
                               fit: BoxFit.cover),
@@ -176,20 +178,16 @@ class _PublishAPsostState extends State<PublishAPsost> {
                                 ? null
                                 : ViewImages(assetImages: images),
                       ),
-                      onTap: imagesUrl.isNotEmpty
-                          ? null
-                          : () {
-                              getImageList();
-                            },
+                      onTap: imagesUrl.isNotEmpty ? null : getImageList,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     SelectCatigory(
                       initialValue: _selectedCategory,
                       onSelectedCategory: (selectedCategory) {
                         _selectedCategory = selectedCategory;
                       },
                     ),
-                    SizedBox(height: 60),
+                    const SizedBox(height: 60),
                   ],
                 ),
               ],
@@ -215,7 +213,7 @@ class _PublishAPsostState extends State<PublishAPsost> {
 
     if (_key.currentState.validate()) {
       setState(() => _loading = true);
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 3));
       Navigator.of(context).pushReplacementNamed('/');
 
       for (var imageFile in images) {
@@ -239,7 +237,7 @@ class _PublishAPsostState extends State<PublishAPsost> {
 
       BotToast.showSimpleNotification(
           title: err == null ? 'تم نشر المنشور الخاص بك' : err,
-          align: Alignment.centerRight,
+          align: Alignment.topCenter,
           hideCloseButton: true);
     } else {
       setState(() {

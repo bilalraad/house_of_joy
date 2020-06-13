@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 
-
+///you can used it to show error or messege as small popup messege on the bottom
 Future<void> showOverlay({
   @required BuildContext context,
   @required String text,
@@ -18,7 +18,6 @@ Future<void> showOverlay({
         color: Colors.white.withOpacity(0),
         child: Container(
           decoration: BoxDecoration(
-            // border: Border.all(),
             borderRadius: BorderRadius.circular(30),
             color: Colors.grey.withOpacity(0.6),
           ),
@@ -28,7 +27,7 @@ Future<void> showOverlay({
               text,
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 15,
                 fontWeight: FontWeight.normal

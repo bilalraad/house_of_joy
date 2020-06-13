@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/functions/show_overlay.dart';
-import 'package:house_of_joy/services/auth.dart';
-import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/ui/Costume_widgets/costume_text_field.dart';
+
+import '../../services/auth.dart';
+import '../../services/data_base.dart';
+import '../../functions/show_overlay.dart';
+import '../Costume_widgets/costume_text_field.dart';
 
 class ForgetPassword extends StatefulWidget {
   @override
@@ -12,15 +13,15 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPassword extends State<ForgetPassword> {
-  final Color _colorpink = Color(0xffFFAADC);
-  final emailController = TextEditingController();
-  String emailErrorText = '';
-  bool loading = false;
-  int error = 0;
+  final _colorpink = const Color(0xffFFAADC);
+  final _emailController = TextEditingController();
+  var _emailErrorText = '';
+  var _loading = false;
+  var _error = 0;
 
   @override
   void dispose() {
-    emailController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -37,27 +38,27 @@ class _ForgetPassword extends State<ForgetPassword> {
                   Stack(
                     children: <Widget>[
                       Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             image: DecorationImage(
                                 image: AssetImage(
                                   'images/backgroundImage.png',
                                 ),
                                 fit: BoxFit.cover)),
                         child: Container(
-                          color: Color.fromRGBO(250, 251, 253, 75),
+                          color: const Color.fromRGBO(250, 251, 253, 75),
                           child: Column(
                             children: <Widget>[
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: IconButton(
-                                    icon: Icon(Icons.arrow_forward_ios),
+                                    icon: const Icon(Icons.arrow_forward_ios),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     }),
                               ),
-                              SizedBox(height: 75),
+                              const SizedBox(height: 75),
                               Padding(
-                                padding: EdgeInsets.only(right: 30),
+                                padding: const EdgeInsets.only(right: 30),
                                 child: Align(
                                   alignment: Alignment.bottomRight,
                                   child: Text(
@@ -71,15 +72,15 @@ class _ForgetPassword extends State<ForgetPassword> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                             ],
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 15),
-                  Align(
+                  const SizedBox(height: 15),
+                  const Align(
                     alignment: Alignment.topRight,
                     child: Padding(
                       padding: EdgeInsets.only(left: 25, right: 30),
@@ -93,8 +94,8 @@ class _ForgetPassword extends State<ForgetPassword> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 5),
-                  Padding(
+                  const SizedBox(height: 5),
+                  const Padding(
                     padding: EdgeInsets.only(left: 25, right: 20),
                     child: Text(
                       'سوف نرسل لك رابط يمكنك استخدامه لتغيير كلمة المرور.',
@@ -104,27 +105,25 @@ class _ForgetPassword extends State<ForgetPassword> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   CustomTextField(
-                    controller: emailController,
+                    controller: _emailController,
                     hint: 'بريدك الالكتروني',
                     onChanged: (newValue) =>
-                        setState(() => emailErrorText = ''),
+                        setState(() => _emailErrorText = ''),
                   ),
-                  emailErrorText.isNotEmpty
+                  _emailErrorText.isNotEmpty
                       ? Text(
-                          emailErrorText,
+                          _emailErrorText,
                           textDirection: TextDirection.rtl,
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
+                          style: const TextStyle(color: Colors.red),
                         )
                       : Container(),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Container(
                     width: MediaQuery.of(context).size.width / 1.8,
                     height: 45,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                       color: Colors.white,
                       boxShadow: [
@@ -132,9 +131,9 @@ class _ForgetPassword extends State<ForgetPassword> {
                       ],
                     ),
                     child: RaisedButton(
-                      onPressed: loading ? null : _onSendPressed,
+                      onPressed: _loading ? null : _onSendPressed,
                       color: _colorpink,
-                      child: Text(
+                      child: const Text(
                         'ارسال',
                         style: TextStyle(
                             color: Colors.white,
@@ -158,32 +157,33 @@ class _ForgetPassword extends State<ForgetPassword> {
 
   void _onSendPressed() async {
     setState(() {
-      loading = true;
+      _loading = true;
     });
     var emailRegEx = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    var email = emailController.text;
+    var email = _emailController.text;
 
     if (email == null || email.isEmpty) {
-      emailErrorText = "الرجاء ادخال الايميل";
-      error++;
+      _emailErrorText = "الرجاء ادخال البريد الالكتروني";
+      _error++;
     } else if (!emailRegEx.hasMatch(email)) {
-      emailErrorText = "الايميل غير صحيح";
-      error++;
+      _emailErrorText = "البريد الالكتروني غير صحيح";
+      _error++;
     } else if (!await DatabaseService('').checkEmailExcist(email)) {
-      emailErrorText = "الايميل غير موجود";
-      error++;
+      _emailErrorText = "البريد الالكتروني غير موجود";
+      _error++;
     }
-    if (error != 0) {
+    if (_error != 0) {
       setState(() {});
     } else {
       Auth().resetPassword(email);
-      emailController.clear();
+      _emailController.clear();
       showOverlay(
-          context: context, text: 'تم ارسال رسالة الى الايميل الخاص بك');
+          context: context,
+          text: 'تم ارسال رسالة الى البريد الالكتروني الخاص بك');
     }
     setState(() {
-      loading = false;
+      _loading = false;
     });
   }
 }

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:house_of_joy/models/post.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/data_base.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+import './data_base.dart';
+import '../models/post.dart';
+import '../models/user.dart';
 
 class PostServices {
   final String postId;
@@ -22,8 +24,9 @@ class PostServices {
           'likes': likes.map((e) => e.toMap()).toList(),
         },
       );
-      if (activity != null)
+      if (activity != null) {
         DatabaseService(postOwnerId).updateUserActivities(activity);
+      }
       return null;
     }
     return 'عذرا لا يوجد اتصال بالانترنت';
@@ -38,16 +41,17 @@ class PostServices {
       await postsCollection
           .document(postId)
           .updateData({'comments': comments.map((e) => e.toMap()).toList()});
-      if (activity != null)
+      if (activity != null) {
         DatabaseService(postOwnerId).updateUserActivities(activity);
+      }
 
       return null;
     }
     return 'عذرا لا يوجد اتصال بالانترنت';
   }
 
+  ///this can be used to add new post or update an existing one
   Future<String> updatePostData(Post post) async {
-    //this can be used to add new family or update an exsisting one
     if (await connected()) {
       await postsCollection.document(postId).setData(post.toMap());
       return null;
@@ -55,12 +59,37 @@ class PostServices {
     return 'عذرا لا يوجد اتصال بالانترنت';
   }
 
+  ///this will get post data by the giving postId
+  Future<Post> getPostData() async {
+    if (await connected()) {
+      final postQurey = await postsCollection.document(postId).get();
+      return Post.fromDocument(postQurey, postQurey.documentID);
+    }
+    return null;
+  }
+
   Future<String> deletePost() async {
     if (await connected()) {
+      await deletePostImages();
       await postsCollection.document(postId).delete();
+      DatabaseService('').deletePostActivities(postId);
+
       return null;
     }
     return 'عذرا لا يوجد اتصال بالانترنت';
+  }
+
+
+  ///this will delete all post images from firestore when post is deleted
+  Future<void> deletePostImages() async {
+    final post = await getPostData();
+
+    post.imagesUrl.forEach((img) async {
+      final photoRef = await FirebaseStorage.instance.getReferenceFromUrl(img);
+      photoRef.delete().catchError((e) {
+        /// '$e if([deletion_error]) this is not a big error so just ignore it';
+      });
+    });
   }
 
   List<Post> _postsListFromSnapshot(QuerySnapshot snap) {

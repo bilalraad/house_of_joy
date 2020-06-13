@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 class User {
   final String uid;
@@ -12,7 +12,7 @@ class User {
 
   User({
     @required this.uid,
-    this.phoneNo = '',
+    @required this.phoneNo,
     @required this.fullName,
     @required this.email,
     this.userName,
@@ -52,19 +52,6 @@ class User {
     };
   }
 
-  // factory User.fromDocument(DocumentSnapshot doc, String uid) {
-  //   if (doc.data == null) return null;
-  //   return User(
-  //     uid: uid,
-  //     phoneNo: doc.data['phoneNo'],
-  //     fullName: doc.data['fullName'],
-  //     userName: doc.data['userName'],
-  //     email: doc.data['email'],
-  //     imageUrl: doc.data['imageUrl'],
-  //     activities: List<Activity>.from(
-  //         doc.data['activities']?.map((e) => Activity.fromMap(e))),
-  //   );
-  // }
   factory User.fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
     var user = User(
@@ -151,7 +138,3 @@ class Activity {
     );
   }
 }
-
-
-
-

@@ -1,14 +1,16 @@
 import 'dart:io';
 
-import 'package:bot_toast/bot_toast.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/models/user.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 
+import '../models/user.dart';
+
+///this func will show [notification-like popup] or [top snakbar] inside the app without the context
 Future<void> showCostumeFireBaseErrorNotif(String title) async {
   //this func. will show in-app notification if there is no internet
   await Future.delayed(const Duration(seconds: 1));
@@ -35,18 +37,19 @@ Future<void> showCostumeFireBaseErrorNotif(String title) async {
 Future<bool> connected() async {
   try {
     final result = await InternetAddress.lookup('google.com');
+    //the first [if] will check if the device is connected to wifi or mobile data
+    //but it dosen't check if there is internet or not(i.e. you nay have connection but you cant browse any thing)
     if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      //this will check the actual intenet connection
       if (await DataConnectionChecker().hasConnection) {
-        print('connected');
-        // Mobile data detected & internet connection confirmed.
+        // 'connected';
         return true;
       } else {
-        // Mobile data detected but no internet connection found.
         return false;
       }
     }
   } catch (_) {
-    print('not connected');
+    // 'not connected';
     return false;
   }
   return false;
@@ -59,9 +62,8 @@ class DatabaseService {
 
   CollectionReference usersCollection = Firestore.instance.collection('users');
 
-// family functions
+  ///this func. can be used to add new user or update an exsisting one
   Future updateUserData(User user) async {
-    //this can be used to add new family or update an exsisting one
     if (await connected()) {
       await usersCollection.document(uid).setData(user.toMap());
     } else {
@@ -81,27 +83,40 @@ class DatabaseService {
         .map(_activitiesListFromSnapshot);
   }
 
+  ///this func. can be used to add new activity or update an exsisting one
   Future<void> updateUserActivities(Activity activity) async {
     if (!await connected()) {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
       return null;
     }
-    var postowner = await getUserData();
-    print(postowner.uid);
+    final postowner = await getUserData();
     await usersCollection.document(uid).updateData({
       'activities':
           (postowner.activities..add(activity)).map((e) => e.toMap()).toList()
     });
   }
 
+  ///if the user deleted a post this will delete all the activities that connected to that post
+  Future<void> deletePostActivities(String postId) async {
+    final postowner = await getCurrentUserData();
+    await usersCollection.document(postowner.uid).updateData({
+      'activities': (postowner.activities
+            ..removeWhere((element) => element.postId == postId))
+          .map((e) => e.toMap())
+          .toList()
+    });
+  }
+
+  ///this will mark all the activities as readed when the user enter the activities tab
   Future<void> markAllActivitiesAsReaded() async {
     if (await connected()) {
-      var postowner = await getUserData();
-      List<Activity> updatedActivities = [];
+      final postowner = await getUserData();
+      var updatedActivities = <Activity>[];
       if (postowner.activities.length >= 6) {
         for (var i = 6; i < postowner.activities.length; i++) {
-          if (postowner.activities[i].isReaded)
+          if (postowner.activities[i].isReaded) {
             postowner.activities.remove(postowner.activities[i - 6]);
+          }
         }
       }
       for (var i in postowner.activities) {
@@ -117,15 +132,15 @@ class DatabaseService {
     if (!await connected()) {
       return null;
     }
-    var querySnapshot = await DatabaseService('')
+    final querySnapshot = await DatabaseService('')
         .usersCollection
         .where('userName', isEqualTo: username)
         .snapshots()
         .first;
 
-    var documents = querySnapshot.documents;
+    final documents = querySnapshot.documents;
 
-    var email = documents.isNotEmpty ? documents.first.data['email'] : null;
+    final email = documents.isNotEmpty ? documents.first.data['email'] : null;
 
     return email;
   }
@@ -134,7 +149,7 @@ class DatabaseService {
     if (!await connected()) {
       return false;
     }
-    var snap = await usersCollection
+    final snap = await usersCollection
         .where('userName', isEqualTo: userName)
         .getDocuments();
     if (snap.documents.isNotEmpty) {
@@ -148,7 +163,7 @@ class DatabaseService {
     if (!await connected()) {
       return false;
     }
-    var snap =
+    final snap =
         await usersCollection.where('email', isEqualTo: email).getDocuments();
     if (snap.documents.isNotEmpty) {
       return true;
@@ -157,13 +172,12 @@ class DatabaseService {
     return false;
   }
 
+  ///get user data that is currently using the app
   Future<User> getCurrentUserData() async {
     if (!await connected()) {
       return null;
     }
     final firebaseuser = await FirebaseAuth.instance.onAuthStateChanged.first;
-    // print(firebaseuser.uid);
-
     if (firebaseuser == null) return null;
     final userDoc = await usersCollection.document(firebaseuser.uid).get();
     final user = User.fromDocument(userDoc, userDoc.documentID);
@@ -175,6 +189,7 @@ class DatabaseService {
     await usersCollection.document(uid).delete();
   }
 
+  ///get any user data by giving his Id
   Future<User> getUserData() async {
     if (uid == null) return null;
     if (!await connected()) {
@@ -186,6 +201,7 @@ class DatabaseService {
     return user;
   }
 
+  ///this function is used to upload profile picture
   Future<String> uploadPic(File image, {String fileName}) async {
     if (!await connected()) {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
@@ -193,10 +209,9 @@ class DatabaseService {
     }
 
     if (uid.isNotEmpty) fileName = uid;
-    StorageReference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    final firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
+    final uploadTask = firebaseStorageRef.putFile(image);
+    final taskSnapshot = await uploadTask.onComplete;
     if (taskSnapshot.error == null) {
       final String imageUrl = await taskSnapshot.ref.getDownloadURL();
       await Firestore.instance
@@ -208,18 +223,16 @@ class DatabaseService {
       return null;
     }
   }
-
+  ///this function is used to upload post pictures
   Future<dynamic> postImageToFireBase(Asset imageFile) async {
     if (!await connected()) {
-      print('عذرا لا يوجد اتصال بالانترنت');
       return null;
     }
-    var imageData = await imageFile.getByteData();
-    String fileName = '$uid${imageFile.name}';
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask =
-        reference.putData(imageData.buffer.asUint8List());
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    final imageData = await imageFile.getByteData();
+    final fileName = '$uid${imageFile.name}';
+    final reference = FirebaseStorage.instance.ref().child(fileName);
+    final uploadTask = reference.putData(imageData.buffer.asUint8List());
+    final storageTaskSnapshot = await uploadTask.onComplete;
     return storageTaskSnapshot.ref.getDownloadURL();
   }
 }

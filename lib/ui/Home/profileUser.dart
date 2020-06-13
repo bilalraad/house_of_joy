@@ -1,50 +1,45 @@
 import 'package:flutter/material.dart';
-
-import 'package:house_of_joy/functions/show_dialog.dart';
-import 'package:house_of_joy/models/post.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/post_services.dart';
-import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
-import 'package:house_of_joy/ui/Costume_widgets/post_widget.dart';
-import 'package:house_of_joy/ui/screens/showSelectedProduct.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/post.dart';
+import '../../models/user.dart';
+import './showSelectedProduct.dart';
+import '../../functions/show_dialog.dart';
+import '../../services/post_services.dart';
+import '../Costume_widgets/view_images.dart';
+import '../Costume_widgets/loading_dialog.dart';
 
-class UserProfile extends StatefulWidget {
+class UserProfileTab extends StatefulWidget {
   final User outSideUser;
 
-  const UserProfile({Key key, this.outSideUser}) : super(key: key);
+  const UserProfileTab({Key key, this.outSideUser}) : super(key: key);
   @override
-  _UserProfileState createState() => _UserProfileState();
+  _UserProfileTabState createState() => _UserProfileTabState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileTabState extends State<UserProfileTab> {
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<User>(context);
-    List<Post> posts;
-    if (widget.outSideUser == null) {
-      posts = Provider.of<List<Post>>(context);
-    } else {
-      user = widget.outSideUser;
-    }
+    final user = widget.outSideUser ?? Provider.of<User>(context);
+    final posts =
+        widget.outSideUser == null ? Provider.of<List<Post>>(context) : null;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage(
                 'images/backgroundImage.png',
               ),
               fit: BoxFit.fill)),
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+        backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: user == null
-            ? LoadingDialog()
+            ? const LoadingDialog()
             : Stack(
                 children: <Widget>[
                   Column(
                     children: <Widget>[
-                      SizedBox(height: 23),
+                      const SizedBox(height: 23),
                       Stack(
                         children: <Widget>[
                           Container(
@@ -56,27 +51,24 @@ class _UserProfileState extends State<UserProfile> {
                                     children: <Widget>[
                                       widget.outSideUser != null
                                           ? IconButton(
-                                              icon: Icon(Icons.arrow_back_ios),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              })
+                                              icon: const Icon(
+                                                  Icons.arrow_back_ios),
+                                              onPressed: () =>
+                                                  Navigator.pop(context))
                                           : Container(),
-                                      Expanded(
-                                        child: SizedBox(width: 5),
-                                      ),
+                                      const Expanded(child: SizedBox(width: 5)),
                                       IconButton(
-                                          icon: Icon(Icons.home),
+                                          icon: const Icon(Icons.home),
                                           iconSize: 30,
-                                          onPressed: () {
-                                            showCostumeDialog(context);
-                                          })
+                                          onPressed: () =>
+                                              showCostumeDialog(context))
                                     ],
                                   ),
                                 ),
                                 Container(
                                   width: 100,
                                   height: 100,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                       color: Color(0xffFFAADC),
                                       shape: BoxShape.circle),
                                   child: !user.imageUrl.isNotEmpty
@@ -89,13 +81,13 @@ class _UserProfileState extends State<UserProfile> {
                                 ),
                                 Text(
                                   user.fullName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontFamily: 'ae_Sindibad',
                                     fontSize: 20,
                                     color: Color(0xff460053),
                                   ),
                                 ),
-                                SizedBox(height: 40),
+                                const SizedBox(height: 40),
                               ],
                             ),
                           ),
@@ -108,19 +100,23 @@ class _UserProfileState extends State<UserProfile> {
                       // posts == null
                       ? _buildOutSideUserPostsGridView()
                       : Container(
-                          padding: EdgeInsets.only(top: 200),
+                          padding: const EdgeInsets.only(top: 200),
                           child: posts == null
-                              ? LoadingDialog()
-                              : GridView.builder(
-                                  itemCount: posts.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3),
-                                  itemBuilder: (context, index) {
-                                    return buidPostFirstImageContainer(
-                                        posts[index], user, true);
-                                  },
-                                ),
+                              ? const LoadingDialog()
+                              : posts.isEmpty
+                                  ? const Center(
+                                      child: Text('لم يتم نشر اي منشورات هنا'))
+                                  : GridView.builder(
+                                      itemCount: posts.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3),
+                                      itemBuilder: (context, index) {
+                                        return buidPostFirstImageContainer(
+                                            posts[index], user,
+                                            showOptions: true);
+                                      },
+                                    ),
                         ),
                 ],
               ),
@@ -130,32 +126,34 @@ class _UserProfileState extends State<UserProfile> {
 
   Widget _buildOutSideUserPostsGridView() {
     return FutureBuilder<List<Post>>(
-        future: PostServices('').getUserPosts(widget.outSideUser.uid),
-        builder: (context, snapshot) {
-          var posts = snapshot.data;
-          return Container(
-            padding: EdgeInsets.only(top: 200),
-            child: posts == null
-                ? LoadingDialog()
-                : GridView.builder(
-                    itemCount: posts.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3),
-                    itemBuilder: (context, index) {
-                      return buidPostFirstImageContainer(
-                          posts[index], widget.outSideUser, false);
-                    },
-                  ),
-          );
-        });
+      future: PostServices('').getUserPosts(widget.outSideUser.uid),
+      builder: (context, snapshot) {
+        var posts = snapshot.data;
+        return Container(
+          padding: const EdgeInsets.only(top: 200),
+          child: posts == null
+              ? const LoadingDialog()
+              : GridView.builder(
+                  itemCount: posts.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemBuilder: (context, index) {
+                    return buidPostFirstImageContainer(
+                        posts[index], widget.outSideUser,
+                        showOptions: false);
+                  },
+                ),
+        );
+      },
+    );
   }
 
-  Widget buidPostFirstImageContainer(Post post, User user, bool showOptions) {
+  Widget buidPostFirstImageContainer(Post post, User user, {bool showOptions}) {
     return Padding(
-      padding: EdgeInsets.all(2),
+      padding: const EdgeInsets.all(2),
       child: GestureDetector(
         child: Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           width: MediaQuery.of(context).size.width / 3,
           height: 80,
           child: LoadImage(

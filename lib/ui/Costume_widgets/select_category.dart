@@ -37,7 +37,7 @@ class _SelectCatigoryState extends State<SelectCatigory> {
     super.initState();
   }
 
-  wrapWidget() {
+  Wrap wrapWidget() {
     return Wrap(
       spacing: 10.0,
       runSpacing: 10.0,
@@ -55,14 +55,14 @@ class _SelectCatigoryState extends State<SelectCatigory> {
     return ChoiceChip(
       disabledColor: Colors.white,
       backgroundColor: Colors.white,
-      labelPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       selected: _defaultChoiceIndex == index,
       label: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
             fontFamily: 'ae_Sindibad', fontSize: 18, color: Color(0xff460053)),
       ),
-      onSelected: (bool selected) {
+      onSelected: (selected) {
         widget.onSelectedCategory(label);
         setState(
           () {
@@ -70,9 +70,9 @@ class _SelectCatigoryState extends State<SelectCatigory> {
           },
         );
       },
-      selectedColor: Color(0xffFD85CB),
+      selectedColor: const Color(0xffFD85CB),
       elevation: 1.0,
-      padding: EdgeInsets.all(6.0),
+      padding: const EdgeInsets.all(6.0),
     );
   }
 

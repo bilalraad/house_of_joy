@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:house_of_joy/functions/validations.dart';
-import 'package:house_of_joy/services/auth.dart';
-import 'package:house_of_joy/ui/Costume_widgets/bloc_text_form_field.dart';
-import 'package:house_of_joy/ui/Costume_widgets/costume_text_field.dart';
-import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
+
+import '../../services/auth.dart';
+import '../../functions/validations.dart';
+import '../Costume_widgets/loading_dialog.dart';
+import '../Costume_widgets/costume_text_field.dart';
+import '../Costume_widgets/bloc_text_form_field.dart';
 
 class ChangePassword extends StatefulWidget {
   @override
@@ -16,13 +16,13 @@ class ChangePassword extends StatefulWidget {
 
 class _ChangePasswordState extends State<ChangePassword> {
   final _formKey = GlobalKey<FormState>();
-  final oldPasswordController = TextEditingController();
+  final _oldPasswordController = TextEditingController();
   FieldValidationFormBloc _formBloc;
-  String oldPasswordErrorText = '';
+  var _oldPasswordErrorText = '';
 
   @override
   void dispose() {
-    oldPasswordController.dispose();
+    _oldPasswordController.dispose();
     super.dispose();
   }
 
@@ -34,20 +34,20 @@ class _ChangePasswordState extends State<ChangePassword> {
         builder: (context) {
           _formBloc = BlocProvider.of<FieldValidationFormBloc>(context);
           return Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage(
                       'images/backgroundImage.png',
                     ),
                     fit: BoxFit.fill)),
             child: Scaffold(
-              backgroundColor: Color.fromRGBO(250, 251, 253, 75),
+              backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
               body: FutureBuilder<bool>(
                 future: Auth().isSigendInWithEmailAndPassword(),
                 builder: (context, snapshot) {
                   var isChangeable = snapshot.hasData ? snapshot.data : true;
                   return snapshot == null
-                      ? LoadingDialog()
+                      ? const LoadingDialog()
                       : ListView(
                           children: <Widget>[
                             Column(
@@ -62,87 +62,79 @@ class _ChangePasswordState extends State<ChangePassword> {
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: Text(
+                                            child: const Text(
                                               'الغاء',
                                               style: TextStyle(
                                                   fontSize: 18,
-                                                  fontWeight:
-                                                      FontWeight.bold,
-                                                  fontFamily:
-                                                      'ae_Sindibad'),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'ae_Sindibad'),
                                             ),
                                           ),
-                                          Expanded(
-                                              child:
-                                                  SizedBox(width: 5)),
+                                          const Expanded(
+                                              child: SizedBox(width: 5)),
                                           FlatButton(
                                             onPressed: isChangeable
                                                 ? () {
                                                     _formBloc.submit();
-                                                    var data = _formBloc
-                                                        .onSubmitting(
+                                                    var data =
+                                                        _formBloc.onSubmitting(
                                                       hasPassword: true,
-                                                      hasConfirmPassword:
-                                                          true,
+                                                      hasConfirmPassword: true,
                                                     );
 
                                                     return _onPressedDone(
-                                                        data['Password'] ??
-                                                            '');
+                                                        data['Password'] ?? '');
                                                   }
                                                 : null,
-                                            child: Text(
+                                            child: const Text(
                                               'تم',
                                               style: TextStyle(
                                                   fontSize: 20,
-                                                  fontWeight:
-                                                      FontWeight.bold,
-                                                  fontFamily:
-                                                      'ae_Sindibad'),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'ae_Sindibad'),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 75),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(right: 30),
+                                    const SizedBox(height: 75),
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 30),
                                       child: Align(
-                                        alignment:
-                                            Alignment.bottomRight,
+                                        alignment: Alignment.bottomRight,
                                         child: Text(
                                           'تغيير كلمة السر',
                                           style: TextStyle(
                                               color: Color(0xFFCA39E3),
                                               fontSize: 24,
-                                              fontFamily:
-                                                  'ae_Sindibad'),
+                                              fontFamily: 'ae_Sindibad'),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 20),
+                                    const SizedBox(height: 20),
                                   ],
                                 ),
-                                SizedBox(height: 15),
+                                const SizedBox(height: 15),
                                 Container(
                                   width:
                                       MediaQuery.of(context).size.width / 1.1,
                                   child: Column(
                                     children: <Widget>[
-                                      SizedBox(height: 60),
+                                      const SizedBox(height: 60),
                                       Form(
                                         key: _formKey,
                                         child: Directionality(
                                           textDirection: TextDirection.rtl,
                                           child: CustomTextField(
                                             key: _formKey,
-                                            controller: oldPasswordController,
+                                            controller: _oldPasswordController,
                                             validator: (value) {
-                                              oldPasswordErrorText =
+                                              _oldPasswordErrorText =
                                                   validatePassword(value);
-                                              if (oldPasswordErrorText != null)
-                                                return oldPasswordErrorText;
+                                              if (_oldPasswordErrorText !=
+                                                  null) {
+                                                return _oldPasswordErrorText;
+                                              }
                                               return null;
                                             },
                                             hint: 'كلمة السر القديمة',
@@ -161,9 +153,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                                             _formBloc.passwordConfirm,
                                         // obscure: true,
                                       ),
-                                      SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       !isChangeable
-                                          ? Text(
+                                          ? const Text(
                                               'لا يمكنتك تغيير كلمة المرور لانك سجلت باستخدام كوكل او فبس بوك',
                                               textAlign: TextAlign.center,
                                             )
@@ -187,11 +179,12 @@ class _ChangePasswordState extends State<ChangePassword> {
   _onPressedDone(String newPassord) async {
     if (_formKey.currentState.validate() && newPassord.isNotEmpty) {
       var error =
-          await Auth().changePassword(oldPasswordController.text, newPassord);
-      if (error == null)
+          await Auth().changePassword(_oldPasswordController.text, newPassord);
+      if (error == null) {
         Navigator.of(context).pop();
-      else
+      } else {
         showFlushSnackBar(context, error);
+      }
     }
   }
 }

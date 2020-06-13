@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+///this is normal [circular progres indicator] instde continer 
+///that made looks like dialog
 class LoadingDialog extends StatelessWidget {
   const LoadingDialog();
   @override
@@ -13,18 +15,18 @@ class LoadingDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           color: Colors.white,
           boxShadow: [
-            BoxShadow(color: Colors.black12, blurRadius: 5),
+            const BoxShadow(color: Colors.black12, blurRadius: 5),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(15.0),
+            const Padding(
+              padding: EdgeInsets.all(15.0),
               child: CircularProgressIndicator(backgroundColor: Colors.grey),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text('Loading..'),
             ),
           ],
@@ -34,28 +36,9 @@ class LoadingDialog extends StatelessWidget {
   }
 }
 
-// showAlertDialog(BuildContext context) {
-//   AlertDialog alert = AlertDialog(
-//     shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(50),
-//         side: BorderSide(color: Colors.transparent)),
-//     elevation: 0,
-//     contentPadding: EdgeInsets.all(0),
-//     backgroundColor: Colors.white.withOpacity(1),
-//     content: LoadingDialog(),
-//   );
-//   showDialog(
-//     barrierDismissible: false,
-//     context: context,
-//     builder: (BuildContext context) {
-//       return ClipRRect(
-//         borderRadius: BorderRadius.circular(15),
-//         child: alert,
-//       );
-//     },
-//   );
-// }
 
+///if [inAsyncCall] is true then it will overlay a circular progres indicator
+///or the on you choose on top of the widget
 class ModalProgress extends StatelessWidget {
   final bool inAsyncCall;
   final double opacity;
@@ -83,22 +66,22 @@ class ModalProgress extends StatelessWidget {
     if (!inAsyncCall) return child;
 
     Widget layOutProgressIndicator;
-    if (offset == null)
+    if (offset == null) {
       layOutProgressIndicator =
-          Center(child: costumeIndicator ?? CircularProgressIndicator());
-    else {
+          Center(child: costumeIndicator ?? const CircularProgressIndicator());
+    } else {
       layOutProgressIndicator = Positioned(
-        child: costumeIndicator ?? CircularProgressIndicator(),
+        child: costumeIndicator ?? const CircularProgressIndicator(),
         left: offset.dx,
         top: offset.dy,
       );
     }
 
-    return new Stack(
+    return Stack(
       children: [
         child,
-        new Opacity(
-          child: new ModalBarrier(dismissible: dismissible, color: color),
+        Opacity(
+          child: ModalBarrier(dismissible: dismissible, color: color),
           opacity: opacity,
         ),
         layOutProgressIndicator,

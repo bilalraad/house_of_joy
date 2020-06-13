@@ -1,19 +1,18 @@
-import 'package:extended_image/extended_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:house_of_joy/functions/creat_route.dart';
-import 'package:house_of_joy/functions/show_overlay.dart';
-import 'package:house_of_joy/models/post.dart';
-import 'package:house_of_joy/models/user.dart';
-import 'package:house_of_joy/services/data_base.dart';
-import 'package:house_of_joy/services/post_services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
-import 'package:house_of_joy/ui/Costume_widgets/loading_dialog.dart';
-import 'package:house_of_joy/ui/Costume_widgets/view_images.dart';
-import 'package:house_of_joy/ui/screens/comments.dart';
-import 'package:house_of_joy/ui/screens/order.dart';
-import 'package:house_of_joy/ui/screens/profileUser.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
+
+import '../Home/order.dart';
+import './view_images.dart';
+import '../Home/comments.dart';
+import './loading_dialog.dart';
+import '../../models/post.dart';
+import '../../models/user.dart';
+import '../Home/profileUser.dart';
+import '../../services/data_base.dart';
+import '../../functions/creat_route.dart';
+import '../../functions/show_overlay.dart';
+import '../../services/post_services.dart';
 
 Widget buildPostWidget(Post post, BuildContext context, int index) {
   return FutureBuilder<User>(
@@ -21,11 +20,11 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
     builder: (context, snapshot) {
       var postUser = snapshot.data;
       return !snapshot.hasData
-          ? post != null && index == 0 ? LoadingDialog() : Container()
+          ? post != null && index == 0 ? const LoadingDialog() : Container()
           : FutureProvider.value(
               value: DatabaseService('').getCurrentUserData(),
               child: Container(
-                padding: EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: 8),
                 child: Column(
                   children: <Widget>[
                     Directionality(
@@ -36,7 +35,7 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                             Container(
                               width: 40,
                               height: 40,
-                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              decoration: const BoxDecoration(shape: BoxShape.circle),
                               child: !postUser.imageUrl.isNotEmpty
                                   ? Image.asset('images/personal.png')
                                   : LoadImage(
@@ -45,16 +44,16 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                                       boxShape: BoxShape.circle,
                                     ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Text(
                               '${postUser.fullName}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
                                 fontFamily: 'ae_Sindibad',
                               ),
                             ),
-                            Expanded(
+                            const Expanded(
                               child: SizedBox(width: 10),
                             ),
                           ],
@@ -69,44 +68,44 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                                     create: (context) => DatabaseService('')
                                         .getCurrentUserData(),
                                   )
-                                ], child: UserProfile(outSideUser: postUser));
+                                ], child: UserProfileTab(outSideUser: postUser));
                               },
                             ),
                           );
                         },
                       ),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Container(
                       width: MediaQuery.of(context).size.width / 1.1,
                       child: Text(
                         '${post.description}',
                         textAlign: TextAlign.right,
                         textDirection: TextDirection.rtl,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.black,
                             fontSize: 18,
                             fontFamily: 'ae_Sindibad'),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Container(
                       width: MediaQuery.of(context).size.width / 1.1,
-                      color: Color(0xffF9F5F7),
+                      color: const Color(0xffF9F5F7),
                       child: Column(
                         children: <Widget>[
                           ViewImages(imagesUrl: post.imagesUrl),
-                          SizedBox(height: 10),
-                          Divider(height: 5, color: Colors.black),
+                          const SizedBox(height: 10),
+                          const Divider(height: 5, color: Colors.black),
                           Container(
                             child: Row(
                               children: <Widget>[
                                 LikeButton(
                                     post.likes, post.postId, post.userId),
-                                Expanded(child: SizedBox(width: 3)),
+                                const Expanded(child: SizedBox(width: 3)),
                                 IconButton(
-                                    icon: Icon(Icons.mode_comment),
-                                    color: Color(0xffBDADE0),
+                                    icon: const Icon(Icons.mode_comment),
+                                    color: const Color(0xffBDADE0),
                                     iconSize: 30,
                                     onPressed: () {
                                       Navigator.push(
@@ -126,12 +125,12 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                                     }),
                                 Text(
                                   '${post.comments.length}',
-                                  style: TextStyle(color: Colors.grey),
+                                  style: const TextStyle(color: Colors.grey),
                                 ),
-                                Expanded(child: SizedBox(width: 3)),
+                                const Expanded(child: SizedBox(width: 3)),
                                 IconButton(
-                                  icon: Icon(faf.FontAwesomeIcons.shoppingCart),
-                                  color: Color(0xffBDADE0),
+                                  icon: const Icon(faf.FontAwesomeIcons.shoppingCart),
+                                  color: const Color(0xffBDADE0),
                                   onPressed: () {
                                     Navigator.push(
                                       context,
@@ -148,7 +147,7 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -171,12 +170,13 @@ class LikeButton extends StatefulWidget {
 
 class _LikeButtonState extends State<LikeButton> {
   Color colorLike = Colors.red;
-  Color colorNotlike = Color(0xffBDADE0);
+  Color colorNotlike = const Color(0xffBDADE0);
   bool islike = false;
   Like like;
+
   @override
   Widget build(BuildContext context) {
-    final user = widget.user ?? Provider.of<User>(context, listen: false);
+    final user = widget.user ?? Provider.of<User>(context);
     if (user != null && widget.likes.any((like) => like.userId == user.uid)) {
       setState(() {
         islike = true;
@@ -185,7 +185,7 @@ class _LikeButtonState extends State<LikeButton> {
     return Row(
       children: <Widget>[
         IconButton(
-          icon: Icon(Icons.favorite),
+          icon: const Icon(Icons.favorite),
           color: islike ? colorLike : colorNotlike,
           iconSize: 30,
           onPressed: () async {
@@ -198,13 +198,13 @@ class _LikeButtonState extends State<LikeButton> {
 
             if (islike) {
               updatedLikes = widget.likes..add(like);
-              if (widget.postOwnerId != user.uid) {
-                newActivity = Activity(
-                  isLike: true,
-                  postId: widget.postId,
-                  userId: user.uid,
-                );
-              }
+              // if (widget.postOwnerId != user.uid) {
+              newActivity = Activity(
+                isLike: true,
+                postId: widget.postId,
+                userId: user.uid,
+              );
+              // }
             } else {
               updatedLikes = widget.likes
                 ..removeWhere((like) => like.userId == user.uid);
@@ -225,105 +225,10 @@ class _LikeButtonState extends State<LikeButton> {
         ),
         Text(
           '${widget.likes.length}',
-          style: TextStyle(color: Colors.grey),
+          style: const TextStyle(color: Colors.grey),
         ),
       ],
     );
   }
 }
 
-class LoadImage extends StatefulWidget {
-  const LoadImage(
-      {@required this.url,
-      this.fit = BoxFit.contain,
-      this.boxShape = BoxShape.rectangle});
-
-  final String url;
-  final BoxFit fit;
-  final BoxShape boxShape;
-
-  @override
-  _LoadImageState createState() => _LoadImageState();
-}
-
-class _LoadImageState extends State<LoadImage> with TickerProviderStateMixin {
-  AnimationController _controller;
-
-  @override
-  void initState() {
-    _controller =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ExtendedImage.network(
-      widget.url,
-      fit: widget.fit,
-      shape: widget.boxShape,
-      width: MediaQuery.of(context).size.width * 0.75,
-      cache: true,
-      mode: ExtendedImageMode.gesture,
-      initGestureConfigHandler: (state) {
-        return GestureConfig(
-          minScale: 0.9,
-          animationMinScale: 0.7,
-          maxScale: 3.0,
-          animationMaxScale: 3.5,
-          speed: 1.0,
-          inertialSpeed: 100.0,
-          initialScale: 1.0,
-          inPageView: false,
-          initialAlignment: InitialAlignment.center,
-        );
-      },
-      loadStateChanged: (ExtendedImageState state) {
-        switch (state.extendedImageLoadState) {
-
-          ///if you don't want override completed widget
-          ///please return null or state.completedWidget
-          //return null;
-          //return state.completedWidget;
-          case LoadState.completed:
-            _controller.forward();
-            return FadeTransition(
-              opacity: _controller,
-              child: ExtendedRawImage(
-                fit: widget.fit,
-                image: state.extendedImageInfo?.image,
-              ),
-            );
-            break;
-          case LoadState.failed:
-            _controller.reset();
-            return GestureDetector(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('خطا غير معروف'),
-                  Text(
-                    "اضغط لأعادة تحميل الصورة",
-                    textAlign: TextAlign.center,
-                  )
-                ],
-              ),
-              onTap: () {
-                state.reLoadImage();
-              },
-            );
-            break;
-
-          default:
-            return null;
-        }
-      },
-    );
-  }
-}
