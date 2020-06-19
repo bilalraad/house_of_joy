@@ -10,15 +10,17 @@ import '../../models/post.dart';
 import '../../models/user.dart';
 import '../../services/data_base.dart';
 import '../../functions/validations.dart';
+import '../../functions/show_overlay.dart';
 import '../../services/post_services.dart';
 import '../Costume_widgets/view_images.dart';
 import '../Costume_widgets/loading_dialog.dart';
 import '../Costume_widgets/select_category.dart';
 
 class PublishAPsostTab extends StatefulWidget {
-  final Post oldPost;
+  final User currentUser;//optional
+  final Post oldPost;//optional
 
-  const PublishAPsostTab({Key key, this.oldPost}) : super(key: key);
+  const PublishAPsostTab({Key key, this.oldPost, this.currentUser});
   @override
   _PublishAPsostTabState createState() => _PublishAPsostTabState();
 }
@@ -69,8 +71,7 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
-
+    final user = widget.currentUser ?? Provider.of<User>(context);
     return Scaffold(
       body: ModalProgress(
         costumeIndicator: const LoadingDialog(),
@@ -214,6 +215,8 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
     if (_key.currentState.validate()) {
       setState(() => _loading = true);
       await Future.delayed(const Duration(seconds: 3));
+      showOverlay(
+          context: context, text: 'سوف يتم ابلاغك عند اكتمال رفع المنشور');
       Navigator.of(context).pushReplacementNamed('/');
 
       for (var imageFile in images) {
@@ -235,10 +238,18 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
       );
       var err = await PostServices(newPost.postId).updatePostData(newPost);
 
-      BotToast.showSimpleNotification(
-          title: err == null ? 'تم نشر المنشور الخاص بك' : err,
-          align: Alignment.topCenter,
-          hideCloseButton: true);
+      BotToast.showNotification(
+        title: (_) => Text(
+          err == null ? 'تم نشر المنشور الخاص بك' : err,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.greenAccent,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        align: Alignment.topCenter,
+      );
     } else {
       setState(() {
         _autoValidate = true;

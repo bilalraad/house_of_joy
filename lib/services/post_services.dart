@@ -72,13 +72,29 @@ class PostServices {
     if (await connected()) {
       await deletePostImages();
       await postsCollection.document(postId).delete();
-      DatabaseService('').deletePostActivities(postId);
+      deletePostActivities(postId);
 
       return null;
     }
     return 'عذرا لا يوجد اتصال بالانترنت';
   }
 
+  ///if the user deleted a post this will delete all the activities that connected to that post
+  Future<void> deletePostActivities(String postId) async {
+    // final activities = await getCurrentUserActivities();
+    final user = await DatabaseService('').getCurrentUserData();
+    await DatabaseService(user.uid)
+        .userActivtiesReference
+        .getDocuments()
+        .then((value) => value.documents.forEach((element) {
+              if (element.data.containsValue(postId)) {
+                DatabaseService(user.uid)
+                    .userActivtiesReference
+                    .document(element.documentID)
+                    .delete();
+              }
+            }));
+  }
 
   ///this will delete all post images from firestore when post is deleted
   Future<void> deletePostImages() async {

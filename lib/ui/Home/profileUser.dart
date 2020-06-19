@@ -71,13 +71,13 @@ class _UserProfileTabState extends State<UserProfileTab> {
                                   decoration: const BoxDecoration(
                                       color: Color(0xffFFAADC),
                                       shape: BoxShape.circle),
-                                  child: !user.imageUrl.isNotEmpty
-                                      ? Image.asset('images/personal.png')
-                                      : LoadImage(
+                                  child: user.imageUrl.isNotEmpty
+                                      ? LoadImage(
                                           url: user.imageUrl,
                                           fit: BoxFit.cover,
                                           boxShape: BoxShape.circle,
-                                        ),
+                                        )
+                                      : Image.asset('images/personal.png'),
                                 ),
                                 Text(
                                   user.fullName,

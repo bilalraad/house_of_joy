@@ -23,19 +23,26 @@ class CategoryTabView extends StatelessWidget {
                 children: List<Widget>.generate(
                   categories.length,
                   (i) {
-                    if (categories[i].type == type) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 30),
-                        child: CategoryCardItem(
-                          category: categories[i].name,
-                          pathImage: categories[i].image,
-                        ),
-                      );
-                    }
-                    return Container();
+                    return Column(
+                      children: <Widget>[
+                        categories[i].type == type
+                            ? Container(
+                                margin: const EdgeInsets.only(bottom: 30),
+                                child: CategoryCardItem(
+                                  category: categories[i].name,
+                                  pathImage: categories[i].image,
+                                ),
+                              )
+                            : Container(),
+                        i == categories.length-1
+                            ? const SizedBox(height: 100)
+                            : Container(),
+                      ],
+                    );
                   },
                 ),
               ),
+              const SizedBox(height: 80)
             ],
           ),
         ),

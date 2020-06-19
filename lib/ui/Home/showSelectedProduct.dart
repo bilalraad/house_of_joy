@@ -11,7 +11,7 @@ import '../../services/data_base.dart';
 import '../../functions/creat_route.dart';
 import '../../functions/validations.dart';
 import '../../services/post_services.dart';
-import '../Costume_widgets/post_widget.dart';
+import '../Costume_widgets/like_button.dart';
 import '../Costume_widgets/view_images.dart';
 import '../Costume_widgets/loading_dialog.dart';
 
@@ -104,11 +104,15 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                 Container(
                   width: 40,
                   height: 40,
-                  child: LoadImage(
-                    url: currentUser.imageUrl,
-                    fit: BoxFit.cover,
-                    boxShape: BoxShape.circle,
-                  ),
+                  decoration: const BoxDecoration(
+                      color: Color(0xffFFAADC), shape: BoxShape.circle),
+                  child: currentUser.imageUrl.isNotEmpty
+                      ? LoadImage(
+                          url: currentUser.imageUrl,
+                          fit: BoxFit.cover,
+                          boxShape: BoxShape.circle,
+                        )
+                      : Image.asset('images/personal.png'),
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -218,7 +222,8 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PublishAPsostTab(oldPost: widget.post),
+                  builder: (context) => PublishAPsostTab(
+                      oldPost: widget.post, currentUser: widget.user),
                 ),
               );
               break;

@@ -6,8 +6,10 @@ import './services/auth.dart';
 import './ui/Auth/start.dart';
 import './ui/Home/homeScreen.dart';
 import './services/shered_Preference.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MultiProvider(
     providers: [
       StreamProvider<AuthState>.value(value: Auth.authState.stream),
@@ -34,6 +36,8 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
+  
+
   @override
   Widget build(BuildContext context) {
     final userId = Provider.of<String>(context);
@@ -44,4 +48,3 @@ class _WrapperState extends State<Wrapper> {
         : Start();
   }
 }
-

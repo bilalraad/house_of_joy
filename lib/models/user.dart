@@ -8,7 +8,6 @@ class User {
   final String email;
   final String userName;
   final String imageUrl;
-  final List<Activity> activities;
 
   User({
     @required this.uid,
@@ -17,7 +16,6 @@ class User {
     @required this.email,
     this.userName,
     this.imageUrl = '',
-    this.activities = const [],
   });
 
   User copyWith({
@@ -36,7 +34,6 @@ class User {
       email: email ?? this.email,
       userName: userName ?? this.userName,
       imageUrl: imageUrl ?? this.imageUrl,
-      activities: activities ?? this.activities,
     );
   }
 
@@ -48,7 +45,6 @@ class User {
       'email': email,
       'userName': userName,
       'imageUrl': imageUrl,
-      'activities': activities?.map((x) => x?.toMap())?.toList(),
     };
   }
 
@@ -61,28 +57,24 @@ class User {
       userName: map['userName'],
       email: map['email'],
       imageUrl: map['imageUrl'],
-      activities: List<Activity>.from(
-          map['Activities']?.map((x) => Activity.fromMap(x))),
     );
     return user;
   }
 
   @override
   String toString() {
-    return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl, activities: $activities)';
+    return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl)';
   }
 
   factory User.fromDocument(DocumentSnapshot doc, String uid) {
-    if (doc == null) return null;
+    if (doc.data == null) return null;
     return User(
-      uid: doc.data['uid'],
+      uid: uid,
       phoneNo: doc.data['phoneNo'],
       fullName: doc.data['fullName'],
       email: doc.data['email'],
       userName: doc.data['userName'],
       imageUrl: doc.data['imageUrl'],
-      activities: List<Activity>.from(
-          doc.data['activities']?.map((x) => Activity.fromMap(x))),
     );
   }
 }
@@ -92,31 +84,37 @@ class Activity {
   final bool isLike; //if false then its comment
   final String postId;
   final String userId;
+  final DateTime activityTime;
 
   Activity({
+    @required this.userId,
     this.isReaded = false,
+    this.activityTime,
     @required this.isLike,
     @required this.postId,
-    @required this.userId,
   });
 
   Activity copyWith({
     bool isReaded,
     bool isLike,
     String postId,
+    String userImageUrl,
+    String userName,
     String userId,
+    String activityTime,
   }) {
     return Activity(
       isReaded: isReaded ?? this.isReaded,
       isLike: isLike ?? this.isLike,
       postId: postId ?? this.postId,
       userId: userId ?? this.userId,
+      activityTime: activityTime ?? this.activityTime,
     );
   }
 
   @override
   String toString() {
-    return 'Activity(isReaded: $isReaded, isLike: $isLike, postId: $postId, userId: $userId)';
+    return 'Activity(isReaded: $isReaded, isLike: $isLike, postId: $postId, userId: $userId, activityTime: $activityTime)';
   }
 
   Map<String, dynamic> toMap() {
@@ -125,6 +123,8 @@ class Activity {
       'isLike': isLike,
       'postId': postId,
       'userId': userId,
+      'activityTime':
+          activityTime?.toIso8601String() ?? DateTime.now().toIso8601String(),
     };
   }
 
@@ -135,6 +135,7 @@ class Activity {
       isLike: map['isLike'],
       postId: map['postId'],
       userId: map['userId'],
+      activityTime: DateTime.parse(map['activityTime']),
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-
-///this is normal [circular progres indicator] instde continer 
+///this is normal [circular progres indicator] instde continer
 ///that made looks like dialog
 class LoadingDialog extends StatelessWidget {
   const LoadingDialog();
@@ -36,9 +35,6 @@ class LoadingDialog extends StatelessWidget {
   }
 }
 
-
-///if [inAsyncCall] is true then it will overlay a circular progres indicator
-///or the on you choose on top of the widget
 class ModalProgress extends StatelessWidget {
   final bool inAsyncCall;
   final double opacity;
@@ -47,6 +43,9 @@ class ModalProgress extends StatelessWidget {
   final Offset offset;
   final bool dismissible;
   final Widget child;
+
+  ///if [inAsyncCall] is true then it will overlay a circular progres indicator
+  ///or the on you choose on top of the widget
 
   ModalProgress({
     Key key,

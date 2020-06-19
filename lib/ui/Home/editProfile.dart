@@ -132,6 +132,37 @@ class _EditProfileState extends State<EditProfile> {
               fit: BoxFit.fill)),
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          titleSpacing: 0,
+          title: FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text(
+              'الغاء',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'ae_Sindibad'),
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: _onPressedDone,
+              child: const Text(
+                'تعديل',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'ae_Sindibad'),
+              ),
+            ),
+          ],
+        ),
         body: Directionality(
           textDirection: TextDirection.rtl,
           child: SingleChildScrollView(
@@ -139,38 +170,7 @@ class _EditProfileState extends State<EditProfile> {
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    Align(
-                        alignment: Alignment.topLeft,
-                        child: SafeArea(
-                          child: Row(
-                            children: <Widget>[
-                              FlatButton(
-                                onPressed: _onPressedDone,
-                                child: const Text(
-                                  'تعديل',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'ae_Sindibad'),
-                                ),
-                              ),
-                              const Expanded(child: SizedBox(width: 5)),
-                              FlatButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text(
-                                  'الغاء',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'ae_Sindibad'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
-                    const SizedBox(height: 75),
+                    const SizedBox(height: 150),
                     const Padding(
                       padding: EdgeInsets.only(right: 30),
                       child: Align(

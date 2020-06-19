@@ -7,9 +7,7 @@ import '../ui/Home/about.dart';
 import '../ui/Auth/logout.dart';
 import '../ui/home/editProfile.dart';
 
-
-
-///this func. will show a dialog when u press the home icon on the top right corner 
+///this func. will show a dialog when u press the home icon on the top right corner
 Future<void> showCostumeDialog(BuildContext context) {
   final user = Provider.of<User>(context, listen: false);
   return showDialog(
@@ -72,7 +70,6 @@ Future<void> showCostumeDialog(BuildContext context) {
                         Navigator.push(context, createRoute(Staff()));
                       },
                     ),
-                    const SizedBox(height: 10),
                   ],
                 ),
               ),

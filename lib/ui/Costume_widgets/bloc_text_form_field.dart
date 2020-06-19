@@ -115,11 +115,17 @@ class BlocTextFormField extends StatelessWidget {
               inputDecorationTheme: InputDecorationTheme(
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(0.3), width: 2.0),
+                  borderSide:
+                      BorderSide(color: Colors.grey.withOpacity(0), width: 0),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50),
+                ),
+                focusColor: Colors.transparent,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  borderSide:
+                      BorderSide(color: Colors.grey.withOpacity(0), width: 0),
                 ),
                 filled: true,
                 fillColor: Colors.white,
@@ -128,25 +134,37 @@ class BlocTextFormField extends StatelessWidget {
             child: Directionality(
               textDirection: TextDirection.rtl,
               child: FormBlocListener<FieldValidationFormBloc, String, String>(
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 1.15,
-                  child: TextFieldBlocBuilder(
-                    onChanged: onChanged,
-                    // obscureText: obscure,
-                    textFieldBloc: textFieldBloc,
-                    suffixButton: obscure
-                        ? SuffixButton.obscureText
-                        : SuffixButton.asyncValidating,
-                    obscureTextFalseIcon:
-                        const Icon(Icons.visibility, color: Color(0xffFFAADC)),
-                    obscureTextTrueIcon: const Icon(Icons.visibility_off,
-                        color: Color(0xffFFAADC)),
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(10),
-                      hintText: hint,
-                      hintStyle: const TextStyle(
-                        fontFamily: 'ae_Sindibad',
-                        color: Color(0xffA2A2A2),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50)),
+                  elevation: 3,
+                  shadowColor: Colors.black26,
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / 1.15,
+                    // height: 55,
+                    constraints: const BoxConstraints(
+                      maxHeight: 100,
+                      minHeight: 40,
+                    ),
+                    child: TextFieldBlocBuilder(
+                      onChanged: onChanged,
+                      // obscureText: obscure,
+                      textFieldBloc: textFieldBloc,
+                      suffixButton: obscure
+                          ? SuffixButton.obscureText
+                          : SuffixButton.asyncValidating,
+                      obscureTextFalseIcon: const Icon(Icons.visibility,
+                          color: Color(0xffFFAADC)),
+                      obscureTextTrueIcon: const Icon(Icons.visibility_off,
+                          color: Color(0xffFFAADC)),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(10),
+                        hintText: hint,
+                        hintStyle: const TextStyle(
+                          fontFamily: 'ae_Sindibad',
+                          color: Color(0xffA2A2A2),
+                        ),
                       ),
                     ),
                   ),

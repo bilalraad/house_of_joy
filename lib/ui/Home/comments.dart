@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../models/post.dart';
 import '../../models/user.dart';
 import '../../services/data_base.dart';
-import '../../functions/show_dialog.dart';
 import '../../functions/validations.dart';
 import '../../services/post_services.dart';
 import '../Costume_widgets/loading_dialog.dart';
@@ -24,7 +23,8 @@ class Comments extends StatefulWidget {
 class _CommentsState extends State<Comments> {
   List<Comment> _comments;
   final _controllercomment = TextEditingController();
-  bool enable = false;
+  var _enable = false;
+  var _loading = false;
 
   @override
   void dispose() {
@@ -48,130 +48,135 @@ class _CommentsState extends State<Comments> {
                   ),
                   fit: BoxFit.fill)),
           child: Scaffold(
+            extendBodyBehindAppBar: true,
             backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
-            body: SingleChildScrollView(
-              child: Column(children: <Widget>[
-                SafeArea(
-                  child: Stack(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-                              icon: const Icon(Icons.arrow_back_ios),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              }),
-                          const Expanded(child: SizedBox(width: 3)),
-                          const Text(
-                            'التعليقات',
-                            style: TextStyle(
-                                color: Color(0xffE10586),
-                                fontSize: 26,
-                                fontFamily: 'ae_Sindibad'),
-                          ),
-                          const Expanded(child: SizedBox(width: 3)),
-                          IconButton(
-                              icon: const Icon(Icons.home),
-                              iconSize: 30,
-                              onPressed: () {
-                                showCostumeDialog(context);
-                              }),
-                        ],
-                      ),
-                    ],
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
                   ),
-                ),
-                const SizedBox(height: 50),
-                _comments == null
-                    ? const LoadingDialog()
-                    : Container(
-                        height: MediaQuery.of(context).size.height * 0.75,
-                        child: ListView.builder(
-                          itemCount: _comments.length,
-                          itemBuilder: (context, i) {
-                            return Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: buildCommentContainer(_comments[i]),
-                            );
-                          },
-                        ),
-                      ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 50,
-                  color: const Color(0xffFFAADC),
-                  child: Row(
-                    children: <Widget>[
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Container(
-                          height: 35,
-                          padding: const EdgeInsets.only(
-                            top: 13,
-                            left: 25,
-                            right: 16,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              title: const Text(
+                'التعليقات',
+                style: TextStyle(
+                    color: Color(0xffE10586),
+                    fontSize: 26,
+                    fontFamily: 'ae_Sindibad'),
+              ),
+              centerTitle: true,
+            ),
+            body: Stack(
+              children: <Widget>[
+                SingleChildScrollView(
+                  child: _comments == null
+                      ? const LoadingDialog()
+                      : SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: ListView.builder(
+                            itemCount: _comments.length,
+                            itemBuilder: (context, i) {
+                              return Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: buildCommentContainer(_comments[i]),
+                                  ),
+                                  i == _comments.length - 1
+                                      ? const SizedBox(height: 100)
+                                      : Container(),
+                                ],
+                              );
+                            },
                           ),
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(color: Colors.black12, blurRadius: 5),
-                              ]),
-                          child: Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: TextField(
-                              controller: _controllercomment,
-                              autofocus: false,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'أضف تعليق',
-                                isDense: true,
-                                hintStyle: TextStyle(
-                                  fontFamily: 'Cambo',
-                                  color: Color(0xffA2A2A2),
+                        ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    color: const Color(0xffFFAADC),
+                    child: Row(
+                      children: <Widget>[
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Container(
+                            height: 35,
+                            padding: const EdgeInsets.only(
+                              top: 13,
+                              left: 25,
+                              right: 16,
+                            ),
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black12, blurRadius: 5),
+                                ]),
+                            child: Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: TextField(
+                                controller: _controllercomment,
+                                autofocus: false,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'أضف تعليق',
+                                  isDense: true,
+                                  hintStyle: TextStyle(
+                                    fontFamily: 'ae_Sindibad',
+                                    color: Color(0xffA2A2A2),
+                                  ),
                                 ),
+                                onChanged: (input) {
+                                  if (!input.startsWith(' ')) {
+                                    setState(() {
+                                      _enable = input.isNotEmpty;
+                                    });
+                                  }
+                                },
                               ),
-                              onChanged: (input) {
-                                if (!input.startsWith(' ')) {
-                                  setState(() {
-                                    enable = input.isNotEmpty;
-                                  });
-                                }
-                              },
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 3),
-                      Container(
-                        height: 30,
-                        width: 30,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.white),
-                        child: Transform.translate(
-                          offset: const Offset(-5, -5),
-                          child: !enable
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear),
-                                  color: const Color(0xffFFAADC),
-                                  enableFeedback: true,
-                                  onPressed: () =>
-                                      FocusScope.of(context).unfocus(),
-                                )
-                              : IconButton(
-                                  icon: const Icon(Icons.arrow_upward),
-                                  color: const Color(0xffFFAADC),
-                                  enableFeedback: true,
-                                  onPressed: () => submmetComment(currentUser),
+                        const SizedBox(width: 3),
+                        Container(
+                          height: 30,
+                          width: 30,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.white),
+                          child: _loading
+                              ? const CircularProgressIndicator(
+                                  backgroundColor: Color(0xffFFAADC))
+                              : Transform.translate(
+                                  offset: const Offset(-5, -5),
+                                  child: !_enable
+                                      ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          color: const Color(0xffFFAADC),
+                                          onPressed: () =>
+                                              FocusScope.of(context).unfocus(),
+                                        )
+                                      : IconButton(
+                                          icon: const Icon(Icons.arrow_upward),
+                                          color: const Color(0xffFFAADC),
+                                          onPressed: () =>
+                                              submmetComment(currentUser),
+                                        ),
                                 ),
                         ),
-                      ),
-                      const SizedBox(width: 3),
-                    ],
+                        const SizedBox(width: 3),
+                      ],
+                    ),
                   ),
                 ),
-              ]),
+              ],
             ),
           ),
         );
@@ -180,9 +185,11 @@ class _CommentsState extends State<Comments> {
   }
 
   void submmetComment(User currentUser) async {
+    setState(() => _loading = true);
     FocusScope.of(context).unfocus();
+
     setState(() {
-      enable = false;
+      _enable = false;
     });
     Activity newActivity;
     if (widget.postOwnerId != currentUser.uid) {
@@ -203,6 +210,7 @@ class _CommentsState extends State<Comments> {
         postOwnerId: widget.postOwnerId,
         activity: newActivity);
     if (error == null) {
+      setState(() => _loading = false);
       _controllercomment.clear();
     } else {
       showFlushSnackBar(context, error);
@@ -215,7 +223,26 @@ class _CommentsState extends State<Comments> {
       builder: (context, snapshot) {
         var commentUser = snapshot.data;
         return snapshot.data == null
-            ? Container()
+            ? Container(
+                width: MediaQuery.of(context).size.width / 1.1,
+                height: 50,
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: ListTile(
+                    title: Container(color: Colors.grey[300], height: 10),
+                    subtitle: Container(color: Colors.grey[300], height: 10),
+                    leading: CircleAvatar(
+                      radius: 50,
+                      child: Container(
+                        width: 50,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(50)),
+                      ),
+                    ),
+                  ),
+                ),
+              )
             : Container(
                 padding: const EdgeInsets.only(right: 10),
                 width: MediaQuery.of(context).size.width / 1.1,

@@ -24,10 +24,7 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
 
   @override
   Widget build(BuildContext context) {
-    var currentUser = Provider.of<User>(context);
-    var activities =
-        currentUser != null ? currentUser.activities.reversed.toList() : null;
-
+    var currentUser = Provider.of<User>(context, listen: true);
     return Container(
       decoration: const BoxDecoration(
           image: DecorationImage(
@@ -37,67 +34,77 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
               fit: BoxFit.fill)),
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
-        body: ModalProgress(
-          inAsyncCall: activities == null,
-          costumeIndicator: const LoadingDialog(),
-          opacity: 0,
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 23),
-              Stack(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Row(
+        body: StreamBuilder<List<Activity>>(
+            stream: DatabaseService(currentUser?.uid ?? '').activities,
+            builder: (context, snapshot) {
+              var activities = snapshot.data;
+              activities?.sort((a,b)=>b.activityTime.compareTo(a.activityTime));
+              return ModalProgress(
+                inAsyncCall: activities == null || currentUser == null,
+                costumeIndicator: const LoadingDialog(),
+                opacity: 0,
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(height: 23),
+                    Stack(
+                      children: <Widget>[
+                        Column(
                           children: <Widget>[
-                            const Expanded(
-                              child: SizedBox(width: 5),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Row(
+                                children: <Widget>[
+                                  const Expanded(
+                                    child: SizedBox(width: 5),
+                                  ),
+                                  IconButton(
+                                      icon: const Icon(Icons.home),
+                                      iconSize: 30,
+                                      onPressed: () {
+                                        showCostumeDialog(context);
+                                      })
+                                ],
+                              ),
                             ),
-                            IconButton(
-                                icon: const Icon(Icons.home),
-                                iconSize: 30,
-                                onPressed: () {
-                                  showCostumeDialog(context);
-                                })
+                            const SizedBox(height: 60),
+                            const Padding(
+                              padding: EdgeInsets.only(right: 30),
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Text(
+                                  'النشاطات',
+                                  style: TextStyle(
+                                      color: Color(0xFFCA39E3),
+                                      fontSize: 24,
+                                      fontFamily: 'ae_Sindibad'),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 60),
-                      const Padding(
-                        padding: EdgeInsets.only(right: 30),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Text(
-                            'النشاطات',
-                            style: TextStyle(
-                                color: Color(0xFFCA39E3),
-                                fontSize: 24,
-                                fontFamily: 'ae_Sindibad'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Expanded(
-                child: activities == null || activities.isEmpty
-                    ? Center(
-                        child: Text(activities == null ? '' : 'لا يوجد نشاطات'))
-                    : ListView.builder(
-                        itemCount: activities.length,
-                        itemBuilder: (context, i) {
-                          DatabaseService(currentUser.uid)
-                              .markAllActivitiesAsReaded();
-                          return buildAlertContainer(
-                              activities[i], currentUser);
-                        }),
-              )
-            ],
-          ),
-        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: activities == null
+                          ? Container()
+                          : activities.isEmpty
+                              ? const Center(child: Text('لايوجد نشاطات'))
+                              : ListView.builder(
+                                  cacheExtent: 8,
+                                  // itemExtent: 5,
+                                  itemCount: activities.length,
+                                  itemBuilder: (context, i) {
+                                    DatabaseService(currentUser.uid)
+                                        .markAllActivitiesAsReaded();
+
+                                    return buildAlertContainer(
+                                        activities[i], currentUser);
+                                  }),
+                    )
+                  ],
+                ),
+              );
+            }),
       ),
     );
   }
@@ -108,7 +115,12 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
       builder: (context, snapshot) {
         var activityByTheUser = snapshot.data;
         return activityByTheUser == null
-            ? Container()
+            ? Container(
+                width: 100,
+                height: 20,
+                color: Colors.grey[300],
+                margin: const EdgeInsets.all(5),
+              )
             : InkWell(
                 onTap: () {
                   Navigator.of(context).push(createRoute(
@@ -119,7 +131,8 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
                   ));
                 },
                 child: Container(
-                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                   child: Directionality(
                     textDirection: TextDirection.rtl,
                     child: Row(
@@ -128,18 +141,15 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                  image: AssetImage(
-                                    'images/personal.png',
-                                  ),
-                                  fit: BoxFit.cover),
                               boxShadow: [BoxShadow(color: Colors.grey[300])],
                               shape: BoxShape.circle),
-                          child: LoadImage(
-                            url: activityByTheUser.imageUrl,
-                            fit: BoxFit.cover,
-                            boxShape: BoxShape.circle,
-                          ),
+                          child: activityByTheUser.imageUrl.isNotEmpty
+                              ? LoadImage(
+                                  url: activityByTheUser.imageUrl,
+                                  fit: BoxFit.cover,
+                                  boxShape: BoxShape.circle,
+                                )
+                              : Image.asset('images/personal.png'),
                         ),
                         const SizedBox(width: 10),
                         Text(

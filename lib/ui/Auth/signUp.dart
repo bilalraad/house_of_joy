@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
 
-import '../../main.dart';
 import './veritfication.dart';
 import '../../models/user.dart';
 import '../../services/auth.dart';
 import '../../functions/validations.dart';
+import '../Costume_widgets/loading_dialog.dart';
 import '../Costume_widgets/bloc_text_form_field.dart';
 
 class SignUp extends StatefulWidget {
@@ -26,253 +25,179 @@ class _SignUp extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffFAFBFD),
-      body: SingleChildScrollView(
-        child: BlocProvider(
-          create: (context) => FieldValidationFormBloc(),
-          child: Builder(builder: (context) {
-            _formBloc = BlocProvider.of<FieldValidationFormBloc>(context);
-            return Column(
-              children: <Widget>[
-                Stack(
+    return Container(
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage(
+                'images/backgroundImage.png',
+              ),
+              fit: BoxFit.fill)),
+      child: Scaffold(
+        backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
+        body: ModalProgress(
+          inAsyncCall: _loading,
+          costumeIndicator: const LoadingDialog(),
+          child: SingleChildScrollView(
+            child: BlocProvider(
+              create: (context) => FieldValidationFormBloc(),
+              child: Builder(builder: (context) {
+                _formBloc = BlocProvider.of<FieldValidationFormBloc>(context);
+                return Column(
                   children: <Widget>[
-                    Container(
-                      decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                'images/backgroundImage.png',
-                              ),
-                              fit: BoxFit.fitWidth)),
-                      child: Container(
-                        color: const Color.fromRGBO(250, 251, 253, 75),
-                        child: Column(
-                          children: <Widget>[
-                            SafeArea(
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: IconButton(
-                                    icon: const Icon(Icons.arrow_back_ios),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    }),
-                              ),
-                            ),
-                            const SizedBox(height: 75),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 30),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: Text(
-                                  'أنشاء حساب',
-                                  style: TextStyle(
-                                      color: Color(0xFFCA39E3),
-                                      fontSize: 26,
-                                      fontFamily: 'ae_Sindibad'),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
+                    Column(
+                      children: <Widget>[
+                        SafeArea(
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: IconButton(
+                                icon: const Icon(Icons.arrow_back_ios),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          ),
                         ),
+                        const SizedBox(height: 75),
+                        const Padding(
+                          padding: EdgeInsets.only(right: 30),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Text(
+                              'أنشاء حساب',
+                              style: TextStyle(
+                                  color: Color(0xFFCA39E3),
+                                  fontSize: 26,
+                                  fontFamily: 'ae_Sindibad'),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.only(top: 40),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          const SizedBox(height: 15),
+                          BlocTextFormField(
+                            hint: 'الاسم الكامل',
+                            textFieldBloc: _formBloc.fullName,
+                          ),
+                          BlocTextFormField(
+                            hint: 'اسم المستخدم',
+                            textFieldBloc: _formBloc.username,
+                          ),
+                          BlocTextFormField(
+                            hint: 'البريد الالكتروني',
+                            textFieldBloc: _formBloc.email,
+                          ),
+                          BlocTextFormField(
+                            hint: 'كلمة السر',
+                            textFieldBloc: _formBloc.password,
+                            obscure: _obscureText,
+                            onChanged: checkChangePassword,
+                          ),
+                          BlocTextFormField(
+                            hint: 'تاكيد كلمة السر',
+                            textFieldBloc: _formBloc.passwordConfirm,
+                          ),
+                          SizedBox(
+                            height: 30,
+                            child: checkYourPassword(context),
+                          ),
+                          BlocTextFormField(
+                            hint: 'رقم الهاتف',
+                            textFieldBloc: _formBloc.number,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.height * 0.5,
+                            child: const Text(
+                              'يجب ان يكون الرقم مربوط بالواتساب الخاص بك ليتمكن\n المشترون من مراسلتك',
+                              style: TextStyle(color: Colors.grey),
+                              // textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 1.2,
+                            child: RaisedButton(
+                              onPressed: _loading ? null : onSignUpPressed,
+                              color: const Color(0xffFFAADC),
+                              child: const Text(
+                                'انشاء حساب',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontFamily: 'ae_Sindibad'),
+                              ),
+                              padding: const EdgeInsets.all(5.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 1.2,
+                            child: Row(
+                              children: <Widget>[
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: Colors.black26,
+                                  ),
+                                ),
+                                const SizedBox(
+                                    width: 30,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text('OR'),
+                                    )),
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: Colors.black26,
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 1.2,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () => Navigator.pop(context),
+                                  child: const Text(
+                                    'تسجيل دخول',
+                                    style: TextStyle(
+                                        color: Color(0xffFFAADC),
+                                        fontFamily: 'ae_Sindibad'),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  'لديك حساب قديم؟',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
                   ],
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      const SizedBox(height: 15),
-                      BlocTextFormField(
-                        hint: 'الاسم الكامل',
-                        textFieldBloc: _formBloc.fullName,
-                      ),
-                      BlocTextFormField(
-                        hint: 'اسم المستخدم',
-                        textFieldBloc: _formBloc.username,
-                      ),
-                      BlocTextFormField(
-                        hint: 'البريد الالكتروني',
-                        textFieldBloc: _formBloc.email,
-                      ),
-                      BlocTextFormField(
-                        hint: 'كلمة السر',
-                        textFieldBloc: _formBloc.password,
-                        obscure: _obscureText,
-                        onChanged: checkChangePassword,
-                      ),
-                      BlocTextFormField(
-                        hint: 'تاكيد كلمة السر',
-                        textFieldBloc: _formBloc.passwordConfirm,
-                      ),
-                      SizedBox(
-                        height: 30,
-                        child: checkYourPassword(context),
-                      ),
-                      BlocTextFormField(
-                        hint: 'رقم الهاتف',
-                        textFieldBloc: _formBloc.number,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.height * 0.5,
-                        child: const Text(
-                          'يجب ان يكون الرقم مربوط بالواتساب الخاص بك ليتمكن\n المشترون من مراسلتك',
-                          style: TextStyle(color: Colors.grey),
-                          // textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 1.2,
-                        child: RaisedButton(
-                          onPressed: _loading ? null : onSignUpPressed,
-                          color: const Color(0xffFFAADC),
-                          child: const Text(
-                            'انشاء حساب',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontFamily: 'ae_Sindibad'),
-                          ),
-                          padding: const EdgeInsets.all(5.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 1.2,
-                        child: Row(
-                          children: <Widget>[
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: Colors.black26,
-                              ),
-                            ),
-                            const SizedBox(
-                                width: 30,
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'OR',
-                                    style: TextStyle(fontFamily: 'Cambo'),
-                                  ),
-                                )),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: Colors.black26,
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 1.1,
-                        child: Row(
-                          children: <Widget>[
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: FlatButton.icon(
-                                onPressed: _loading ? null : onFacebookSignUp,
-                                color: const Color(0xff6B6BD9),
-                                disabledColor: Colors.grey,
-                                icon: const Padding(
-                                  padding: EdgeInsets.only(bottom: 5, top: 5),
-                                  child: Icon(
-                                    faf.FontAwesomeIcons.facebookF,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                label: const Text(
-                                  'Facebook',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 22),
-                                ),
-                                padding: const EdgeInsets.all(5.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: Container(
-                                height: 45,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 1, color: const Color(0xFFCA39E3)),
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                width: MediaQuery.of(context).size.width / 3,
-                                child: FlatButton.icon(
-                                  onPressed: _loading ? null : onGoogleSignUp,
-                                  color: const Color(0xffffffff),
-                                  disabledColor: Colors.grey,
-                                  label: const Text(
-                                    'Google',
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 24),
-                                  ),
-                                  icon: Container(
-                                    height: 30,
-                                    width: 30,
-                                    child: const Image(
-                                      image: AssetImage('images/google.png'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(5.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 1.2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: const Text(
-                                'تسجيل دخول',
-                                style: TextStyle(
-                                    color: Color(0xffFFAADC),
-                                    fontFamily: 'ae_Sindibad'),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              'لديك حساب قديم؟',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }),
+                );
+              }),
+            ),
+          ),
         ),
       ),
     );
@@ -314,37 +239,6 @@ class _SignUp extends State<SignUp> {
       } else {
         showFlushSnackBar(context, error);
       }
-    }
-    setState(() => _loading = false);
-  }
-
-  void onFacebookSignUp() async {
-    setState(() => _loading = true);
-    var error = await Auth().signInWithFacebook();
-    if (error == null && error.isNotEmpty) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => Wrapper()),
-        (route) => false,
-      );
-    } else {
-      if (error.isNotEmpty) showFlushSnackBar(context, error);
-    }
-    setState(() => _loading = false);
-  }
-
-  void onGoogleSignUp() async {
-    setState(() => _loading = true);
-    var error = await Auth().signInWithGoogle();
-
-    if (error == null) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => Wrapper()),
-        (route) => false,
-      );
-    } else {
-      showFlushSnackBar(context, error);
     }
     setState(() => _loading = false);
   }

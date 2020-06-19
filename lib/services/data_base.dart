@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -16,16 +18,13 @@ Future<void> showCostumeFireBaseErrorNotif(String title) async {
   await Future.delayed(const Duration(seconds: 1));
   BotToast.showNotification(
     title: (child) {
-      return Container(
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          // textDirection: TextDirection.rtl,
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+      return Text(
+        title,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.red,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       );
     },
@@ -62,6 +61,10 @@ class DatabaseService {
 
   CollectionReference usersCollection = Firestore.instance.collection('users');
 
+  CollectionReference get userActivtiesReference {
+    return usersCollection.document(uid).collection('userActivities');
+  }
+
   ///this func. can be used to add new user or update an exsisting one
   Future updateUserData(User user) async {
     if (await connected()) {
@@ -71,60 +74,38 @@ class DatabaseService {
     }
   }
 
-  List<Activity> _activitiesListFromSnapshot(DocumentSnapshot doc) {
-    return List<Activity>.from(
-        doc.data['activities']?.map((x) => Activity.fromMap(x)));
+  List<Activity> _activitiesListFromSnapshot(QuerySnapshot querySnapshot) {
+    if(querySnapshot.documents == null) return null;
+    var activities = <Activity>[];
+    querySnapshot?.documents
+        ?.forEach((element) => activities.add(Activity.fromMap(element.data)));
+    return activities;
   }
 
   Stream<List<Activity>> get activities {
-    return usersCollection
-        .document(uid)
-        .snapshots()
-        .map(_activitiesListFromSnapshot);
+    return userActivtiesReference.snapshots().map(_activitiesListFromSnapshot);
   }
 
   ///this func. can be used to add new activity or update an exsisting one
   Future<void> updateUserActivities(Activity activity) async {
     if (!await connected()) {
-      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
       return null;
     }
-    final postowner = await getUserData();
-    await usersCollection.document(uid).updateData({
-      'activities':
-          (postowner.activities..add(activity)).map((e) => e.toMap()).toList()
-    });
-  }
-
-  ///if the user deleted a post this will delete all the activities that connected to that post
-  Future<void> deletePostActivities(String postId) async {
-    final postowner = await getCurrentUserData();
-    await usersCollection.document(postowner.uid).updateData({
-      'activities': (postowner.activities
-            ..removeWhere((element) => element.postId == postId))
-          .map((e) => e.toMap())
-          .toList()
-    });
+    userActivtiesReference.document().setData(activity.toMap());
   }
 
   ///this will mark all the activities as readed when the user enter the activities tab
   Future<void> markAllActivitiesAsReaded() async {
     if (await connected()) {
-      final postowner = await getUserData();
-      var updatedActivities = <Activity>[];
-      if (postowner.activities.length >= 6) {
-        for (var i = 6; i < postowner.activities.length; i++) {
-          if (postowner.activities[i].isReaded) {
-            postowner.activities.remove(postowner.activities[i - 6]);
-          }
-        }
-      }
-      for (var i in postowner.activities) {
-        updatedActivities.add(i.copyWith(isReaded: true));
-      }
-
-      await usersCollection.document(uid).updateData(
-          {'activities': (updatedActivities.map((e) => e.toMap()).toList())});
+      await userActivtiesReference
+          .getDocuments()
+          .then((value) => value.documents.forEach((element) {
+                if (!element.data['isReaded']) {
+                  userActivtiesReference
+                      .document(element.documentID)
+                      .updateData({'isReaded': true});
+                }
+              }));
     }
   }
 
@@ -193,7 +174,6 @@ class DatabaseService {
   Future<User> getUserData() async {
     if (uid == null) return null;
     if (!await connected()) {
-      showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
       return null;
     }
     final userDoc = await usersCollection.document(uid).get();
@@ -223,13 +203,15 @@ class DatabaseService {
       return null;
     }
   }
+
   ///this function is used to upload post pictures
   Future<dynamic> postImageToFireBase(Asset imageFile) async {
+    var randomInt = Random();
     if (!await connected()) {
       return null;
     }
     final imageData = await imageFile.getByteData();
-    final fileName = '$uid${imageFile.name}';
+    final fileName = '$uid${imageFile.name}${randomInt.nextInt(100)}';
     final reference = FirebaseStorage.instance.ref().child(fileName);
     final uploadTask = reference.putData(imageData.buffer.asUint8List());
     final storageTaskSnapshot = await uploadTask.onComplete;

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,13 +9,15 @@ import '../../models/post.dart';
 import '../../models/user.dart';
 import '../../models/category.dart';
 import '../../services/data_base.dart';
+import '../../functions/validations.dart';
 import '../../functions/show_dialog.dart';
 import '../../services/post_services.dart';
 import '../Costume_widgets/category_tab_view.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userId;
-  HomeScreen({this.userId});
+  final int initialIndex;
+  HomeScreen({this.userId, this.initialIndex = 0});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -22,12 +25,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  List<Widget> taps = [
+  final List<Widget> taps = [
     const HomePageTab(),
     const UserProfileTab(),
     const PublishAPsostTab(),
     const ActivitiesTab(),
   ];
+
+  final _fcm = FirebaseMessaging();
+
+  @override
+  void initState() {
+    _fcm.configure(
+      onMessage: (message) async {
+        print(message);
+        showFlushSnackBar(context, message['notification']['body']);
+      },
+      onLaunch: (message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (message) async {
+        print("onresum: $message");
+      },
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       right: 0.0,
                       child: StreamBuilder(
                         stream: DatabaseService(widget.userId).activities,
-                        // initialData: initialData ,
                         builder: (context, snapshot) {
                           activities = snapshot.data;
                           return activities != null &&
@@ -118,7 +139,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
 
 class HomePageTab extends StatefulWidget {
   const HomePageTab();
@@ -150,103 +170,107 @@ class _HomePageTabState extends State<HomePageTab>
   Widget build(BuildContext context) {
     final colorpink = const Color(0xffFFAADC);
 
-    return Container(
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(
-                'images/backgroundImage.png',
-              ),
-              fit: BoxFit.fill)),
-      child: Scaffold(
-        backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
-        body: SafeArea(
-          child: Stack(
-            textDirection: TextDirection.rtl,
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 200,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      const SizedBox(height: 100),
-                      Container(
-                        padding: const EdgeInsets.only(right: 30),
-                        child: const Text(
-                          'التصنيفات',
-                          style: TextStyle(
-                            color: Color(0xffE10586),
-                            fontFamily: 'ae_Sindibad',
-                            fontSize: 26,
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        leading: Container(),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.home, color: Colors.black),
+            iconSize: 30,
+            onPressed: () {
+              showCostumeDialog(context);
+            },
+          )
+        ],
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(
+                  'images/backgroundImage.png',
+                ),
+                fit: BoxFit.fill)),
+        child: Scaffold(
+          backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
+          body: SafeArea(
+            child: Stack(
+              textDirection: TextDirection.rtl,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        const SizedBox(height: 100),
+                        Container(
+                          padding: const EdgeInsets.only(right: 30),
+                          child: const Text(
+                            'التصنيفات',
+                            style: TextStyle(
+                              color: Color(0xffE10586),
+                              fontFamily: 'ae_Sindibad',
+                              fontSize: 26,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  width: MediaQuery.of(context).size.width,
-                  height: 200,
-                  child: AppBar(
-                    backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
-                    elevation: 0,
-                    bottom: TabBar(
-                      tabs: tabs,
-                      controller: _tabController,
-                      indicatorColor: colorpink,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      labelColor: const Color(0xff460053),
-                      labelStyle: const TextStyle(
-                          fontFamily: 'ae_Sindibad',
-                          fontSize: 18,
-                          color: Colors.black),
-                      isScrollable: true,
+                      ],
                     ),
                   ),
                 ),
-              ),
-              Transform.translate(
-                offset: const Offset(0, 200),
-                child: Container(
-                  height: 500,
-                  color: const Color(0xffFAFBFD),
-                  child: TabBarView(
-                    children: List<Widget>.generate(tabs.length, (index) {
-                      return CategoryTabView(
-                        type: CategoryTabType.values[index],
-                        category: tabs[index].text,
-                      );
-                    }),
-                    controller: _tabController,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    child: AppBar(
+                      backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
+                      elevation: 0,
+                      bottom: TabBar(
+                        tabs: tabs,
+                        controller: _tabController,
+                        indicatorColor: colorpink,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        labelColor: const Color(0xff460053),
+                        labelStyle: const TextStyle(
+                            fontFamily: 'ae_Sindibad',
+                            fontSize: 18,
+                            color: Colors.black),
+                        isScrollable: true,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              Transform.translate(
-                offset: const Offset(-5, 5),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.home),
-                    iconSize: 30,
-                    onPressed: () {
-                      showCostumeDialog(context);
-                    },
+                Transform.translate(
+                  offset: const Offset(0, 200),
+                  child: Container(
+                    height: 500,
+                    color: const Color(0xffFAFBFD),
+                    child: TabBarView(
+                      children: List<Widget>.generate(
+                        tabs.length,
+                        (index) {
+                          return CategoryTabView(
+                            type: CategoryTabType.values[index],
+                            category: tabs[index].text,
+                          );
+                        },
+                      ),
+                      controller: _tabController,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-
-
-

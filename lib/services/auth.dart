@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -38,7 +40,7 @@ abstract class BaseAuth {
 enum AuthState {
   lohedIn,
   notLogedIn,
-  error,
+  error, //this added for future use
 }
 
 class Auth implements BaseAuth {
@@ -69,6 +71,8 @@ class Auth implements BaseAuth {
       var firebaseuser = result.user;
       if (firebaseuser.isEmailVerified) {
         final user = await DatabaseService(firebaseuser.uid).getUserData();
+        _saveDeviceToken(user.uid);
+
         SharedPrefs().setUserId(uid: user.uid);
         addState(AuthState.lohedIn);
 
@@ -95,7 +99,7 @@ class Auth implements BaseAuth {
 
         return errorMessege;
       } else {
-        debugPrint(e);
+        // debugPrint(e);
       }
     }
     return null;
@@ -139,7 +143,7 @@ class Auth implements BaseAuth {
 
         return errorMessege;
       } else {
-        debugPrint(e);
+        // debugPrint(e);
         return 'حدث خطا غير معروف';
       }
     }
@@ -177,7 +181,6 @@ class Auth implements BaseAuth {
       assert(firebaseUser.displayName != null, 'the display name is null');
       assert(!firebaseUser.isAnonymous, 'the user is anonymous');
       assert(await firebaseUser.getIdToken() != null, 'test1');
-
       //If the user already excists in the data base then get his data
       user = await DatabaseService(firebaseUser.uid).getUserData() ??
           User(
@@ -187,11 +190,11 @@ class Auth implements BaseAuth {
             phoneNo: '',
             email: firebaseUser.email ?? "",
             imageUrl: googleUser.photoUrl ?? '',
-            activities: [],
           );
 
-      if (user.userName.isEmpty) {
+      if (user.phoneNo.isEmpty) {
         await DatabaseService(firebaseUser.uid).updateUserData(user);
+        _saveDeviceToken(user.uid);
       }
 
       SharedPrefs().setUserId(uid: user.uid);
@@ -212,9 +215,9 @@ class Auth implements BaseAuth {
         }
         return errorMessege;
       }
-      debugPrint(e);
+      print(e);
     }
-    return '';
+    return 'تم الغاء تسجيل الدخول';
   }
 
   Future<bool> googleSignout() async {
@@ -305,7 +308,6 @@ class Auth implements BaseAuth {
           final authResult =
               await _firebaseAuth.signInWithCredential(credential);
           final firebaseUser = authResult.user;
-          // if (await _isAlreadyLinked(profile['email'], toFacebook: true)) {
           user = await DatabaseService(firebaseUser.uid).getUserData() ??
               User(
                 uid: firebaseUser.uid,
@@ -314,27 +316,25 @@ class Auth implements BaseAuth {
                 phoneNo: '',
                 email: profile['email'] ?? "",
                 imageUrl: profile['picture']["data"]["url"],
-                activities: [],
               );
-          // } else {
           if (user.userName.isEmpty) {
             await DatabaseService(firebaseUser.uid).updateUserData(user);
           }
-          // }
+          _saveDeviceToken(user.uid);
           SharedPrefs().setUserId(uid: user.uid);
           addState(AuthState.lohedIn);
           return null;
           break;
         case FacebookLoginStatus.cancelledByUser:
           addState(AuthState.notLogedIn);
-          debugPrint('Login cancelled by the user.');
+          // debugPrint('Login cancelled by the user.');
           return '';
 
           break;
         case FacebookLoginStatus.error:
           addState(AuthState.error);
-          debugPrint('Something went wrong with the login process.\n'
-              'Here\'s the error Facebook gave us: ${result.errorMessage}');
+          // debugPrint('Something went wrong with the login process.\n'
+          //     'Here\'s the error Facebook gave us: ${result.errorMessage}');
           return 'حدث خطا غير معروف، الرجاء المحاولة مرة اخرى';
 
           break;
@@ -354,7 +354,7 @@ class Auth implements BaseAuth {
         }
         return errorMessege;
       }
-      debugPrint(e);
+      // debugPrint(e);
     }
     return null;
   }
@@ -363,6 +363,26 @@ class Auth implements BaseAuth {
   Future<bool> facebookSignout() async {
     if (await facebookSignIn.isLoggedIn) await facebookSignIn.logOut();
     return true;
+  }
+
+  void _saveDeviceToken(String uid) async {
+    final _fcm = FirebaseMessaging();
+    // Get the token for this device
+    final fcmToken = await _fcm.getToken();
+
+    // Save it to Firestore
+    if (fcmToken != null) {
+      var tokens = DatabaseService('')
+          .usersCollection
+          .document(uid)
+          .collection('tokens')
+          .document(fcmToken);
+
+      await tokens.setData({
+        'token': fcmToken,
+        'createdAt': FieldValue.serverTimestamp(), // optional
+      });
+    }
   }
 
   static void addState(AuthState state) {

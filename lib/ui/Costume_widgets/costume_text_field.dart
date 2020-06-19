@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-///this just a normal custumized text form field 
+///this just a normal custumized text form field
 class CustomTextField extends StatelessWidget {
   CustomTextField({
     Key key,
@@ -35,7 +35,7 @@ class CustomTextField extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
             borderSide:
-                BorderSide(color: Colors.grey.withOpacity(0.3), width: 2.0),
+                BorderSide(color: Colors.grey.withOpacity(0), width: 0.0),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
@@ -44,30 +44,37 @@ class CustomTextField extends StatelessWidget {
           fillColor: Colors.white,
         ),
       ),
-      child: Container(
-        width: MediaQuery.of(context).size.width / 1.2,
-        child: TextFormField(
-          readOnly: readOnly,
-          controller: _controller,
-          onSaved: onSaved,
-          validator: validator,
-          obscureText: obsecure,
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            hintText: hint,
-            contentPadding: const EdgeInsets.all(10),
-            hintStyle: const TextStyle(
-              fontFamily: 'ae_Sindibad',
-              color: Color(0xffA2A2A2),
-            ),
-            suffixIcon: suffixWidget ??
-                Padding(
-                  child: IconTheme(
-                    data: const IconThemeData(color: Colors.black),
-                    child: suffixIcon ?? Container(width: 0),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        elevation: 3,
+        shadowColor: Colors.grey.withOpacity(0.3),
+        margin: const EdgeInsets.only(bottom: 15),
+        child: Container(
+          width: MediaQuery.of(context).size.width / 1.15,
+          height: 55,
+          child: TextFormField(
+            readOnly: readOnly,
+            controller: _controller,
+            onSaved: onSaved,
+            validator: validator,
+            obscureText: obsecure,
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              hintText: hint,
+              contentPadding: const EdgeInsets.all(10),
+              hintStyle: const TextStyle(
+                fontFamily: 'ae_Sindibad',
+                color: Color(0xffA2A2A2),
+              ),
+              suffixIcon: suffixWidget ??
+                  Padding(
+                    child: IconTheme(
+                      data: const IconThemeData(color: Colors.black),
+                      child: suffixIcon ?? Container(width: 0),
+                    ),
+                    padding: const EdgeInsets.only(left: 30, right: 10),
                   ),
-                  padding: const EdgeInsets.only(left: 30, right: 10),
-                ),
+            ),
           ),
         ),
       ),

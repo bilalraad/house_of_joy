@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart' as faf;
 
 import '../Home/order.dart';
+import './like_button.dart';
 import './view_images.dart';
 import '../Home/comments.dart';
 import './loading_dialog.dart';
@@ -11,8 +12,6 @@ import '../../models/user.dart';
 import '../Home/profileUser.dart';
 import '../../services/data_base.dart';
 import '../../functions/creat_route.dart';
-import '../../functions/show_overlay.dart';
-import '../../services/post_services.dart';
 
 Widget buildPostWidget(Post post, BuildContext context, int index) {
   return FutureBuilder<User>(
@@ -35,7 +34,11 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                             Container(
                               width: 40,
                               height: 40,
-                              decoration: const BoxDecoration(shape: BoxShape.circle),
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(color: Colors.black12),
+                                  ]),
                               child: !postUser.imageUrl.isNotEmpty
                                   ? Image.asset('images/personal.png')
                                   : LoadImage(
@@ -63,12 +66,15 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return MultiProvider(providers: [
-                                  FutureProvider<User>(
-                                    create: (context) => DatabaseService('')
-                                        .getCurrentUserData(),
-                                  )
-                                ], child: UserProfileTab(outSideUser: postUser));
+                                return MultiProvider(
+                                    providers: [
+                                      FutureProvider<User>(
+                                        create: (context) => DatabaseService('')
+                                            .getCurrentUserData(),
+                                      )
+                                    ],
+                                    child:
+                                        UserProfileTab(outSideUser: postUser));
                               },
                             ),
                           );
@@ -129,7 +135,8 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                                 ),
                                 const Expanded(child: SizedBox(width: 3)),
                                 IconButton(
-                                  icon: const Icon(faf.FontAwesomeIcons.shoppingCart),
+                                  icon: const Icon(
+                                      faf.FontAwesomeIcons.shoppingCart),
                                   color: const Color(0xffBDADE0),
                                   onPressed: () {
                                     Navigator.push(
@@ -154,81 +161,5 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
             );
     },
   );
-}
-
-class LikeButton extends StatefulWidget {
-  final List<Like> likes;
-  final String postId;
-  final String postOwnerId;
-  final User user;
-
-  LikeButton(this.likes, this.postId, this.postOwnerId, {this.user});
-
-  @override
-  _LikeButtonState createState() => _LikeButtonState();
-}
-
-class _LikeButtonState extends State<LikeButton> {
-  Color colorLike = Colors.red;
-  Color colorNotlike = const Color(0xffBDADE0);
-  bool islike = false;
-  Like like;
-
-  @override
-  Widget build(BuildContext context) {
-    final user = widget.user ?? Provider.of<User>(context);
-    if (user != null && widget.likes.any((like) => like.userId == user.uid)) {
-      setState(() {
-        islike = true;
-      });
-    }
-    return Row(
-      children: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.favorite),
-          color: islike ? colorLike : colorNotlike,
-          iconSize: 30,
-          onPressed: () async {
-            setState(() {
-              islike = !islike;
-            });
-            List<Like> updatedLikes;
-            like = Like(userId: user.uid);
-            Activity newActivity;
-
-            if (islike) {
-              updatedLikes = widget.likes..add(like);
-              // if (widget.postOwnerId != user.uid) {
-              newActivity = Activity(
-                isLike: true,
-                postId: widget.postId,
-                userId: user.uid,
-              );
-              // }
-            } else {
-              updatedLikes = widget.likes
-                ..removeWhere((like) => like.userId == user.uid);
-            }
-            var error = await PostServices(widget.postId).likeUnlikePost(
-              updatedLikes,
-              newActivity,
-              widget.postOwnerId,
-            );
-
-            if (error != null) {
-              setState(() {
-                islike = false;
-              });
-              showOverlay(context: context, text: error);
-            }
-          },
-        ),
-        Text(
-          '${widget.likes.length}',
-          style: const TextStyle(color: Colors.grey),
-        ),
-      ],
-    );
-  }
 }
 
