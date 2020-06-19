@@ -12,15 +12,15 @@
 
 ## About Code Fore Iraq
 
-وهي مبادرة انسانية غير ربحية تهدف الى خدمة المجتمع عن طريق البرمجة (Programming).
-تعتبر "Code for Iraq" مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب
+وهي مبادرة انسانية غير ربحية تهدف الى خدمة المجتمع عن طريق البرمجة.
+تعتبر مبادرة البرمجة من اجل العراق مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب
 بأستخدام التقنيات مفتوحة المصدر Open source , كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما .
 
 ## Devlopers of this app
 
 1 - Muhammed Essa - Manager code for Iraq
 2 - Zahraa Ali - Project manager
-3 - Bilal Raad - Flutter devoloper - contact: bilal52040@gmail.com, telegram: @bilal_rad
+3 - Bilal Raad - Flutter developer - contact: bilal52040@gmail.com, telegram: @bilal_rad
 4 - Ahmed Yaseen - Programmer
 5 - Noor Al-huda Lateef - ui/ux design
 6 - Murtada Hamid - Logic designe
