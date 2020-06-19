@@ -1,16 +1,26 @@
 # house_of_joy
 
-code for iraq
+عمل تطبيق خاص للمشاريع الصغيرة المنزلية بكل انواعها للنساء
+يتكون التطبيق من اقسام مثلا قسم خاص للأكلات والحلويات
+وقسم خاص للاعمال اليدوية وقسم خاص للخياطة وغيرها.
+يمكن لأي ربة بيت او بنت متخرجة ولا تمتلك عمل وتمتلك مشروعها الخاص
+وتحتاج الى ترويج وعرض مشروعها يمكن رفع المشروع على هذا التطبيق
+وعند الدخول الى التطبيق يستطيع المتصفح مشاهدة الأقسام واختيار القسم الذي يحتاج
+الطلب منه يضغط على القسم ويتصفح وعند الطلب يتم المراسله
+والطلب عن طريق رقم الموبايل أو الواتساب أو الفايبر
+وكذلك أعطاء رأيه وترك تعليق على الذي طلبه مسبقا ليسهل للبقية معرفة اراء الزائرين.,
 
-## Getting Started
+## About Code Fore Iraq
 
-This project is a starting point for a Flutter application.
+وهي مبادرة انسانية غير ربحية تهدف الى خدمة المجتمع عن طريق البرمجة (Programming).
+تعتبر "Code for Iraq" مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب
+بأستخدام التقنيات مفتوحة المصدر Open source , كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما .
 
-A few resources to get you started if this is your first Flutter project:
+## Devlopers of this app
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1 - Muhammed Essa - Manager code for Iraq
+2 - Zahraa Ali - Project manager
+3 - Bilal Raad - Flutter devoloper - contact: bilal52040@gmail.com, telegram: @bilal_rad
+4 - Ahmed Yaseen - Programmer
+5 - Noor Al-huda Lateef - ui/ux design
+6 - Murtada Hamid - Logic designe
