@@ -377,7 +377,7 @@ class _Login extends State<Login> {
   void onFacebookSignUp() async {
     setState(() => _loading = true);
     var error = await Auth().signInWithFacebook();
-    if (error == null && error.isNotEmpty) {
+    if (error == null || error.isEmpty) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Wrapper()),

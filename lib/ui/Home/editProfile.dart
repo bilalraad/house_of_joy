@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../models/user.dart';
-import '../Auth/changePassword.dart';
 import '../../services/data_base.dart';
-import '../../functions/creat_route.dart';
 import '../../functions/show_overlay.dart';
 
 class EditProfile extends StatefulWidget {
@@ -188,36 +186,34 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
                 const SizedBox(height: 15),
-                Stack(
-                  children: <Widget>[
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                          color: const Color(0xffFFAADC),
-                          image: DecorationImage(
-                              image: profilepic ?? _decideImageView(),
-                              fit: BoxFit.cover),
-                          shape: BoxShape.circle),
-                    ),
-                    Transform.translate(
-                      offset: const Offset(-72, 0),
-                      child: GestureDetector(
+                GestureDetector(
+                  onTap: () => _showDialog(context),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                            color: const Color(0xffFFAADC),
+                            image: DecorationImage(
+                                image: profilepic ?? _decideImageView(),
+                                fit: BoxFit.cover),
+                            shape: BoxShape.circle),
+                      ),
+                      Transform.translate(
+                        offset: const Offset(0, 0),
                         child: Container(
-                          width: 35,
-                          height: 35,
+                          width: 25,
+                          height: 25,
                           decoration: const BoxDecoration(
                             image: DecorationImage(
                                 image: AssetImage('images/camera.png'),
                                 fit: BoxFit.cover),
                           ),
                         ),
-                        onTap: () {
-                          _showDialog(context);
-                        },
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
                 Form(
                   key: _formKey,
@@ -295,38 +291,6 @@ class _EditProfileState extends State<EditProfile> {
                                 style: TextStyle(color: Colors.grey),
                               )
                             : Container(height: 10),
-                        GestureDetector(
-                          child: Stack(
-                            children: <Widget>[
-                              TextField(
-                                decoration: inputDecoration.copyWith(
-                                  hintText: 'تغيير كلمة السر',
-                                ),
-                                readOnly: true,
-                              ),
-                              Transform.translate(
-                                offset: const Offset(0, 10),
-                                child: const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Icon(Icons.arrow_forward_ios),
-                                ),
-                              ),
-                            ],
-                          ),
-                          onTap: () async {
-                            setState(() {
-                              loading = true;
-                            });
-
-                            Navigator.push(
-                              context,
-                              createRoute(ChangePassword()),
-                            );
-                            setState(() {
-                              loading = false;
-                            });
-                          },
-                        ),
                         const SizedBox(height: 20),
                         loading
                             ? const CircularProgressIndicator()

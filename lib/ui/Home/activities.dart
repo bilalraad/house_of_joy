@@ -58,7 +58,7 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
                                     child: SizedBox(width: 5),
                                   ),
                                   IconButton(
-                                      icon: const Icon(Icons.home),
+                                      icon: const Icon(Icons.dehaze),
                                       iconSize: 30,
                                       onPressed: () {
                                         showCostumeDialog(context);

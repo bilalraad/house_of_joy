@@ -37,7 +37,7 @@ class About extends StatelessWidget {
                         child: Text(
                           isAboutApp ? 'حول التطبيق' : 'حول المبادرة',
                           style: const TextStyle(
-                              color: Color(0xFFCA39E3),
+                              color: Color(0xffFD85CB),
                               fontSize: 24,
                               fontFamily: 'ae_Sindibad'),
                         ),
@@ -47,12 +47,17 @@ class About extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width / 1.4,
+                  width: MediaQuery.of(context).size.width * 0.5,
                   height: 220,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('images/codeForIraq.jpg'),
-                          fit: BoxFit.cover)),
+                    image: AssetImage(
+                      isAboutApp
+                          ? 'images/logo.png'
+                          : 'images/code_for_iraq.png',
+                    ),
+                    fit: BoxFit.contain,
+                  )),
                 ),
                 const SizedBox(height: 15),
                 Directionality(
@@ -60,6 +65,7 @@ class About extends StatelessWidget {
                   child: Container(
                     width: MediaQuery.of(context).size.width / 1.1,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         isAboutApp
                             ? const Text(
@@ -73,12 +79,14 @@ class About extends StatelessWidget {
                                 'والطلب عن طريق رقم الموبايل أو الواتساب أو الفايبر '
                                 'وكذلك أعطاء رأيه وترك تعليق على الذي طلبه مسبقا ليسهل للبقية معرفة اراء الزائرين.',
                                 style: TextStyle(fontSize: 18),
+                                textAlign: TextAlign.center,
                               )
                             : const Text(
                                 'وهي مبادرة انسانية غير ربحية تهدف الى خدمة المجتمع عن طريق البرمجة (Programming). '
                                 'تعتبر "Code for Iraq" مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب '
                                 'بأستخدام التقنيات مفتوحة المصدر Open source  , كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما .',
                                 style: TextStyle(fontSize: 18),
+                                textAlign: TextAlign.center,
                               ),
                         const SizedBox(height: 30)
                       ],
@@ -94,6 +102,45 @@ class About extends StatelessWidget {
   }
 }
 
+final List<Map<String, String>> teamData = [
+  {
+    'name': 'مُحمد عيسى',
+    'position': 'صاحب مبادرة البرمجة من اجل العراق',
+    'city': 'كركوك',
+    'email': 'muhammed.essa@codeforiraq.org',
+  },
+  {
+    'name': 'زهراء عليّ',
+    'position': 'ادارة المشروع',
+    'city': 'واسط',
+    'email': 'zahraa.ali@codeforiraq.org',
+  },
+  {
+    'name': 'نور الهُدى لطيّف',
+    'position': 'تصميم التطبيق',
+    'city': 'واسط',
+    'email': 'noor.alhuda@codeforiraq.org',
+  },
+  {
+    'name': 'بِلال رعد',
+    'position': 'برمجة التطبيق',
+    'city': 'بغداد',
+    'email': 'bilal.raad@codeforiraq.org',
+  },
+  {
+    'name': 'أحمد ياسين',
+    'position': 'برمجة التطبيق',
+    'city': 'صلاح االدين',
+    'email': '',
+  },
+  {
+    'name': 'مُرتضى حامد',
+    'position': 'تصميم الشعار',
+    'city': 'بغداد',
+    'email': '',
+  },
+];
+
 class Staff extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -108,6 +155,7 @@ class Staff extends StatelessWidget {
         backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               SafeArea(
                 child: Column(
@@ -128,7 +176,7 @@ class Staff extends StatelessWidget {
                         child: Text(
                           'فريق العمل',
                           style: TextStyle(
-                              color: Color(0xFFCA39E3),
+                              color: Color(0xffFD85CB),
                               fontSize: 24,
                               fontFamily: 'ae_Sindibad'),
                         ),
@@ -138,21 +186,12 @@ class Staff extends StatelessWidget {
                   ],
                 ),
               ),
-              _createNewEmloyee(context, 'Muhammed Essa',
-                  'Manager code for Iraq', 'Kirkuk', 'images/MuhammedEssa.jpg'),
-              const SizedBox(height: 10),
-              _createNewEmloyee(context, 'Zahraa Ali', 'Project manager',
-                  'Wasit', 'images/ZahraAli.jpg'),
-              const SizedBox(height: 10),
-              _createNewEmloyee(context, 'Noor Al-huda Lateef', 'ui/ux design',
-                  'Wasit', 'images/NoorAlhuda.jpg'),
-              const SizedBox(height: 10),
-              _createNewEmloyee(context, 'Ahmed Yaseen', 'Programmer',
-                  'Salah Al-din', 'images/AhmedYaseen.jpg'),
-              const SizedBox(height: 10),
-              _createNewEmloyee(context, 'Murtada Hamid', 'Logc designer',
-                  'Baghdad', 'images/MurtadaHamid.jpg'),
-              const SizedBox(height: 10),
+              for (var member in teamData)
+                _createNewEmloyee(
+                    name: member['name'],
+                    city: member['city'],
+                    email: member['email'],
+                    position: member['position'])
             ],
           ),
         ),
@@ -160,56 +199,42 @@ class Staff extends StatelessWidget {
     );
   }
 
-  Widget _createNewEmloyee(BuildContext context, String name, String position,
-      String city, String pathImage) {
-    return Container(
-      width: MediaQuery.of(context).size.width / 1.1,
-      height: 100,
-      child: Row(
-        children: <Widget>[
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: const Color(0xffFFAADC),
-              image: DecorationImage(
-                  image: AssetImage(pathImage), fit: BoxFit.cover),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          const SizedBox(width: 5),
-          Column(
+  Widget _createNewEmloyee(
+      {String name, String position, String city, String email}) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Card(
+        elevation: 3,
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Container(
+          padding: const EdgeInsets.only(right: 10, top: 5, bottom: 5),
+          width: double.infinity,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const SizedBox(height: 12),
               Text(
-                '$name',
+                name,
                 style: const TextStyle(
-                    color: Color(0xFFCA39E3),
-                    fontSize: 18,
+                    color: Color(0xffFD85CB),
+                    fontSize: 23,
                     fontFamily: 'ae_Sindibad',
-                    fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.bold),
               ),
               Text(
-                '$position',
-                style: const TextStyle(
-                    color: Color(0xFFCA39E3),
-                    fontSize: 14,
-                    fontFamily: 'ae_Sindibad',
-                    fontStyle: FontStyle.italic),
+                city,
+                style: const TextStyle(fontSize: 14),
               ),
               Text(
-                '$city',
-                style: const TextStyle(
-                    color: Color(0xFFCA39E3),
-                    fontSize: 14,
-                    fontFamily: 'ae_Sindibad',
-                    fontStyle: FontStyle.italic),
+                position,
+                style: const TextStyle(fontSize: 14),
+              ),
+              Text(
+                email,
+                style: const TextStyle(fontSize: 14),
               ),
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }

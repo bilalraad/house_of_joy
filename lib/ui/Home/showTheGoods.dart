@@ -45,12 +45,34 @@ class _ShowThwGoodsState extends State<ShowThwGoods> {
                   fit: BoxFit.fill)),
           child: Scaffold(
             backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              centerTitle: true,
+              title: Text(
+                '$_title',
+                style: const TextStyle(
+                    color: Color(0xffE10586),
+                    fontSize: 26,
+                    fontFamily: 'ae_Sindibad'),
+              ),
+              leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ),
             body: SafeArea(
               child: Stack(
                 children: <Widget>[
                   ModalProgress(
                     costumeIndicator: const LoadingDialog(),
                     inAsyncCall: !snapshot.hasData,
+                    opacity: 0,
                     child: Container(
                       padding: const EdgeInsets.only(top: 100),
                       child: posts == null
@@ -65,31 +87,6 @@ class _ShowThwGoodsState extends State<ShowThwGoods> {
                                   },
                                 ),
                     ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      IconButton(
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }),
-                      const Expanded(child: SizedBox(width: 3)),
-                      Text(
-                        '$_title',
-                        style: const TextStyle(
-                            color: Color(0xffE10586),
-                            fontSize: 26,
-                            fontFamily: 'ae_Sindibad'),
-                      ),
-                      const Expanded(child: SizedBox(width: 3)),
-                      IconButton(
-                        icon: const Icon(Icons.home),
-                        iconSize: 30,
-                        onPressed: () {
-                          showCostumeDialog(context);
-                        },
-                      ),
-                    ],
                   ),
                 ],
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './profileUser.dart';
 import '../../models/post.dart';
 import '../../models/user.dart';
 import '../../services/data_base.dart';
@@ -248,34 +249,44 @@ class _CommentsState extends State<Comments> {
                 width: MediaQuery.of(context).size.width / 1.1,
                 child: Column(
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        const Expanded(child: SizedBox(width: 10)),
-                        Text(
-                          '${commentUser.fullName}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontFamily: 'ae_Sindibad',
-                          ),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return UserProfileTab(outSideUser: commentUser);
+                          },
                         ),
-                        const SizedBox(width: 5),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: commentUser.imageUrl.isNotEmpty
-                                    ? NetworkImage(
-                                        commentUser.imageUrl,
-                                      )
-                                    : const AssetImage('images/personal.png'),
-                                fit: BoxFit.cover),
-                            boxShadow: [BoxShadow(color: Colors.grey[300])],
-                            shape: BoxShape.circle,
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          const Expanded(child: SizedBox(width: 10)),
+                          Text(
+                            '${commentUser.fullName}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontFamily: 'ae_Sindibad',
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 5),
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: commentUser.imageUrl.isNotEmpty
+                                      ? NetworkImage(
+                                          commentUser.imageUrl,
+                                        )
+                                      : const AssetImage('images/personal.png'),
+                                  fit: BoxFit.cover),
+                              boxShadow: [BoxShadow(color: Colors.grey[300])],
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 5),
                     Container(

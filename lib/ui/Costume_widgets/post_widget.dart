@@ -66,15 +66,7 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return MultiProvider(
-                                    providers: [
-                                      FutureProvider<User>(
-                                        create: (context) => DatabaseService('')
-                                            .getCurrentUserData(),
-                                      )
-                                    ],
-                                    child:
-                                        UserProfileTab(outSideUser: postUser));
+                                return UserProfileTab(outSideUser: postUser);
                               },
                             ),
                           );
@@ -162,4 +154,3 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
     },
   );
 }
-

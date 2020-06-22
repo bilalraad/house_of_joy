@@ -178,7 +178,7 @@ class _HomePageTabState extends State<HomePageTab>
         elevation: 0,
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.home, color: Colors.black),
+            icon: const Icon(Icons.dehaze, color: Colors.black),
             iconSize: 30,
             onPressed: () {
               showCostumeDialog(context);

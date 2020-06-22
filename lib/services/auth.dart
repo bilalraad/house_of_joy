@@ -31,8 +31,8 @@ abstract class BaseAuth {
   Future<bool> facebookSignout();
 
   Future<void> resetPassword(String email);
-
-  Future<String> changePassword(String oldPassword, String newPassword);
+  //for future use
+  // Future<String> changePassword(String oldPassword, String newPassword);
 
   Future<String> signInWithFacebook();
 }
@@ -237,31 +237,31 @@ class Auth implements BaseAuth {
       align: Alignment.topRight,
     );
   }
-
-  Future<String> changePassword(
-    String oldPassword,
-    String newPassword,
-  ) async {
-    try {
-      final user = await _firebaseAuth.currentUser();
-      final email = user.email;
-      final result = await user.reauthenticateWithCredential(
-          EmailAuthProvider.getCredential(email: email, password: oldPassword));
-      await result.user.updatePassword(newPassword);
-      return null;
-    } catch (error) {
-      if (error is PlatformException) {
-        if (error.code == 'ERROR_WRONG_PASSWORD') {
-          return 'كلمة السر غير صحيحة';
-        } else if (error.code == 'ERROR_NETWORK_REQUEST_FAILED') {
-          return 'تاكد من اتصالك بالانترنت';
-        } else {
-          return 'حدث خطا غير معروف الرجاء المحاولة لاحقا';
-        }
-      }
-    }
-    return null;
-  }
+  //for future use
+  // Future<String> changePassword(
+  //   String oldPassword,
+  //   String newPassword,
+  // ) async {
+  //   try {
+  //     final user = await _firebaseAuth.currentUser();
+  //     final email = user.email;
+  //     final result = await user.reauthenticateWithCredential(
+  //         EmailAuthProvider.getCredential(email: email, password: oldPassword));
+  //     await result.user.updatePassword(newPassword);
+  //     return null;
+  //   } catch (error) {
+  //     if (error is PlatformException) {
+  //       if (error.code == 'ERROR_WRONG_PASSWORD') {
+  //         return 'كلمة السر غير صحيحة';
+  //       } else if (error.code == 'ERROR_NETWORK_REQUEST_FAILED') {
+  //         return 'تاكد من اتصالك بالانترنت';
+  //       } else {
+  //         return 'حدث خطا غير معروف الرجاء المحاولة لاحقا';
+  //       }
+  //     }
+  //   }
+  //   return null;
+  // }
 
   Future<String> _getEmailAlreadyInUseError(String email) async {
     final signInMethodsLinkedToEmail =
