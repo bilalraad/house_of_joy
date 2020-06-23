@@ -131,7 +131,7 @@ final List<Map<String, String>> teamData = [
     'name': 'أحمد ياسين',
     'position': 'برمجة التطبيق',
     'city': 'صلاح االدين',
-    'email': '',
+    'email': 'ahmed.yaseen93@codeforiraq.org',
   },
   {
     'name': 'مُرتضى حامد',
@@ -220,18 +220,9 @@ class Staff extends StatelessWidget {
                     fontFamily: 'ae_Sindibad',
                     fontWeight: FontWeight.bold),
               ),
-              Text(
-                city,
-                style: const TextStyle(fontSize: 14),
-              ),
-              Text(
-                position,
-                style: const TextStyle(fontSize: 14),
-              ),
-              Text(
-                email,
-                style: const TextStyle(fontSize: 14),
-              ),
+              Text(city),
+              Text(position),
+              Text(email),
             ],
           ),
         ),

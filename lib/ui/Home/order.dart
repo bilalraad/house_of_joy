@@ -107,6 +107,7 @@ class _OrderState extends State<Order> {
                     child: Text(
                       'لم يضع صاحب المنشور رقم هاتفه، يمكنك طلب ذلك من خلال التعليقات',
                       textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18),
                     ),
                   )
                 : Container()

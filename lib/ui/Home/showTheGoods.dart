@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/post.dart';
-import '../../functions/show_dialog.dart';
 import '../../services/post_services.dart';
 import '../Costume_widgets/post_widget.dart';
 import '../Costume_widgets/loading_dialog.dart';

@@ -225,7 +225,7 @@ class Auth implements BaseAuth {
     return true;
   }
 
-  ///this func. will sent link to users's email to reset the password from the link
+  ///this func. will sent link to user's email to reset the password from the link
   Future<void> resetPassword(String email) async {
     if (!await connected()) {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
@@ -333,8 +333,6 @@ class Auth implements BaseAuth {
           break;
         case FacebookLoginStatus.error:
           addState(AuthState.error);
-          // debugPrint('Something went wrong with the login process.\n'
-          //     'Here\'s the error Facebook gave us: ${result.errorMessage}');
           return 'حدث خطا غير معروف، الرجاء المحاولة مرة اخرى';
 
           break;
