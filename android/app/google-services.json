@@ -8,26 +8,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:802462984285:android:a44cfbdb01b0bdeab605b4",
+        "mobilesdk_app_id": "1:802462984285:android:887fdde1cc4b6f0cb605b4",
         "android_client_info": {
-          "package_name": "com.example.house_of_joy"
+          "package_name": "org.codeforiraq.house_of_joy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "802462984285-j8hrqcf18dpekctcomh14o1hvotn50qb.apps.googleusercontent.com",
+          "client_id": "802462984285-qjehjsg92kmrvo31iao3cbb6d20c6evt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.house_of_joy",
-            "certificate_hash": "5c2360cd6ecd8ea72bd0a4bf3b1d36cee277dfad"
+            "package_name": "org.codeforiraq.house_of_joy",
+            "certificate_hash": "faf2a0f239a60ff82acbe8f3cf911341e20c5c00"
           }
         },
         {
-          "client_id": "802462984285-hel0dvn0na53ifnnb4usil54j0jf2r2m.apps.googleusercontent.com",
+          "client_id": "802462984285-fr4u3as6ddo150rf639nf3hfhjmpcn21.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.house_of_joy",
-            "certificate_hash": "faf2a0f239a60ff82acbe8f3cf911341e20c5c00"
+            "package_name": "org.codeforiraq.house_of_joy",
+            "certificate_hash": "5c2360cd6ecd8ea72bd0a4bf3b1d36cee277dfad"
           }
         },
         {
@@ -37,7 +37,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDXkG-Em7v5egkN6FLgxVezBaT7yl1JevQ"
+          "current_key": "AIzaSyD33rIMKDayVHxJZc-e8PfMqipQdznNFjA"
         }
       ],
       "services": {

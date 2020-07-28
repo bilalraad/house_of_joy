@@ -59,7 +59,7 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
     });
 
     images = await MultiImagePicker.pickImages(
-          maxImages: 5,
+          maxImages: 1,
           enableCamera: true,
         ).catchError((err) {}) ??
         [];

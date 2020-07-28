@@ -16,17 +16,17 @@
 تعتبر مبادرة البرمجة من اجل العراق مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب
    كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما ،باستخدام تقنيات مفتوحة المصدر.
 
-## Devlopers of this app
+## Project Team
 
-1 - Muhammed Essa - Manager code for Iraq
+1 - Muhammed Essa - Manager code for Iraq - contact: muhammed.essa@codeforiraq.org
 
-2 - Zahraa Ali - Project manager
+2 - Zahraa Ali - Project manager - contact: zahraa.ali@codeforiraq.org
 
-3 - Bilal Raad - Flutter developer - contact: bilal52040@gmail.com, telegram: @bilal_rad
+3 - Bilal Raad - Flutter developer - contact: bilal.raad@codeforiraq.org.com, telegram: @bilal_rad
 
-4 - Ahmed Yaseen - Programmer
+4 - Ahmed Yaseen - Programmer - contact: ahmed.yaseen93@codeforiraq.org
 
-5 - Noor Al-huda Lateef - ui/ux design
+5 - Noor Al-huda Lateef - ui/ux design - contact: noor.alhuda@codeforiraq.org
 
-6 - Murtada Hamid - Logic designe
+6 - Murtada Hamid - Logo designe
 

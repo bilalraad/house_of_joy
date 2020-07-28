@@ -1,4 +1,4 @@
-package com.example.house_of_joy
+package org.codeforiraq.house_of_joy
 
 
 import androidx.annotation.NonNull;

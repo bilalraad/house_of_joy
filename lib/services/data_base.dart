@@ -21,7 +21,7 @@ Future<void> showCostumeFireBaseErrorNotif(String title) async {
       return Text(
         title,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.red,
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -32,7 +32,7 @@ Future<void> showCostumeFireBaseErrorNotif(String title) async {
   );
   await Future.delayed(const Duration(seconds: 2));
 }
-
+///To check the internet connection and data connection
 Future<bool> connected() async {
   try {
     final result = await InternetAddress.lookup('google.com');
@@ -210,7 +210,7 @@ class DatabaseService {
     if (!await connected()) {
       return null;
     }
-    final imageData = await imageFile.getByteData();
+    final imageData = await imageFile.getByteData(quality: 70);
     final fileName = '$uid${imageFile.name}${randomInt.nextInt(100)}';
     final reference = FirebaseStorage.instance.ref().child(fileName);
     final uploadTask = reference.putData(imageData.buffer.asUint8List());
