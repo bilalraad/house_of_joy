@@ -18,7 +18,7 @@ import './shered_Preference.dart';
 abstract class BaseAuth {
   Future<String> signIn(String email, String password, String userName);
 
-  Future<String> signUp(String email, String password, User user);
+  Future<String> signUp(String email, String password, UserModel user);
 
   Future<void> sendEmailVerification();
 
@@ -69,7 +69,7 @@ class Auth implements BaseAuth {
         password: password,
       );
       var firebaseuser = result.user;
-      if (firebaseuser.isEmailVerified) {
+      if (firebaseuser.emailVerified) {
         final user = await DatabaseService(firebaseuser.uid).getUserData();
         _saveDeviceToken(user.uid);
 
@@ -105,7 +105,7 @@ class Auth implements BaseAuth {
     return null;
   }
 
-  Future<String> signUp(String email, String password, User user) async {
+  Future<String> signUp(String email, String password, UserModel user) async {
     try {
       final result = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -160,21 +160,22 @@ class Auth implements BaseAuth {
 
   /// this func. will send a link to user's email not a code
   Future<void> sendEmailVerification() async {
-    final user = await _firebaseAuth.currentUser();
+    final user = await _firebaseAuth.currentUser;
     user.sendEmailVerification();
   }
 
   Future<String> signInWithGoogle() async {
-    User user;
+    UserModel user;
     String email;
     try {
       final googleUser = await _googleSignIn.signIn();
       final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.getCredential(
+      final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       email = googleUser.email;
+      print(email);
       final authResult = await _firebaseAuth.signInWithCredential(credential);
       final firebaseUser = authResult.user;
       assert(firebaseUser.email != null, 'the email is null');
@@ -183,7 +184,7 @@ class Auth implements BaseAuth {
       assert(await firebaseUser.getIdToken() != null, 'test1');
       //If the user already excists in the data base then get his data
       user = await DatabaseService(firebaseUser.uid).getUserData() ??
-          User(
+          UserModel(
             uid: firebaseUser.uid,
             fullName: firebaseUser.displayName ?? '',
             userName: '',
@@ -215,7 +216,7 @@ class Auth implements BaseAuth {
         }
         return errorMessege;
       }
-      print(e);
+      // print(e);
     }
     return 'تم الغاء تسجيل الدخول';
   }
@@ -265,7 +266,7 @@ class Auth implements BaseAuth {
 
   Future<String> _getEmailAlreadyInUseError(String email) async {
     final signInMethodsLinkedToEmail =
-        await _firebaseAuth.fetchSignInMethodsForEmail(email: email);
+        await _firebaseAuth.fetchSignInMethodsForEmail(email);
 
     if (signInMethodsLinkedToEmail.first == 'password') {
       return ('اليريد الالكتروني مربوط  سابقا بحساب اخر');
@@ -277,9 +278,9 @@ class Auth implements BaseAuth {
   }
 
   Future<bool> isSigendInWithEmailAndPassword() async {
-    final user = await _firebaseAuth.currentUser();
+    final user = await _firebaseAuth.currentUser;
     final signInMethodsLinkedToEmail =
-        await _firebaseAuth.fetchSignInMethodsForEmail(email: user.email);
+        await _firebaseAuth.fetchSignInMethodsForEmail(user.email);
 
     if (signInMethodsLinkedToEmail.contains('password')) {
       return true;
@@ -297,19 +298,18 @@ class Auth implements BaseAuth {
       switch (result.status) {
         case FacebookLoginStatus.loggedIn:
           final token = result.accessToken.token;
-          var credential =
-              FacebookAuthProvider.getCredential(accessToken: token);
+          var credential = FacebookAuthProvider.credential(token);
 
-          final graphResponse = await http.get(
-              'https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$token');
+          final graphResponse = await http.get(Uri.parse(
+              'https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=$token'));
           final profile = json.decode(graphResponse.body);
           email = profile['email'];
-          User user;
+          UserModel user;
           final authResult =
               await _firebaseAuth.signInWithCredential(credential);
           final firebaseUser = authResult.user;
           user = await DatabaseService(firebaseUser.uid).getUserData() ??
-              User(
+              UserModel(
                 uid: firebaseUser.uid,
                 fullName: profile['name'] ?? '',
                 userName: '',
@@ -338,6 +338,7 @@ class Auth implements BaseAuth {
           break;
       }
     } catch (e) {
+      print(e);
       addState(AuthState.error);
       if (e is PlatformException) {
         var errorMessege = '';
@@ -364,7 +365,7 @@ class Auth implements BaseAuth {
   }
 
   void _saveDeviceToken(String uid) async {
-    final _fcm = FirebaseMessaging();
+    final _fcm = FirebaseMessaging.instance;
     // Get the token for this device
     final fcmToken = await _fcm.getToken();
 
@@ -372,11 +373,11 @@ class Auth implements BaseAuth {
     if (fcmToken != null) {
       var tokens = DatabaseService('')
           .usersCollection
-          .document(uid)
+          .doc(uid)
           .collection('tokens')
-          .document(fcmToken);
+          .doc(fcmToken);
 
-      await tokens.setData({
+      await tokens.set({
         'token': fcmToken,
         'createdAt': FieldValue.serverTimestamp(), // optional
       });

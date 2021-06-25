@@ -32,22 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
     const ActivitiesTab(),
   ];
 
-  final _fcm = FirebaseMessaging();
-
   @override
   void initState() {
-    _fcm.configure(
-      onMessage: (message) async {
-        print(message);
-        showFlushSnackBar(context, message['notification']['body']);
-      },
-      onLaunch: (message) async {
-        print("onLaunch: $message");
-      },
-      onResume: (message) async {
-        print("onresum: $message");
-      },
-    );
+    FirebaseMessaging.onMessage.listen((message) {
+      showFlushSnackBar(context, message.data['notification']['body']);
+    });
     super.initState();
   }
 
@@ -57,10 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: MultiProvider(
         providers: [
-          FutureProvider<User>.value(
+          FutureProvider<UserModel>.value(
+              initialData: null,
               value: DatabaseService('').getCurrentUserData()),
           FutureProvider<List<Post>>.value(
-              value: PostServices('').getUserPosts()),
+              initialData: null, value: PostServices('').getUserPosts()),
         ],
         child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 800),
@@ -93,20 +83,20 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             },
             items: [
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
-                title: Container(),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: '',
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.person_pin),
+                label: '',
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.add_circle_outline),
+                label: '',
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.person_pin),
-                title: Container(),
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.add_circle_outline),
-                title: Container(),
-              ),
-              BottomNavigationBarItem(
-                title: Container(),
+                label: '',
                 icon: Stack(
                   children: <Widget>[
                     const Icon(Icons.notifications),

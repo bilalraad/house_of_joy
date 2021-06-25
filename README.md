@@ -14,7 +14,7 @@
 
 وهي مبادرة انسانية غير ربحية تهدف الى خدمة المجتمع عن طريق البرمجة.
 تعتبر مبادرة البرمجة من اجل العراق مبادرة تعليمية حقيقية ترعى المهتمين بتعلم تصميم وبرمجة تطبيقات الهاتف الجوال ومواقع الانترنت وبرامج الحاسوب والشبكات والاتصالات ونظم تشغيل الحاسوب
-   كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما ،باستخدام تقنيات مفتوحة المصدر.
+كما توفر لهم جميع الدروس التعليمية اللازمة وبشكل مجاني تماما ،باستخدام تقنيات مفتوحة المصدر.
 
 ## Project Team
 
@@ -22,11 +22,10 @@
 
 2 - Zahraa Ali - Project manager - contact: zahraa.ali@codeforiraq.org
 
-3 - Bilal Raad - Flutter developer - contact: bilal.raad@codeforiraq.org.com, telegram: @bilal_rad
+3 - Bilal Raad - Flutter developer - contact: bilal.raad@codeforiraq.org.com, telegram: <a href="https://t.me/bilal_rad">@bilal_rad</a>
 
 4 - Ahmed Yaseen - Programmer - contact: ahmed.yaseen93@codeforiraq.org
 
 5 - Noor Al-huda Lateef - ui/ux design - contact: noor.alhuda@codeforiraq.org
 
 6 - Murtada Hamid - Logo designe
-

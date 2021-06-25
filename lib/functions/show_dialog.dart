@@ -9,7 +9,8 @@ import '../ui/home/editProfile.dart';
 
 ///this func. will show a dialog when u press the home icon on the top right corner
 Future<void> showCostumeDialog(BuildContext context) {
-  final user = Provider.of<User>(context, listen: false);
+  final user = Provider.of<UserModel>(context, listen: false);
+  print(user);
   return showDialog(
       context: context,
       builder: (context) {

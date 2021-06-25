@@ -127,19 +127,21 @@ class _ForgetPassword extends State<ForgetPassword> {
                             BoxShadow(color: Colors.black12, blurRadius: 5),
                           ],
                         ),
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: _loading ? null : _onSendPressed,
-                          color: _colorpink,
+                          style: ElevatedButton.styleFrom(
+                            primary: _colorpink,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: const EdgeInsets.all(5.0),
+                          ),
                           child: const Text(
                             'ارسال',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontFamily: 'ae_Sindibad'),
-                          ),
-                          padding: const EdgeInsets.all(5.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
                           ),
                         ),
                       ),

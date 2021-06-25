@@ -29,7 +29,7 @@ class _OrderState extends State<Order> {
           backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios,color: Colors.black),
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
               onPressed: () {
                 Navigator.pop(context);
               }),
@@ -61,8 +61,14 @@ class _OrderState extends State<Order> {
                 borderRadius: BorderRadius.all(Radius.circular(50)),
                 color: Colors.white,
               ),
-              child: RaisedButton(
-                color: Colors.white,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(5.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  primary: Colors.white,
+                ),
                 onPressed: widget.userNumber.isEmpty
                     ? null
                     : () async {
@@ -94,10 +100,6 @@ class _OrderState extends State<Order> {
                     ),
                     const SizedBox(width: 20),
                   ],
-                ),
-                padding: const EdgeInsets.all(5.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
             ),

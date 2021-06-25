@@ -10,7 +10,7 @@ class LikeButton extends StatefulWidget {
   final List<Like> likes;
   final String postId;
   final String postOwnerId;
-  final User user;
+  final UserModel user;
 
   LikeButton(this.likes, this.postId, this.postOwnerId, {this.user});
 
@@ -26,7 +26,7 @@ class _LikeButtonState extends State<LikeButton> {
 
   @override
   Widget build(BuildContext context) {
-    final user = widget.user ?? Provider.of<User>(context);
+    final user = widget.user ?? Provider.of<UserModel>(context);
     if (user != null && widget.likes.any((like) => like.userId == user.uid)) {
       setState(() {
         islike = true;

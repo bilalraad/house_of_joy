@@ -22,7 +22,7 @@ enum PopMenuItem {
 
 class ShowSelectedProduct extends StatefulWidget {
   final Post post;
-  final User user;
+  final UserModel user;
   final bool showOptions;
 
   const ShowSelectedProduct({
@@ -91,7 +91,7 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
     );
   }
 
-  Widget buildSelectedPost(User currentUser) {
+  Widget buildSelectedPost(UserModel currentUser) {
     return Container(
       padding: const EdgeInsets.only(top: 100),
       width: MediaQuery.of(context).size.width / 1.1,
@@ -169,7 +169,8 @@ class _ShowSelectedProductState extends State<ShowSelectedProduct> {
                             Navigator.push(
                               context,
                               createRoute(
-                                FutureProvider<User>(
+                                FutureProvider<UserModel>(
+                                  initialData: null,
                                   create: (context) =>
                                       DatabaseService('').getCurrentUserData(),
                                   child: Comments(

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-class User {
+class UserModel {
   final String uid;
   final String phoneNo;
   final String fullName;
@@ -9,7 +9,7 @@ class User {
   final String userName;
   final String imageUrl;
 
-  User({
+  UserModel({
     @required this.uid,
     @required this.phoneNo,
     @required this.fullName,
@@ -18,7 +18,7 @@ class User {
     this.imageUrl = '',
   });
 
-  User copyWith({
+  UserModel copyWith({
     String uid,
     String phoneNo,
     String fullName,
@@ -27,7 +27,7 @@ class User {
     String imageUrl,
     List<Activity> activities,
   }) {
-    return User(
+    return UserModel(
       uid: uid ?? this.uid,
       phoneNo: phoneNo ?? this.phoneNo,
       fullName: fullName ?? this.fullName,
@@ -48,9 +48,9 @@ class User {
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
-    var user = User(
+    var user = UserModel(
       uid: map['uid'],
       phoneNo: map['phoneNo'],
       fullName: map['fullName'],
@@ -66,15 +66,15 @@ class User {
     return 'User(uid: $uid, phoneNo: $phoneNo, fullName: $fullName, email: $email, userName: $userName, imageUrl: $imageUrl)';
   }
 
-  factory User.fromDocument(DocumentSnapshot doc, String uid) {
-    if (doc.data == null) return null;
-    return User(
-      uid: uid,
-      phoneNo: doc.data['phoneNo'],
-      fullName: doc.data['fullName'],
-      email: doc.data['email'],
-      userName: doc.data['userName'],
-      imageUrl: doc.data['imageUrl'],
+  factory UserModel.fromDocument(DocumentSnapshot doc) {
+    if (doc == null) return null;
+    return UserModel(
+      uid: doc.id,
+      phoneNo: doc['phoneNo'],
+      fullName: doc['fullName'],
+      email: doc['email'],
+      userName: doc['userName'],
+      imageUrl: doc['imageUrl'],
     );
   }
 }
@@ -98,8 +98,6 @@ class Activity {
     bool isReaded,
     bool isLike,
     String postId,
-    String userImageUrl,
-    String userName,
     String userId,
     String activityTime,
   }) {

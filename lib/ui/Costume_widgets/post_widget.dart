@@ -14,13 +14,16 @@ import '../../services/data_base.dart';
 import '../../functions/creat_route.dart';
 
 Widget buildPostWidget(Post post, BuildContext context, int index) {
-  return FutureBuilder<User>(
+  return FutureBuilder<UserModel>(
     future: DatabaseService(post.userId).getUserData(),
     builder: (context, snapshot) {
       var postUser = snapshot.data;
       return !snapshot.hasData
-          ? post != null && index == 0 ? const LoadingDialog() : Container()
+          ? post != null && index == 0
+              ? const LoadingDialog()
+              : Container()
           : FutureProvider.value(
+              initialData: null,
               value: DatabaseService('').getCurrentUserData(),
               child: Container(
                 padding: const EdgeInsets.only(right: 8),
@@ -109,7 +112,8 @@ Widget buildPostWidget(Post post, BuildContext context, int index) {
                                       Navigator.push(
                                         context,
                                         createRoute(
-                                          FutureProvider<User>(
+                                          FutureProvider<UserModel>(
+                                            initialData: null,
                                             create: (context) =>
                                                 DatabaseService('')
                                                     .getCurrentUserData(),

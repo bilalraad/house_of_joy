@@ -33,14 +33,15 @@ class CategoryCardItem extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(10)),
               color: Color(0xffF3E4F7),
             ),
-            child: FlatButton(
+            child: TextButton(
               child: Row(
                 children: <Widget>[
                   Container(
                       height: MediaQuery.of(context).size.height * 0.14,
                       width: MediaQuery.of(context).size.height * 0.14,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
                         image: DecorationImage(
                             image: AssetImage(pathImage), fit: BoxFit.cover),
                       )),

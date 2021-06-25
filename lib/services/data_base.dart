@@ -7,8 +7,8 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 
 import '../models/user.dart';
 
@@ -32,6 +32,7 @@ Future<void> showCostumeFireBaseErrorNotif(String title) async {
   );
   await Future.delayed(const Duration(seconds: 2));
 }
+
 ///To check the internet connection and data connection
 Future<bool> connected() async {
   try {
@@ -59,26 +60,27 @@ class DatabaseService {
 
   DatabaseService(this.uid);
 
-  CollectionReference usersCollection = Firestore.instance.collection('users');
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
 
   CollectionReference get userActivtiesReference {
-    return usersCollection.document(uid).collection('userActivities');
+    return usersCollection.doc(uid).collection('userActivities');
   }
 
   ///this func. can be used to add new user or update an exsisting one
-  Future updateUserData(User user) async {
+  Future updateUserData(UserModel user) async {
     if (await connected()) {
-      await usersCollection.document(uid).setData(user.toMap());
+      await usersCollection.doc(uid).set(user.toMap());
     } else {
       showCostumeFireBaseErrorNotif('عذرا لا يوجد اتصال بالانترنت');
     }
   }
 
   List<Activity> _activitiesListFromSnapshot(QuerySnapshot querySnapshot) {
-    if(querySnapshot.documents == null) return null;
+    if (querySnapshot.docs == null) return null;
     var activities = <Activity>[];
-    querySnapshot?.documents
-        ?.forEach((element) => activities.add(Activity.fromMap(element.data)));
+    querySnapshot?.docs?.forEach(
+        (element) => activities.add(Activity.fromMap(element.data())));
     return activities;
   }
 
@@ -91,19 +93,19 @@ class DatabaseService {
     if (!await connected()) {
       return null;
     }
-    userActivtiesReference.document().setData(activity.toMap());
+    userActivtiesReference.doc().set(activity.toMap());
   }
 
   ///this will mark all the activities as readed when the user enter the activities tab
   Future<void> markAllActivitiesAsReaded() async {
     if (await connected()) {
       await userActivtiesReference
-          .getDocuments()
-          .then((value) => value.documents.forEach((element) {
-                if (!element.data['isReaded']) {
+          .get()
+          .then((value) => value.docs.forEach((element) {
+                if (!element['isReaded']) {
                   userActivtiesReference
-                      .document(element.documentID)
-                      .updateData({'isReaded': true});
+                      .doc(element.id)
+                      .update({'isReaded': true});
                 }
               }));
     }
@@ -119,9 +121,9 @@ class DatabaseService {
         .snapshots()
         .first;
 
-    final documents = querySnapshot.documents;
+    final documents = querySnapshot.docs;
 
-    final email = documents.isNotEmpty ? documents.first.data['email'] : null;
+    final email = documents.isNotEmpty ? documents.first['email'] : null;
 
     return email;
   }
@@ -130,10 +132,9 @@ class DatabaseService {
     if (!await connected()) {
       return false;
     }
-    final snap = await usersCollection
-        .where('userName', isEqualTo: userName)
-        .getDocuments();
-    if (snap.documents.isNotEmpty) {
+    final snap =
+        await usersCollection.where('userName', isEqualTo: userName).get();
+    if (snap.docs.isNotEmpty) {
       return true;
     }
 
@@ -144,9 +145,8 @@ class DatabaseService {
     if (!await connected()) {
       return false;
     }
-    final snap =
-        await usersCollection.where('email', isEqualTo: email).getDocuments();
-    if (snap.documents.isNotEmpty) {
+    final snap = await usersCollection.where('email', isEqualTo: email).get();
+    if (snap.docs.isNotEmpty) {
       return true;
     }
 
@@ -154,30 +154,30 @@ class DatabaseService {
   }
 
   ///get user data that is currently using the app
-  Future<User> getCurrentUserData() async {
+  Future<UserModel> getCurrentUserData() async {
     if (!await connected()) {
       return null;
     }
-    final firebaseuser = await FirebaseAuth.instance.onAuthStateChanged.first;
+    final firebaseuser = await FirebaseAuth.instance.authStateChanges().first;
     if (firebaseuser == null) return null;
-    final userDoc = await usersCollection.document(firebaseuser.uid).get();
-    final user = User.fromDocument(userDoc, userDoc.documentID);
+    final userDoc = await usersCollection.doc(firebaseuser.uid).get();
+    final user = UserModel.fromDocument(userDoc);
     return user;
   }
 
   Future deleteUser() async {
     //this can be used to delete user and only can be used by the admin
-    await usersCollection.document(uid).delete();
+    await usersCollection.doc(uid).delete();
   }
 
   ///get any user data by giving his Id
-  Future<User> getUserData() async {
+  Future<UserModel> getUserData() async {
     if (uid == null) return null;
     if (!await connected()) {
       return null;
     }
-    final userDoc = await usersCollection.document(uid).get();
-    final user = User.fromDocument(userDoc, userDoc.documentID);
+    final userDoc = await usersCollection.doc(uid).get();
+    final user = UserModel.fromDocument(userDoc);
     return user;
   }
 
@@ -190,22 +190,21 @@ class DatabaseService {
 
     if (uid.isNotEmpty) fileName = uid;
     final firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
-    final uploadTask = firebaseStorageRef.putFile(image);
-    final taskSnapshot = await uploadTask.onComplete;
-    if (taskSnapshot.error == null) {
-      final String imageUrl = await taskSnapshot.ref.getDownloadURL();
-      await Firestore.instance
+    try {
+      await firebaseStorageRef.putFile(image);
+      final imageUrl = await firebaseStorageRef.getDownloadURL();
+      await FirebaseFirestore.instance
           .collection("images")
           .add({"url": imageUrl, "name": fileName});
 
       return imageUrl;
-    } else {
+    } catch (e) {
       return null;
     }
   }
 
   ///this function is used to upload post pictures
-  Future<dynamic> postImageToFireBase(Asset imageFile) async {
+  Future<String> postImageToFireBase(Asset imageFile) async {
     var randomInt = Random();
     if (!await connected()) {
       return null;
@@ -213,8 +212,11 @@ class DatabaseService {
     final imageData = await imageFile.getByteData(quality: 70);
     final fileName = '$uid${imageFile.name}${randomInt.nextInt(100)}';
     final reference = FirebaseStorage.instance.ref().child(fileName);
-    final uploadTask = reference.putData(imageData.buffer.asUint8List());
-    final storageTaskSnapshot = await uploadTask.onComplete;
-    return storageTaskSnapshot.ref.getDownloadURL();
+    try {
+      await reference.putData(imageData.buffer.asUint8List());
+      return await reference.getDownloadURL();
+    } catch (e) {
+      return null;
+    }
   }
 }

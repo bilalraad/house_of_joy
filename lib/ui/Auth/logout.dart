@@ -108,7 +108,7 @@ class Logout extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(40)),
                               color: Colors.white,
                             ),
-                            child: FlatButton(
+                            child: TextButton(
                               onPressed: () async {
                                 await Auth().signOut();
 
@@ -156,7 +156,7 @@ class Logout extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(40)),
                               color: Colors.white,
                             ),
-                            child: FlatButton(
+                            child: TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },

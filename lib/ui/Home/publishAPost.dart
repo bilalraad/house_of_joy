@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 
 import '../../models/post.dart';
 import '../../models/user.dart';
@@ -17,8 +17,8 @@ import '../Costume_widgets/loading_dialog.dart';
 import '../Costume_widgets/select_category.dart';
 
 class PublishAPsostTab extends StatefulWidget {
-  final User currentUser;//optional
-  final Post oldPost;//optional
+  final UserModel currentUser; //optional
+  final Post oldPost; //optional
 
   const PublishAPsostTab({Key key, this.oldPost, this.currentUser});
   @override
@@ -31,7 +31,7 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
   List<String> imagesUrl = [];
   List<Asset> images = [];
   String _selectedCategory = '';
-  bool _autoValidate = false;
+  // bool _autoValidate = false;
   bool _loading = false;
 
   File imageFile;
@@ -71,7 +71,7 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
 
   @override
   Widget build(BuildContext context) {
-    final user = widget.currentUser ?? Provider.of<User>(context);
+    final user = widget.currentUser ?? Provider.of<UserModel>(context);
     return Scaffold(
       body: ModalProgress(
         costumeIndicator: const LoadingDialog(),
@@ -85,7 +85,9 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        FlatButton(
+                        TextButton(
+                            style: TextButton.styleFrom(
+                                primary: const Color(0xffE10586)),
                             child: const Text(
                               'الغاء',
                               style: TextStyle(
@@ -106,7 +108,9 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
                           ),
                         ),
                         const Expanded(child: SizedBox(width: 5)),
-                        FlatButton(
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              primary: const Color(0xffE10586)),
                           child: const Text(
                             'تم',
                             style: TextStyle(
@@ -126,7 +130,8 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
                         child: Form(
                           key: _key,
                           child: TextFormField(
-                            autovalidate: _autoValidate,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             maxLines: 3,
                             textDirection: TextDirection.rtl,
                             controller: _controllerForDescription,
@@ -199,7 +204,7 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
     );
   }
 
-  void onPressedDone(User user) async {
+  void onPressedDone(UserModel user) async {
     FocusScope.of(context).unfocus();
 
     if (_selectedCategory.isEmpty) {
@@ -229,7 +234,7 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
       }
       var newPost = Post(
         userId: user.uid,
-        postId: widget.oldPost?.postId ?? Uuid().v4(),
+        postId: widget.oldPost?.postId ?? const Uuid().v4(),
         imagesUrl: imagesUrl,
         comments: widget.oldPost?.comments ?? [],
         description: _controllerForDescription.text,
@@ -250,10 +255,6 @@ class _PublishAPsostTabState extends State<PublishAPsostTab> {
         ),
         align: Alignment.topCenter,
       );
-    } else {
-      setState(() {
-        _autoValidate = true;
-      });
     }
   }
 }

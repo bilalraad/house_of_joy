@@ -35,7 +35,7 @@ class _CommentsState extends State<Comments> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<User>(context);
+    final currentUser = Provider.of<UserModel>(context);
 
     return StreamBuilder<List<Comment>>(
       stream: PostServices(widget.postId).comments,
@@ -185,7 +185,7 @@ class _CommentsState extends State<Comments> {
     );
   }
 
-  void submmetComment(User currentUser) async {
+  void submmetComment(UserModel currentUser) async {
     setState(() => _loading = true);
     FocusScope.of(context).unfocus();
 
@@ -219,7 +219,7 @@ class _CommentsState extends State<Comments> {
   }
 
   Widget buildCommentContainer(Comment comment) {
-    return FutureBuilder<User>(
+    return FutureBuilder<UserModel>(
       future: DatabaseService(comment.userId).getUserData(),
       builder: (context, snapshot) {
         var commentUser = snapshot.data;

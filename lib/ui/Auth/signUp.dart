@@ -122,19 +122,21 @@ class _SignUp extends State<SignUp> {
                           const SizedBox(height: 15),
                           SizedBox(
                             width: MediaQuery.of(context).size.width / 1.2,
-                            child: RaisedButton(
+                            child: ElevatedButton(
                               onPressed: _loading ? null : onSignUpPressed,
-                              color: const Color(0xffFFAADC),
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.all(5.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                primary: const Color(0xffFFAADC),
+                              ),
                               child: const Text(
                                 'انشاء حساب',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 24,
                                     fontFamily: 'ae_Sindibad'),
-                              ),
-                              padding: const EdgeInsets.all(5.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
                               ),
                             ),
                           ),
@@ -216,7 +218,7 @@ class _SignUp extends State<SignUp> {
     if (data != null) {
       final number =
           data['number'].isNotEmpty ? '+964${data['number'].substring(1)}' : '';
-      var tempUser = User(
+      var tempUser = UserModel(
         uid: '', //will get it from firesbase
         fullName: data['fullName'],
         email: data['email'],

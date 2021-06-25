@@ -191,7 +191,7 @@ class _Login extends State<Login> {
                     height: 45,
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: FlatButton(
+                      child: TextButton(
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -219,19 +219,21 @@ class _Login extends State<Login> {
                         boxShadow: [
                           BoxShadow(color: Colors.black12, blurRadius: 5),
                         ]),
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: _loading ? null : _onLogInPressd,
-                      color: const Color(0xffFFAADC),
+                      style: ElevatedButton.styleFrom(
+                        primary: const Color(0xffFFAADC),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        padding: const EdgeInsets.all(5.0),
+                      ),
                       child: const Text(
                         'تسجيل',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontFamily: 'ae_Sindibad'),
-                      ),
-                      padding: const EdgeInsets.all(5.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
                   ),
@@ -270,10 +272,16 @@ class _Login extends State<Login> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         const SizedBox(width: 5),
-                        FlatButton.icon(
-                          onPressed: _loading ? null : onFacebookSignUp,
-                          color: const Color(0xff6B6BD9),
-                          disabledColor: Colors.grey,
+                        TextButton.icon(
+                          onPressed: !_loading ? onFacebookSignUp : null,
+                          style: TextButton.styleFrom(
+                            primary: const Color(0xff6B6BD9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: const EdgeInsets.all(5.0),
+                          ),
+                          // disabledColor: Colors.grey,
                           icon: const Padding(
                             padding: EdgeInsets.only(bottom: 5, top: 5),
                             child: Icon(
@@ -290,10 +298,6 @@ class _Login extends State<Login> {
                                   TextStyle(color: Colors.white, fontSize: 22),
                             ),
                           ),
-                          padding: const EdgeInsets.all(5.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
                         ),
                         const SizedBox(width: 15),
                         Container(
@@ -303,10 +307,17 @@ class _Login extends State<Login> {
                                 width: 2, color: const Color(0xFFCA39E3)),
                             borderRadius: BorderRadius.circular(30.0),
                           ),
-                          child: FlatButton.icon(
+                          child: TextButton.icon(
                             onPressed: _loading ? null : onGoogleSignUp,
-                            color: const Color(0xffffffff),
-                            disabledColor: Colors.grey,
+                            style: TextButton.styleFrom(
+                              primary: const Color(0xffffffff),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              padding: const EdgeInsets.all(5.0),
+                            ),
+
+                            // disabledColor: Colors.grey,
                             label: const Padding(
                               padding: EdgeInsets.only(right: 15),
                               child: Text(
@@ -322,10 +333,6 @@ class _Login extends State<Login> {
                                 image: AssetImage('images/google.png'),
                                 fit: BoxFit.cover,
                               ),
-                            ),
-                            padding: const EdgeInsets.all(5.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
                             ),
                           ),
                         ),

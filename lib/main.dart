@@ -1,4 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,11 +10,13 @@ import './services/shered_Preference.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  Firebase.initializeApp();
   runApp(MultiProvider(
     providers: [
-      StreamProvider<AuthState>.value(value: Auth.authState.stream),
-      FutureProvider<String>.value(value: SharedPrefs().getUserId()),
+      StreamProvider<AuthState>.value(
+          initialData: null, value: Auth.authState.stream),
+      FutureProvider<String>.value(
+          initialData: null, value: SharedPrefs().getUserId()),
     ],
     child: MaterialApp(
       builder: BotToastInit(),
@@ -36,8 +39,6 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
-  
-
   @override
   Widget build(BuildContext context) {
     final userId = Provider.of<String>(context);

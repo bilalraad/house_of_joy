@@ -8,7 +8,7 @@ import '../../services/data_base.dart';
 import '../../functions/show_overlay.dart';
 
 class EditProfile extends StatefulWidget {
-  final User user;
+  final UserModel user;
   const EditProfile({
     @required this.user,
   }) : assert(user != null, 'user data should be provided');
@@ -136,7 +136,8 @@ class _EditProfileState extends State<EditProfile> {
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
           titleSpacing: 0,
-          title: FlatButton(
+          title: TextButton(
+            style: TextButton.styleFrom(primary: Colors.black),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -149,8 +150,9 @@ class _EditProfileState extends State<EditProfile> {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: _onPressedDone,
+              style: TextButton.styleFrom(primary: Colors.black),
               child: const Text(
                 'تعديل',
                 style: TextStyle(

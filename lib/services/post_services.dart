@@ -11,7 +11,8 @@ class PostServices {
 
   PostServices(this.postId);
 
-  CollectionReference postsCollection = Firestore.instance.collection('Posts');
+  CollectionReference postsCollection =
+      FirebaseFirestore.instance.collection('Posts');
 
   Future<String> likeUnlikePost(
     List<Like> likes,
@@ -19,7 +20,7 @@ class PostServices {
     String postOwnerId,
   ) async {
     if (await connected()) {
-      await postsCollection.document(postId).updateData(
+      await postsCollection.doc(postId).update(
         {
           'likes': likes.map((e) => e.toMap()).toList(),
         },
@@ -39,8 +40,8 @@ class PostServices {
   }) async {
     if (await connected()) {
       await postsCollection
-          .document(postId)
-          .updateData({'comments': comments.map((e) => e.toMap()).toList()});
+          .doc(postId)
+          .update({'comments': comments.map((e) => e.toMap()).toList()});
       if (activity != null) {
         DatabaseService(postOwnerId).updateUserActivities(activity);
       }
@@ -53,7 +54,7 @@ class PostServices {
   ///this can be used to add new post or update an existing one
   Future<String> updatePostData(Post post) async {
     if (await connected()) {
-      await postsCollection.document(postId).setData(post.toMap());
+      await postsCollection.doc(postId).set(post.toMap());
       return null;
     }
     return 'عذرا لا يوجد اتصال بالانترنت';
@@ -62,8 +63,8 @@ class PostServices {
   ///this will get post data by the giving postId
   Future<Post> getPostData() async {
     if (await connected()) {
-      final postQurey = await postsCollection.document(postId).get();
-      return Post.fromDocument(postQurey, postQurey.documentID);
+      final postQurey = await postsCollection.doc(postId).get();
+      return Post.fromDocument(postQurey, postQurey.id);
     }
     return null;
   }
@@ -71,7 +72,7 @@ class PostServices {
   Future<String> deletePost() async {
     if (await connected()) {
       await deletePostImages();
-      await postsCollection.document(postId).delete();
+      await postsCollection.doc(postId).delete();
       deletePostActivities(postId);
 
       return null;
@@ -85,14 +86,12 @@ class PostServices {
     final user = await DatabaseService('').getCurrentUserData();
     await DatabaseService(user.uid)
         .userActivtiesReference
-        .getDocuments()
-        .then((value) => value.documents.forEach((element) {
-              if (element.data.containsValue(postId)) {
-                DatabaseService(user.uid)
-                    .userActivtiesReference
-                    .document(element.documentID)
-                    .delete();
-              }
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              DatabaseService(user.uid)
+                  .userActivtiesReference
+                  .doc(postId)
+                  .delete();
             }));
   }
 
@@ -101,7 +100,7 @@ class PostServices {
     final post = await getPostData();
 
     post.imagesUrl.forEach((img) async {
-      final photoRef = await FirebaseStorage.instance.getReferenceFromUrl(img);
+      final photoRef = await FirebaseStorage.instance.refFromURL(img);
       photoRef.delete().catchError((e) {
         /// '$e if([deletion_error]) this is not a big error so just ignore it';
       });
@@ -109,14 +108,13 @@ class PostServices {
   }
 
   List<Post> _postsListFromSnapshot(QuerySnapshot snap) {
-    return snap.documents.map((doc) {
-      return Post.fromDocument(doc, doc.documentID);
+    return snap.docs.map((doc) {
+      return Post.fromDocument(doc, doc.id);
     }).toList();
   }
 
   List<Comment> _commentsListFromSnapshot(DocumentSnapshot doc) {
-    return List<Comment>.from(
-        doc.data['comments']?.map((x) => Comment.fromMap(x)));
+    return List<Comment>.from(doc['comments']?.map((x) => Comment.fromMap(x)));
   }
 
   Stream<List<Post>> getPostsByCategory(String category) {
@@ -128,17 +126,17 @@ class PostServices {
 
   Stream<List<Comment>> get comments {
     return postsCollection
-        .document(postId)
+        .doc(postId)
         .snapshots()
         .map(_commentsListFromSnapshot);
   }
 
   Future<List<Post>> getUserPosts([String uid]) async {
-    final firebaseuser = await FirebaseAuth.instance.onAuthStateChanged.first;
+    final firebaseuser = await FirebaseAuth.instance.authStateChanges().first;
     if (firebaseuser == null) return null;
 
     return _postsListFromSnapshot(await postsCollection
         .where('userId', isEqualTo: uid ?? firebaseuser.uid)
-        .getDocuments());
+        .get());
   }
 }

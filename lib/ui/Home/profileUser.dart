@@ -10,7 +10,7 @@ import '../Costume_widgets/view_images.dart';
 import '../Costume_widgets/loading_dialog.dart';
 
 class UserProfileTab extends StatefulWidget {
-  final User outSideUser;
+  final UserModel outSideUser;
 
   const UserProfileTab({Key key, this.outSideUser}) : super(key: key);
   @override
@@ -20,7 +20,7 @@ class UserProfileTab extends StatefulWidget {
 class _UserProfileTabState extends State<UserProfileTab> {
   @override
   Widget build(BuildContext context) {
-    final user = widget.outSideUser ?? Provider.of<User>(context);
+    final user = widget.outSideUser ?? Provider.of<UserModel>(context);
     final posts =
         widget.outSideUser == null ? Provider.of<List<Post>>(context) : null;
 
@@ -148,7 +148,8 @@ class _UserProfileTabState extends State<UserProfileTab> {
     );
   }
 
-  Widget buidPostFirstImageContainer(Post post, User user, {bool showOptions}) {
+  Widget buidPostFirstImageContainer(Post post, UserModel user,
+      {bool showOptions}) {
     return Padding(
       padding: const EdgeInsets.all(2),
       child: GestureDetector(

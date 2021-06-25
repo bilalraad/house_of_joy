@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 
 class ViewImages extends StatefulWidget {
   final List<String> imagesUrl;
@@ -135,7 +134,6 @@ class _ViewImagesState extends State<ViewImages>
     );
   }
 }
-
 
 class LoadImage extends StatefulWidget {
   const LoadImage(

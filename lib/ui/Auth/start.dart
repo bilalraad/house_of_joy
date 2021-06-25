@@ -5,14 +5,7 @@ import '../Auth/login.dart';
 class Start extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage(
-              'images/backgroundImageStart.png',
-            ),
-            fit: BoxFit.fill),
-      ),
+    return Material(
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: ListView(
@@ -103,24 +96,26 @@ class Start extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width / 1.2,
                     height: 45,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => Login()),
                         );
                       },
-                      color: const Color(0xffFFAADC),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(5.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        primary: const Color(0xffFFAADC),
+                      ),
                       child: const Text(
                         'ابدا',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontFamily: 'ae_Sindibad'),
-                      ),
-                      padding: const EdgeInsets.all(5.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
                   ),

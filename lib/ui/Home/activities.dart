@@ -24,7 +24,7 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
 
   @override
   Widget build(BuildContext context) {
-    var currentUser = Provider.of<User>(context, listen: true);
+    var currentUser = Provider.of<UserModel>(context, listen: true);
     return Container(
       decoration: const BoxDecoration(
           image: DecorationImage(
@@ -35,10 +35,11 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(250, 251, 253, 75),
         body: StreamBuilder<List<Activity>>(
-            stream: DatabaseService(currentUser?.uid ?? '').activities,
+            stream: DatabaseService(currentUser?.uid).activities,
             builder: (context, snapshot) {
               var activities = snapshot.data;
-              activities?.sort((a,b)=>b.activityTime.compareTo(a.activityTime));
+              activities
+                  ?.sort((a, b) => b.activityTime.compareTo(a.activityTime));
               return ModalProgress(
                 inAsyncCall: activities == null || currentUser == null,
                 costumeIndicator: const LoadingDialog(),
@@ -109,8 +110,8 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
     );
   }
 
-  Widget buildAlertContainer(Activity activity, User currentUser) {
-    return FutureBuilder<User>(
+  Widget buildAlertContainer(Activity activity, UserModel currentUser) {
+    return FutureBuilder<UserModel>(
       future: DatabaseService(activity.userId).getUserData(),
       builder: (context, snapshot) {
         var activityByTheUser = snapshot.data;
@@ -181,7 +182,7 @@ class _ActivitiesTabState extends State<ActivitiesTab> {
 
 class TempPage extends StatelessWidget {
   final String postId;
-  final User currentUser;
+  final UserModel currentUser;
   const TempPage({this.postId, this.currentUser});
 
   @override
@@ -195,7 +196,8 @@ class TempPage extends StatelessWidget {
             inAsyncCall: post == null,
             child: post == null
                 ? Container()
-                : FutureProvider<User>(
+                : FutureProvider<UserModel>(
+                    initialData: null,
                     create: (_) => DatabaseService('').getCurrentUserData(),
                     child: ShowSelectedProduct(
                       post: post,
