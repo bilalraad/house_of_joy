@@ -1,3 +1,8 @@
+# Disclaimer
+The app is currently deprecated.
+I'm working on a new design for the app.
+
+
 # House Of Joy بيت الفرح
 
 هو تطبيق خاص للمشاريع الصغيرة المنزلية بكل انواعها للنساء
